@@ -154,10 +154,10 @@ welcome as issues or pull requests.
     gap (the files that only Lean's module system reads were not compared) and that two checks
     were untested. A fourth review, of the corrections, found two more routes of the same
     kind and a weakness of the test script. The routes were closed, each with a test module,
-    and the script was corrected; the reviewer's check of those corrections was not finished
-    when this version was built. None of these gaps touches the five theorems: the archive
-    does not use the
-    module system. All four reviews are in `notes/`.
+    and the script was corrected; the fourth reviewer then checked the corrections and found
+    no input on which the corrected program reports success wrongly (appended to its report,
+    with the points it leaves open). None of these gaps touches the five theorems: the archive
+    does not use the module system. All four reviews are in `notes/`.
   - The static scan matched no word that follows a dot, so it could not have found several of
     the names it was looking for. It is corrected and was run again; it finds none of them.
   - The checker is tested on modules built to be wrong (`verify/hostile/`), against Lean's own

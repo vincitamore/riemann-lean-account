@@ -284,8 +284,10 @@ was changed to compare the other files, and test modules were added. The fourth 
 those changes, found two more routes of the same kind, by which a module inside the module
 system could receive a constant that the program had not seen, and found that the test script
 could report on files left by an earlier run. The two routes were closed, each with a test
-module, and the script was corrected. The reviewer's check of those corrections was not
-finished when this version was built. None of the gaps found by the third
+module, and the script was corrected. The reviewer then checked the corrections, building
+the program and running the tests, and found no input on which the corrected program reports
+success wrongly; that check, with the points it leaves open, is appended to the fourth
+report. None of the gaps found by the third
 and fourth reviews touches the five theorems, which are stated and checked outside the module
 system (\cref{sec:scan}). The tests below
 were made with the program whose SHA-256 begins {\small\ttfamily \hostileprogramsha}.

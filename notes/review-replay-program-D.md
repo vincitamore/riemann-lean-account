@@ -1090,3 +1090,520 @@ unsafe def main (args : List String) : IO Unit := do
     IO.println s!"  bytes of module-system files: .olean {oleanBytes}, .olean.server {serverBytes}, .olean.private {privateBytes}"
     for e in examples do IO.println s!"  mismatch: {e}"
 ```
+
+## Check of the corrections
+
+**What was checked.** After this review the replay program, the test package and the test
+script were changed in answer to it. This section checks the changes, in the same way as the
+review: each claim says whether it was read in source (with file and line) or established by
+running something (with what was run). The versions checked, by SHA-256 (computed with
+`sha256sum`); line numbers in this section are of these versions:
+
+| File | SHA-256 |
+|---|---|
+| `verify/replay/ReplayMain.lean`, 582 lines, called "the corrected version" below | `b5e3596dde657bc84d9ed580574989a80d06ae4f3faecc055ebf8ed51a2d73d5` |
+| `verify/hostile/Craft.lean`, 135 lines | `52e2cfeb4eaba9b6c2e23dae2dc6a55c02f1ffbd75addd50fd30f601272e4a6d` |
+| `verify/hostile/expected.txt`, 29 lines | `da3d4d684d5bdaee0c143ae620b70584681eb08b70fcb00817f061af6d3eec61` |
+| `publish/public/verify/hostile.sh`, 90 lines | `5616b12587cd4cf40b181af4ccb8c1cfa9cc814f1e956fb5a8d792a7f92966f6` |
+
+The twenty sources under `verify/hostile/Hostile/` and the package's `lakefile.toml` and
+`lean-toolchain` are unchanged (their hashes are those of Appendix B and of the table at the top).
+"The version reviewed" is `3cb54c97…` as above. Its difference from the corrected version was
+read in full, and so were `Craft.lean`, `expected.txt` and `hostile.sh`. Lean is cited as in the
+review; in addition `LeanIR.lean`, `Lean/Compiler/Options.lean` and Lake's
+`lake/Lake/Build/Actions.lean` and `lake/Lake/Build/Module.lean`, under `src/lean/` in the
+release archive, and `src/runtime/io.cpp` at tag `v4.33.1`. I did not re-read the paper.
+Everything was run on the same Windows computer as the review, with the same release archive of
+Lean 4.33.1 (its SHA-256, `c39360867edfff6b090f20c16e18581c969ce839b71e813d76022ec04ec73e4d`,
+checked again), in a new scratch directory outside the repository, deleted afterwards. Apart from
+this section, nothing in the repository was written. While the check was being made, the results
+recorded in the repository and the numbers of the paper were regenerated with the corrected
+version and committed; D.1 and D.4 cite those files by their hashes.
+
+**Verdict of the check.** I found no input on which the corrected version reports success
+wrongly. Findings 1 and 2 are closed, and so is a third route of the same kind that I had not
+reported and that the correction closes as well: the import list of the `.ir` file, which Lean
+follows for a module that it loads only for its compiled code. Measured: a `module` file proves
+`False` through that list, and `#print axioms` reports no axioms; the version reviewed accepts
+the module that carries the list, and the corrected version rejects it (D.2 (e)). From the
+source of Lean 4.33.1 I can find no further route by which a module inside the module system
+receives, from files that the program passes, a constant that the program neither replayed nor
+compared; D.3 gives that enumeration, which is mine and not a proof, and its limits. The new
+block can make the program fail, never succeed: everything it finds becomes a failure. On Lean's
+library it finds nothing (measured). `hostile.sh`, unchanged, printed `HOSTILE-OK` for the
+corrected version in a fresh output directory and again in the same directory reused, with the
+expected verdict and failure names on all 29 modules and the expected reports on the two named
+theorems, and it can no longer report on the outputs of an earlier run (measured). Removing any
+one of the new checks makes at least one test fail, except two marks whose loss is harmless and
+the test of stored keys, which no test can show (D.2 (g), D.4). What remains: the memory that
+the second reading of the files costs, which the correction raised (finding 5, measured);
+`balanced` (finding 12) and one sentence of the header, unchanged; and the notes below.
+
+### D.1 The findings of this review
+
+| Finding | Status | Lines | How established |
+|---|---|---|---|
+| 1. The import list of an exported part is not compared | Closed | 344-347, 414-415 | Read. Measured: `Exp.ImportsMore` of Appendix A is rejected ("the import list of the first part of the compiled file differs from that of the private part"), and so is `Exp.UseMore`, which imports it; the version reviewed accepts `Exp.ImportsMore` (exit 0). |
+| 2. The `.ir` file is not read | Closed | 438-453 | Read. Measured: `Exp.IrCarrier` and `Exp.Mid` are rejected ("a file of compiled code of this module holds 1 constants; Lean writes none there"); the version reviewed accepts both. |
+| 3. A stray `.olean.server` file stops the program | Closed | 403-409 | The server part is no longer read; the first part is read alone, and only when `.olean.private` exists. Measured: `Exp.PlainStale` (a stray `.olean.server`) gives exit 0 and `failed 0`, where the version reviewed stopped with an uncaught exception; `Exp.PlainStalePrivate` (a stray `.olean.private` beside a plain `.olean`) gives exit 0 with both versions. |
+| 4. Two counts of the summary count every constant twice | Closed | 422-433, 565-566 | Measured: the summary gives 52,130 constants and 99 unmarked axioms on the closure of `Init`, and 152,607 and 685 on that of `Lean`, where the version reviewed gave 104,260 and 198, and 305,214 and 1,370. Read: the recorded run on Mathlib, made with the corrected version (`verify/results/stock.txt` records its hash) and not by me, gives 644,284 and 531 (`verify/results/replay-Mathlib/replay-summary.txt`, SHA-256 `d7afc0590b17d25de9ffc33be9e124c2a99aefca2a228f5a5732175c56a1992c`), exactly half the 1,288,568 and 1,062 of the earlier run, and `paper/numbers.tex` (SHA-256 `7886af82a28875fa0c0a87f17f224c94b41598fb890232fb3e4af543b5c4b590`) now gives these. |
+| 5. The second reading costs memory that is not returned | Open, and larger | 406-409, 441-445 | Read and measured, D.2 (b). |
+| 6. `hostile.sh` can report on the outputs of an earlier run | Closed | `hostile.sh` 24-35, 52-53, 59, 67-73 | Read and measured, D.5. |
+| 7. Part of the new rule is needed by no test | Closed | | Measured: each of the copies 1-9 and 11-15 of D.4 (among them the statement, the universe parameters, the marks of unsafe definitions and opaque constants, the import lists, the code files and the earlier targets rule) gives a wrong result on at least one module or on the runs with a named theorem. |
+| 8. The allowance depends on how a path is spelled | Closed | 357-358, 416 | Read (`IO.FS.realPath` uses `GetFinalPathNameByHandle` on Windows and `realpath` elsewhere, `src/runtime/io.cpp:1005-1058`). Measured under six spellings, D.2 (f). |
+| 9. Inside the module system a theorem may use the unmarked axiom of a partial definition | Unchanged (it is Lean's behaviour); now stated | header 36-38 | Read. |
+| 10. The server part's constants reach no kernel environment | Closed | header 26-27 | The part is not read. |
+| 11. Comments that say more than the code | Partly closed | header 13-16 | Four of the five points are met; D.6 lists what the new text says more than the code. |
+| 12. `balanced` cannot be false | Open | 559, 580 | Unchanged. |
+
+### D.2 The new block
+
+(a) *The gate on `.olean.private` (403-406).* The comment is right. The program's import, with
+no map of artifacts (361), reads every module through `readModuleDataPartsOfMod`
+(`Lean/Environment.lean:2231-2238`), which reads the server and private parts exactly when the
+first part has the flag and throws if either file is missing (2078-2091); and `getData?` takes a
+part other than the first only when the first has the flag (2023-2026). So after a successful
+import a module without `.olean.private` has an unflagged first part, every importer receives
+that part, and it is `md`. A module whose `.olean.private` exists but whose first part has no
+flag is read again and nothing is compared (410), which is also right, since Lean never opens
+that private part (measured with `Exp.PlainStalePrivate`, above).
+
+(b) *Reading again the files that the import has mapped.* It is safe. The first part heads its
+chain of parts (it is saved with no regions before it, 1772-1777, 1901-1909), so it can be read
+alone, and the `.ir.sig` and `.ir` files form a chain of their own (1913-1915). The import keeps
+every one of these files mapped at the address recorded in it (they are in
+`header.regions`, 2371), so the second reading cannot map it there; the reader then copies the
+file into allocated memory and translates every pointer in it (`src/library/module.cpp:516-575`,
+`src/runtime/compact.cpp:659-685`). Nothing frees the copies (no call of `CompactedRegion.free`),
+and names taken from the first part are kept in `early` only when a check fails. The cost is
+therefore a copy, kept to the end, of every `.olean`, `.ir.sig` and `.ir` file of the closure:
+the version reviewed copied the `.olean` and `.olean.server` files, the corrected version copies
+the `.olean` and code files. On the closure of `Lean` these files total 335.4 MB for `.olean`,
+30.3 MB for `.olean.server`, 0.4 MB for `.ir.sig` and 347.9 MB for `.ir` (measured, 2,322 files
+of each). Measured on `Hostile.Plant`, whose closure is that of `Lean`, three runs of
+each version, alternating, with the peak counters of Windows read every 20 ms: the peak of
+private bytes was 2,617, 2,632 and 2,612 MiB with the version that review C read (`65396ce3…`,
+which reads no file twice), 2,998, 2,987 and 2,994 MiB with the version reviewed, and 3,316,
+3,277 and 3,280 MiB with the corrected version (means 2,620, 2,993 and 3,291 MiB); a run took
+11.0, 12.7 and 13.1 s on average; all nine runs reported `failed 0`. So the second reading now
+costs about 670 MiB on this closure where it cost about 370, close to the size of the files
+copied (652 MiB). For the closures of Mathlib and of the archive I did not measure. A remedy: free
+each copy (`CompactedRegion.free`) as soon as its checks are done; for the code files that is
+safe at once, since their failure messages keep nothing from them, and for the first part when
+it produced no failure.
+
+(c) *The files of compiled code (438-453).* Lean reads `.ir.sig` and then `.ir`, always together,
+whenever `.ir.sig` exists and the module's compiled code is needed (`readIRPartsOfMod`,
+2093-2105, called at 2212 and 2223 under the conditions of 2190 and 2209). At the level of the
+program's own import every module needs it (2182, 2190); an importer inside the module system
+needs it for fewer modules. The condition at 441 therefore covers every reading Lean does, and
+the comment at 438 is right in that sense. If `.ir.sig` exists without `.ir`, Lean's import
+throws when it opens `.ir`, so the program's own import fails before line 441 is reached
+(measured: `Exp.SigOnly` of Appendix D stops both versions with "uncaught exception: failed to
+open file '…SigOnly.ir'"; an import from outside the module system fails the same way); the
+branch at 443 that reads `.ir.sig` alone is never taken, which is harmless. If `.ir` exists
+without `.ir.sig`, neither Lean nor the program reads it.
+
+(d) *`sameImports` (344-347).* It compares the lengths and all four fields of `Import` at
+4.33.1, `module`, `importAll`, `isExported` and `isMeta` (`Lean/Setup.lean:25-32`). Lean writes
+one list into all five files: `mkModuleData` and `mkIRData` copy the environment's header
+(`Lean/Environment.lean:1858-1883, 1891-1899`), and `leanir`, when it writes the code files,
+first sets the header's list to the module's own (`LeanIR.lean:124`). Measured: in a module
+built through `leanir` (f), all five files carry the same list, `Init` twice, once imported
+publicly and once publicly with `meta`.
+
+(e) *Is the import list of the `.ir` file followed?* Yes; the test at 451-453 is needed, not
+merely harmless. For a module loaded without its data, `mainModule?` is the `.ir` part
+(2029-2033) and the recursion follows its import list (2199-2201, 2222-2225). When such a module
+is reached again later, with its data, the recursion runs again on the module's record as it was
+before (2203-2219), so the same list is followed a second time, now with the data of the modules
+that it imports publicly (read, not tested). Measured, with the files of Appendix D:
+`Exp.IrMore` has three honest parts, which import `Init` only, and an `.ir` file with no
+constants whose import list adds `Exp.IrBad`, a module outside `Exp.IrMore`'s replayed closure
+whose `.ir` file holds `theorem Exp.irBadFalse : False := True.intro`. `Exp.Mid2` begins with
+`module` and imports `Exp.IrMore`; `Exp.UseIr2` begins with `module`, says `meta import
+Exp.Mid2`, and proves `theorem Exp.fromIrMore : False := Exp.irBadFalse`. It compiles, and
+`#print axioms` prints `'_private.Exp.UseIr2.0.Exp.fromIrMore' does not depend on any axioms`.
+The version reviewed accepts `Exp.IrMore` and `Exp.Mid2` (exit 0); the corrected version rejects
+both ("the import list of the `.ir` file differs from that of the part replayed"), and
+`Exp.UseIr2` also with `unknown constant 'Exp.irBadFalse'`.
+
+(f) *False failures on honest files.* On the closure of `Lean` the corrected version reports
+`failed 0` (measured, the runs of (b)), so the first parts, import lists and code files of
+Lean's library pass. I did not run the program on Mathlib's closure; the recorded run (D.1,
+finding 4) reports `failed 0` with the first parts and code files of all 10,498 modules read. The allowance now holds under
+every spelling I tried. With `LEAN_PATH` naming the toolchain's library as `LEAN_SYSROOT` does,
+with forward slashes, with another case of the drive letter, with another case of two
+directories, and through a directory junction on the side of `LEAN_SYSROOT` or on the side of
+`LEAN_PATH`, the control `Hostile.Honest` gives `failed 0` with 99 allowed axioms; the version
+reviewed gives `failed 198` in five of these six runs (measured). If `GetFinalPathNameByHandle`
+fails, `realPath` returns its argument unchanged (`src/runtime/io.cpp:1021-1024`) and the
+dependence on spelling returns; I did not produce that case. One source of false failures is
+possible and was not observed. `leanir`, which Lake runs only when the internal option
+`compiler.postponeCompile` is set (default false, `Lean/Compiler/Options.lean:44-47`;
+`lake/Lake/Build/Actions.lean:45, 84-99`), writes into `.ir.sig` the exported view of the
+constants that it adds itself (`LeanIR.lean:26-30, 160-162`, with `mkModuleData`,
+`Lean/Environment.lean:1866-1877`), where line 448 requires none. In a module that I built with
+that option set, `.ir.sig` held no constants and the corrected version accepted it (measured,
+Appendix D); whether `leanir` ever adds a constant I did not establish. Such a case would be a
+false failure, not a false success: when the files are found on the search path, `.ir.sig` is
+never a module's main data (the main data of a module without its data is the last of
+`#[.ir.sig, .ir]`, 2033, 2105).
+
+(g) *The stored-key test of the first part (426-429).* The comment is right, with one case left
+out. If `e.name != n`, either the private part holds no constant under `n`, and line 437 records
+a failure under `n`; or it holds one, `p`. Then `p.name == n`, or line 381 has already recorded a
+failure under `n` for the private part; and if `p.name == n`, `exportedForm` is false, since both
+of its branches require `e`'s name to be `p`'s, and line 435 records a failure under `n`. The case
+left out by the comment is the first. In every case another test records a failure under the same
+name, so this test changes no verdict and no failure name, and no test module can show it.
+Measured: copy 10 of D.4, without the test, gives the expected result on all 29 modules.
+
+### D.3 What a module inside the module system can still receive
+
+The enumeration is mine, from the source of Lean 4.33.1 as I read it (`Lean/Environment.lean`
+2016-2053, 2078-2105, 2107-2245, 2307-2372, and `processHeaderCore` in `Lean/Elab/Import.lean`
+138-158). It is not a proof, and nothing checks it mechanically.
+
+A file that begins with `module` is compiled with its imports at level exported, or server in
+the language server (`Lean/Elab/Import.lean:147-153`). The constants of its kernel environment at
+import come from `finalizeImport` alone: from the main data of every module that the import
+reached (2313-2316, 2332-2344), and, for the public view used while elaborating public
+declarations, from the first parts of the modules imported publicly, or their `.ir` parts when
+they are loaded only for their compiled code (2016-2021, 2349-2358). A module's main
+data is its private part if it is imported with `all`; its first part if not, when the first part
+has the flag, and its only part when it has not; and its `.ir` part if the module is loaded only
+for its compiled code (2023-2033). The modules reached are those named, recursively, by the import
+lists of these same main data (2199-2201), including the second pass of (e) above (2203-2219).
+The names listed for the compiler go only into the table that maps names to modules
+(2345-2347), and the entries of environment extensions only into extension states.
+
+Against this, the corrected version requires, for every module of the replayed closure: the
+private part replayed; when the first part has the flag, every constant of the first part to be an
+`exportedForm` of the private part's constant of that name (430-437), the private part to have the
+flag too, and the first part to carry the private part's import list (412-415); and the code files
+to hold no constants (447-449), with the `.ir` file carrying the private part's import list
+(451-453). Every
+list that an importer follows is then a private part's list, so every module that it reaches from
+a module of the closure is in the closure. And every constant that it takes is a constant of a
+private part of the closure, which the replay examines as described in the review (the further
+versions of a repeated name included, and the unsafe and partial constants not at all), or the
+statement of such a constant as an axiom, marked unsafe when the constant is unsafe or partial,
+except under the allowance of finding 9; the kernel lets no theorem use an unsafe or partial
+constant or an axiom marked unsafe (`src/kernel/type_checker.cpp:101-122`). I found no route
+outside this. The limits:
+- The importer must read the files that the program read. When Lake compiles a module it gives
+  Lean the paths of each dependency's files (`arts`, `Lean/Environment.lean:2231-2245`;
+  `lake/Lake/Build/Module.lean:465-495`), which need not be the files on the search path; I did
+  not examine where Lake takes them from.
+- The files must not change between the two readings; the program's own second reading is of the
+  file as it is at that moment.
+- Lean's reader of compiled files is trusted, with the hashes and flags stored in names and terms
+  (review C, finding 2).
+- Extension entries are not compared (header 40-42). They add no constant at import, but they
+  carry compiled code that the importing process may run (an initializer, an elaborator,
+  `#eval`, a proof by `native_decide`), and such code can add declarations without the kernel,
+  as any code run during compilation can; a proof that relies on compiled code through
+  `Lean.ofReduceBool` lists that axiom, and a replay of the importing module's own closure is
+  what examines declarations so added. The names listed for the compiler decide to which module
+  a name is attributed, and so which recorded list `#print axioms` reads
+  (`Lean/Util/CollectAxioms.lean:101-111`); that bears on `#print axioms`, not on the kernel.
+- Other ways of building an environment than `importModules` were not examined: the language
+  server's own paths beyond `processHeaderCore`, `leanchecker`, `lean4lean`.
+- In the toolchain's library the program admits unmarked axioms for partial definitions
+  (finding 9). That rests on every file under that directory being the release's, which
+  `publish/public/verify/toolchain.sh` is meant to establish; I did not check that script.
+
+### D.4 The suite and the copies, measured
+
+`hostile.sh`, unchanged, was run with the corrected version as
+`bash hostile.sh <package> <program> <output directory> 6`, in a copy of `verify/hostile`, with
+`HOME` pointing at a directory whose `.elan/env` puts the release first on `PATH`. In a fresh
+output directory it printed `HOSTILE-OK` after 472 s; run again with the same output directory,
+it printed `HOSTILE-OK` after 446 s. The two outputs are identical apart from the order of the
+four `#print axioms` lines taken from the build's log. Both end with "axioms named Hostile.* that
+the replay lists for Hostile.Axiom: 1" and "named theorems: Hostile.conclusion reported FAILED,
+Hostile.Honest.size_pos reported checked; as expected: yes". The version reviewed and the copies
+below were run on the same 29 modules by a loop that does what the script does for the replay
+alone (its lines 34, 46 and 52-56), followed by its lines 79-88 for the named theorems, six
+modules at a time. The run recorded in the repository, `verify/results/hostile.txt` (SHA-256
+`ca43132b36b05470d95a9bddca3111f44ee281fb3d03147d4731e5f1375a0dc7`), is a run of the corrected
+version on the same 29 modules that ends in `HOSTILE-OK`; compared with mine, it differs only in
+the order of the `#print axioms` lines and in one line of `leanchecker`'s error output for
+`MissingConstructor` (a backtrace there, the exception's message here).
+
+| Module | Expected of the replay | Version reviewed | Corrected version | Failures recorded by the corrected version, by name | leanchecker | leanchecker `--fresh` |
+|---|---|---|---|---|---|---|
+| Honest | accepts | accepts | accepts | none | accepts | accepts |
+| Plant | accepts | accepts | accepts | none | accepts | accepts |
+| Axiom | accepts | accepts | accepts | none | accepts | accepts |
+| Sorry | accepts | accepts | accepts | none | accepts | accepts |
+| FalseTheorem | rejects | rejects | rejects | `Hostile.falseProved` | rejects | rejects |
+| WrongValue | rejects | rejects | rejects | `Hostile.three` | rejects | rejects |
+| UsesUnsafe | rejects | rejects | rejects | `Hostile.fromUnsafe` | rejects | rejects |
+| TamperedRecursor | rejects | rejects | rejects | `Hostile.Two.rec` | rejects | rejects |
+| TamperedConstructor | rejects | rejects | rejects | `Hostile.Box.mk` | rejects | rejects |
+| DupBogusLast | rejects | rejects | rejects | `Hostile.Dup.twice` | accepts | rejects |
+| DupBogusFirst | rejects | rejects | rejects | `Hostile.Dup.twice` | accepts | accepts |
+| MissingConstructor | rejects | rejects | rejects | `Hostile.Coin`, `Hostile.Coin.heads`, `Hostile.onlyHeads` | rejects | rejects |
+| KeyMismatch | rejects | rejects | rejects | `Hostile.Phantom`, `Hostile.phantomBody` | rejects | rejects |
+| MissingRecursor | rejects | rejects | rejects | `Hostile.Bit.rec` | accepts | accepts |
+| TamperedInductive | rejects | rejects | rejects | `Hostile.Chain` | accepts | accepts |
+| FakeQuotient | rejects | rejects | rejects | `Hostile.fakeQuot` | accepts | accepts |
+| AfterFakeQuotient | rejects | rejects | rejects | `Hostile.fakeQuot`, `Hostile.falseFromQuot` | accepts | rejects |
+| FakeInductive | rejects | rejects | rejects | `Hostile.fakeInductive` | accepts | accepts |
+| ConstructorIsUnsafe | rejects | rejects | rejects | `Hostile.Claim`, `Hostile.claimed` | accepts | accepts |
+| ExportedOnly | rejects | rejects | rejects | `Hostile.exportedFalse` | accepts | accepts |
+| ExportedFlag | rejects | rejects | rejects | `Hostile.ExportedFlag`, `Hostile.exportedFalse` | accepts | accepts |
+| ExportedStatement | rejects | rejects | rejects | `Hostile.stated` | accepts | accepts |
+| ExportedLevels | rejects | rejects | rejects | `Hostile.levelled` | accepts | accepts |
+| ExportedPartial | rejects | rejects | rejects | `Hostile.spin` | accepts | accepts |
+| ExportedUnsafe | rejects | rejects | rejects | `Hostile.wild` | accepts | accepts |
+| ExportedOpaque | rejects | rejects | rejects | `Hostile.shut` | accepts | accepts |
+| ExportedImports | rejects | **accepts** | rejects | `Hostile.ExportedImports` | accepts | accepts |
+| CodeConstants | rejects | **accepts** | rejects | `Hostile.CodeConstants` | accepts | accepts |
+| CodeImports | rejects | **accepts** | rejects | `Hostile.CodeImports` | accepts | accepts |
+
+For every module the corrected version recorded failures under exactly the names of
+`expected.txt`. The version reviewed accepts `ExportedImports`, `CodeConstants` and
+`CodeImports`, and on `ExportedFlag` records only `Hostile.exportedFalse` (it has no test of the
+flags), which the script would also count as unexpected. Of the 25 modules that a replay must
+reject, `leanchecker` rejects 7 in its ordinary mode and 9 with `--fresh`.
+
+The copies. Each differs from the corrected version in one line (copy 13 in two lines replaced by
+one), given by its line number in the corrected version; each was built and run as just described.
+"Caught by" names the rows of the table, or the line of the script, at which the copy gives a
+result other than the expected one.
+
+| Copy | Line | Change | Caught by |
+|---|---|---|---|
+| 1 | 414 | `unless sameImports first.imports md.imports do` becomes `unless true \|\| sameImports first.imports md.imports do` (the import list of the first part) | ExportedImports (accepted) |
+| 2 | 448 | the condition becomes `false && (pd.constants.size != 0 \|\| pd.constNames.size != 0)` (constants in the code files) | CodeConstants (accepted) |
+| 3 | 452 | `unless sameImports pd.imports md.imports do` becomes `unless true \|\| sameImports pd.imports md.imports do` (the import list of the `.ir` file) | CodeImports (accepted) |
+| 4 | 333 | `a.type == p.type` becomes `true` (the statement) | ExportedStatement (accepted) |
+| 5 | 333 | `a.levelParams == p.levelParams` becomes `true` (the universe parameters) | ExportedLevels (accepted) |
+| 6 | 337 | `.unsafe => a.isUnsafe` becomes `.unsafe => true` (the mark of an unsafe definition's axiom) | ExportedUnsafe (accepted) |
+| 7 | 339 | `.opaqueInfo o => a.isUnsafe == o.isUnsafe` becomes `.opaqueInfo o => true` (the mark of an opaque constant's axiom) | ExportedOpaque (accepted) |
+| 8 | 532 | `if failed.contains x then` becomes `if failed.contains x && x == t then` (the targets rule of the version review C read) | the named-theorem check, script lines 80-81 and 85-88: `Hostile.conclusion` is reported checked |
+| 9 | 412 | `unless md.isModule do` becomes `unless true \|\| md.isModule do` (the private part's flag) | ExportedFlag (only `Hostile.exportedFalse` recorded) |
+| 10 | 428 | `if e.name != n then` becomes `if false then` (the stored key of the first part) | nothing, as D.2 (g) predicts |
+| 11 | 410 | `if first.isModule then` becomes `if md.isModule then` (the gate on the replayed part's own flag) | ExportedFlag (accepted) |
+| 12 | 338 | `a.isUnsafe \|\| core` becomes `a.isUnsafe \|\| true` (the allowance everywhere) | ExportedPartial (accepted) |
+| 13 | 436-437 | a constant of the first part that the private part lacks is accepted | ExportedOnly (accepted), ExportedFlag (only `Hostile.ExportedFlag` recorded) |
+| 14 | 406 | the condition becomes `(← ….pathExists) && false` (no first part compared) | ExportedOnly, ExportedFlag, ExportedStatement, ExportedLevels, ExportedPartial, ExportedUnsafe, ExportedOpaque, ExportedImports (all accepted) |
+| 15 | 441 | the condition becomes `(← irSig.pathExists) && false` (no code file read) | CodeConstants, CodeImports (both accepted) |
+| 16 | 334 | `.thmInfo _ => !a.isUnsafe` becomes `.thmInfo _ => true` | nothing |
+| 17 | 336 | `.safe => !a.isUnsafe` becomes `.safe => true` | nothing |
+
+Copies 16 and 17 would let a first part hold, for a theorem or a safe definition, an axiom marked
+unsafe, which no theorem may use; that direction is harmless, and no test needs it. Every other
+check is needed by some test, the stored-key test excepted for the reason of D.2 (g).
+
+### D.5 `hostile.sh`
+
+Read in source; line numbers of `publish/public/verify/hostile.sh`.
+- *Outputs of an earlier run.* Closed. Before anything is run, every module's replay directory,
+  report and `leanchecker` outputs are removed (34); a module counts only if the program wrote its
+  summary (52-53), which it writes after every check (line 571 of the corrected version); and a
+  module without a report is counted as a failure and named (70). Measured: I ran the unchanged
+  script, in the output directory of its earlier successful run, with a copy of the corrected
+  version that stops at its first failure without writing its files (one line added after line
+  211, `throw (IO.userError "stopped at the first failure")`; SHA-256 `d31601d8…`). It printed
+  `HOSTILE-UNEXPECTED`: the four controls as expected, each of the 25 other modules reported with
+  "the replay did not finish: uncaught exception: stopped at the first failure", and the check of
+  the named theorems not as expected. In the corresponding experiment of finding 6 the version of
+  the script reviewed printed `HOSTILE-OK`.
+- *`expected.txt`.* The file must end with a newline (24) and every line must have the form of
+  line 25, which allows no blank at the end of a line, so that `xargs -L 1`, which joins a line
+  ending in a blank with the next, finds none; and `xargs` now reads the file itself (67). A line
+  ending in a tab, which the pattern allows, would still be joined to the next; the module of the
+  next line would then have no report, which line 70 catches. Three things are not refused, all
+  notes, since `expected.txt` is the authors' file. An empty file: the script tests no module and
+  prints `HOSTILE-OK` (measured: with an empty `expected.txt` it built the package, ran the three
+  checkers once on an empty module name, since `xargs` runs its command once when its input is
+  empty, ran the two named theorems, and printed `HOSTILE-OK`). A missing line: its module is not
+  tested. A module listed twice: its two runs write the same files, so that only the later
+  expectation is checked, twice. `paper/tools/numbers.py` (SHA-256
+  `28f27a5968694d36f14ed8249d0cf75ab896a90b2d1e34df6f122778601917b0`) refuses a `hostile.txt` whose
+  modules are not those of `paper/tools/hostile-rows.txt` (355-356), so the first two could not
+  reach the paper unless that list were shortened too.
+- *Named theorems.* Lines 76-89 run the program on `Hostile.FalseTheorem` with the target
+  `Hostile.conclusion`, which must be reported FAILED, and on `Hostile.Honest` with
+  `Hostile.Honest.size_pos`, which must be reported checked, with exit code 0; either failing makes
+  the result `HOSTILE-UNEXPECTED`, and `numbers.py` also requires the line that reports them
+  (365-366). Measured: the copy with the targets rule of the version that review C read (copy 8)
+  fails there and nowhere else.
+- *Unchanged and minor.* Line 74 prints the number of `Hostile.*` axioms that the replay lists for
+  `Hostile.Axiom` and tests nothing; a replay that listed none would still give `HOSTILE-OK`.
+
+### D.6 The rewritten header
+
+Read; lines of the corrected version. Each item is a sentence that says more than the code or
+than Lean's source.
+- 13-16, unchanged: "every constant read that is neither unsafe nor partial must equal, field by
+  field, the constant of that name in the environment the kernel built". The program now also
+  reads the constants of first parts, which are mostly axioms and do not equal the kernel's
+  constants, and it reads the further versions of repeated names; the comparison (502-508) is of
+  the version Lean keeps of each name of the parts replayed. A version that holds: "every constant
+  of the parts replayed, in the version that Lean's import keeps, ...".
+- 23-26: "A module inside the system receives its constants from elsewhere: from the first part
+  (`.olean`), from the modules that the first part's import list names, and, for a module loaded
+  only for its compiled code, from the `.ir` file". Under `import all` it receives the private
+  part, and for a module loaded only for its compiled code it also receives the modules that the
+  `.ir` file's import list names (D.2 (e)). The program checks that list (451-453), so the code
+  is right; the sentence lists one route fewer than the code guards.
+- 29-30: "and it writes no constants into the `.ir` and `.ir.sig` files". True of `lean`
+  (`Lean/Environment.lean:1891-1899, 1913-1915`). `leanir`, run only under the internal option
+  `compiler.postponeCompile`, writes into `.ir.sig` the exported view of the constants it adds
+  (D.2 (f)); in my probe there were none.
+- 31-32: "every constant of the first part is the replayed constant of that name or its statement
+  as such an axiom, the import lists and the flags agree". The constant compared is the private
+  part's, which is not replayed when it is unsafe or partial; the docstring at 329 says so. Of the
+  flags, the program requires only that the private part have the flag when the first part has it
+  (412-413). The flag of the `.ir` file is not compared; for a module loaded only for its compiled
+  code it selects among parts that such a module does not have (2023-2026), so that is harmless.
+- 40-42: "the entries of environment extensions and the names listed for the compiler, which
+  reach the elaborator and the compiler of a module inside the system and not its kernel". True of
+  the import. These entries include compiled code that the importing process may run, and that
+  code can add declarations without the kernel (D.3); and the names listed for the compiler decide
+  which recorded list `#print axioms` reads.
+- 59-60: "the files that a module inside the module system reads to agree with the part replayed".
+  The server part, which the language server reads, is not compared; its constants reach no kernel
+  environment (26-27), so this is a matter of wording.
+- The comments at 403-405 and 450 are right (D.2 (a), (e)); that at 426-427 is right with the
+  omission of D.2 (g); that at 438 is right in the sense of D.2 (c).
+
+### D.7 What was not checked
+
+- Nothing was run on the archive, on Mathlib or on the published results. The memory that the
+  corrected version needs on those closures was not measured; the run on Mathlib cited in D.1 was
+  read, not repeated.
+- Whether `leanir` ever adds a constant that it would write into `.ir.sig` (D.2 (f)).
+- Where Lake takes the files that it gives a compiling module (D.3).
+- The paper, apart from the numbers of `paper/numbers.tex` cited in D.1.
+- `lean4lean`, `toolchain.sh`, and the changed `paper/tools/hostile-rows.txt`.
+
+### Appendix D: the scratch files of this check
+
+A Lake package with an executable `craft` whose root is the file below, run from the package's
+directory after `lake build`. The `module` files after it were then compiled in this order with
+`lean -o .lake/build/lib/lean/Exp/<name>.olean Exp/<name>.lean`, with `LEAN_PATH` set to the
+package's `.lake/build/lib/lean`: `Exp.UseMore`, `Exp.Mid`, `Exp.UseIr`, `Exp.Mid2`, `Exp.UseIr2`.
+`Exp/UseMore.lean`, `Exp/Mid.lean` and `Exp/UseIr.lean` are those of Appendix A.
+
+```lean
+import Lean
+open Lean
+
+/-
+Scratch files for the check of the corrections (not part of the repository).
+
+(A) `Exp.ImportsMore`, `Exp.Bad`: as in Appendix A of the report: the first and server parts of
+    `Exp.ImportsMore` import `Exp.Bad`, a plain file holding `theorem Exp.badFalse : False`.
+(B) `Exp.IrCarrier`: three honest parts, an `.ir` part holding `theorem Exp.irFalse : False`.
+(C) `Exp.PlainStale`: an honest plain file with a stray `.olean.server` copied from another
+    module; `Exp.PlainStalePrivate`: the same with a stray `.olean.private`.
+(D) `Exp.IrBad`: three honest parts, an `.ir` part holding `theorem Exp.irBadFalse : False`.
+    `Exp.IrMore`: three honest parts, importing `Init` only, and an `.ir` part with no
+    constants whose import list is `Init` and `Exp.IrBad`.
+(E) `Exp.SigOnly`: three honest parts and an `.ir.sig` file with no `.ir` beside it.
+-/
+
+def lib : System.FilePath := ".lake/build/lib/lean"
+
+def md (imports : Array Import) (cs : Array ConstantInfo) (isModule := false) : ModuleData :=
+  { isModule, imports, constNames := cs.map (·.name), constants := cs, extraConstNames := #[],
+    entries := #[] }
+
+def thm (n : Name) (type value : Expr) : ConstantInfo :=
+  .thmInfo { name := n, levelParams := [], type, value, all := [n] }
+
+def initImp : Import := { module := `Init }
+
+def threeParts (mod : Name) (c : ConstantInfo) (imports : Array Import := #[initImp]) : IO System.FilePath := do
+  let p := modToFilePath lib mod "olean"
+  saveModuleDataParts mod #[
+    (p, md imports #[c] (isModule := true)),
+    (p.addExtension "server", md imports #[c] (isModule := true)),
+    (p.addExtension "private", md #[initImp] #[c] (isModule := true))]
+  return p
+
+def codeFiles (mod : Name) (p : System.FilePath) (cs : Array ConstantInfo) (imports : Array Import := #[initImp]) : IO Unit :=
+  saveModuleDataParts (mod ++ `ir) #[
+    (p.withExtension "ir.sig", default),
+    (p.withExtension "ir", md imports cs (isModule := true))]
+
+def main : IO Unit := do
+  IO.FS.createDirAll (lib / "Exp")
+  let trueT := mkConst ``True
+  let ok (n : Name) := thm n trueT (mkConst ``True.intro)
+  let falseThm (n : Name) := thm n (mkConst ``False) (mkConst ``True.intro)
+  -- (A)
+  saveModuleData (modToFilePath lib `Exp.Bad "olean") `Exp.Bad (md #[initImp] #[falseThm `Exp.badFalse])
+  discard <| threeParts `Exp.ImportsMore (ok `Exp.ok) #[initImp, { module := `Exp.Bad }]
+  -- (B)
+  let q ← threeParts `Exp.IrCarrier (ok `Exp.ok2)
+  codeFiles `Exp.IrCarrier q #[falseThm `Exp.irFalse]
+  -- (C)
+  let s := modToFilePath lib `Exp.PlainStale "olean"
+  saveModuleData s `Exp.PlainStale (md #[initImp] #[ok `Exp.ok4])
+  IO.FS.writeBinFile (s.addExtension "server") (← IO.FS.readBinFile (q.addExtension "server"))
+  let s2 := modToFilePath lib `Exp.PlainStalePrivate "olean"
+  saveModuleData s2 `Exp.PlainStalePrivate (md #[initImp] #[ok `Exp.ok5])
+  IO.FS.writeBinFile (s2.addExtension "private") (← IO.FS.readBinFile (q.addExtension "private"))
+  -- (D)
+  let b ← threeParts `Exp.IrBad (ok `Exp.ok6)
+  codeFiles `Exp.IrBad b #[falseThm `Exp.irBadFalse]
+  let m ← threeParts `Exp.IrMore (ok `Exp.ok7)
+  codeFiles `Exp.IrMore m #[] #[initImp, { module := `Exp.IrBad }]
+  -- (E)
+  let e ← threeParts `Exp.SigOnly (ok `Exp.ok8)
+  saveModuleData (e.withExtension "ir.sig") (`Exp.SigOnly ++ `ir) default
+  IO.println "written"
+```
+
+`Exp/Mid2.lean`:
+
+```lean
+module
+
+import Exp.IrMore
+```
+
+`Exp/UseIr2.lean`:
+
+```lean
+module
+
+meta import Exp.Mid2
+
+theorem Exp.fromIrMore : False := Exp.irBadFalse
+
+#print axioms Exp.fromIrMore
+```
+
+The module built through `leanir`: a Lake package with this `lakefile.toml`, built with
+`lake build`,
+
+```toml
+name = "leanirprobe"
+defaultTargets = ["Probe"]
+
+[leanOptions]
+compiler.postponeCompile = true
+
+[[lean_lib]]
+name = "Probe"
+globs = ["Probe.+"]
+```
+
+and this `Probe/Sig.lean`:
+
+```lean
+module
+
+/-- an ordinary public theorem and definition, compiled with `leanir` -/
+public theorem Probe.sigTrue : True := trivial
+
+public def Probe.double (n : Nat) : Nat := 2 * n
+```
