@@ -1,4 +1,8 @@
-"""Turn the researched literature rows into the LaTeX appendix table and summary counts.
+"""Turn the literature rows into the LaTeX appendix table and summary counts.
+
+The description of each row (refs/rows-author.json) and its scope with the reason
+(refs/rows-scope-author.json) are the authors'. The sources come from the reference research
+(rows-A/B/C.jsonl). Counts are written to refs/rows-counts.json.
 
 Usage: python tools/rows_to_tex.py sections/appendix-rows.tex refs/evidence/identmap.json rows-A.jsonl ...
 """
@@ -9,7 +13,8 @@ import sys
 
 from leanfmt import leanb
 
-MATCH = {"yes": "general", "special-case": "special case", "different": "different", "unclear": "unclear"}
+# the researched label, kept in the row records and used only if the authors gave none
+MATCH = {"yes": "general", "special-case": "restricted", "different": "differs", "unclear": "differs"}
 
 UNI = {
     "≤": r"$\le$", "≥": r"$\ge$", "−": "--", "·": r"$\cdot$", "Σ": r"$\Sigma$", "μ": r"$\mu$",
@@ -75,11 +80,9 @@ def main() -> None:
     # (refs/rows-author.json); the researched `what_it_states` is the fallback and is escaped.
     author_path = os.path.join(os.path.dirname(inputs[0]), "rows-author.json")
     author = json.load(open(author_path, encoding="utf-8")) if os.path.exists(author_path) else {}
-    # Labels fixed by the authors' reading of the Lean statement, over the researched label.
-    # SiegelKlingenDeligneRibet is a conjunction one of whose parts is the special case DeligneRibet.
-    special = {"UnusedSlot72": "empty", "EveryCharacter": "conclusion", "JoinOut": "internal",
-               "ThetaRationalInvariance": "internal", "LocalMatching": "internal",
-               "SiegelKlingenDeligneRibet": "special case"}
+    # The scope of each row and the reason for it are the authors' own comparison.
+    scope_path = os.path.join(os.path.dirname(inputs[0]), "rows-scope-author.json")
+    scope = json.load(open(scope_path, encoding="utf-8"))
     counts: dict[str, int] = {}
     seen: set[str] = set()
     with open(dst, "w", encoding="utf-8", newline="\n") as f:
@@ -89,13 +92,16 @@ def main() -> None:
             "One row for each of the \\literaturerows{} theorems of the archive's literature file "
             "(\\cref{sec:literature}), in the order of the file. The second column says what the "
             "Lean statement asserts, in our words; where the statement is a conjunction of named "
-            "parts the description covers the parts. The third column says whether it is the "
-            "published theorem in general form, a special case of it, or a variant (a different "
-            "statement, or one whose relation to its name is undecided); the other labels are "
-            "internal (a statement in the archive's own terms), empty, conclusion and repeated. "
-            "The descriptions are ours, from the Lean statements; the third and fourth columns "
-            "are taken from reports on the literature (\\cref{app:audit}). The fourth gives the "
-            "sources.\n\n"
+            "parts the description covers the parts. After it, in italics, is our comparison with "
+            "the published theorem that the name refers to, and the third column gives its "
+            "outcome: \\emph{general}, the published theorem in the generality of a cited source; "
+            "\\emph{restricted}, a special case of it or a weaker form; \\emph{differs}, not a "
+            "statement of the cited literature as it stands. The other labels are internal (a "
+            "statement in the archive's own terms), empty, conclusion and repeated. The comparison "
+            "was made from the Lean statement and from our knowledge of the published theorem; we "
+            "did not open the papers for it, and a row should be checked against its sources "
+            "before it is relied on. The fourth column gives the sources, from the reference "
+            "research.\n\n"
         )
         f.write("{\\scriptsize\\setlength{\\tabcolsep}{3pt}\n")
         f.write("\\begin{longtable}{@{}>{\\raggedright\\arraybackslash}p{0.21\\textwidth}"
@@ -107,10 +113,11 @@ def main() -> None:
         for r in rows:
             name = r.get("statement", r.get("row", ""))
             stmt = short_statement(name)
-            m = MATCH.get(r.get("name_matches_statement", "unclear"), "unclear")
-            if m in ("unclear", "different"):
-                m = "variant"
-            m = special.get(stmt, m)
+            entry = scope.get(name) or scope.get(stmt)
+            if entry:
+                m, reason = entry[0], entry[1]
+            else:
+                m, reason = MATCH.get(r.get("name_matches_statement", "unclear"), "differs"), ""
             keys = [canon(ref) for ref in r.get("refs", []) if ref.get("key")]
             if name in seen:
                 m = "repeated"
@@ -121,8 +128,15 @@ def main() -> None:
             text = author.get(name) or esc(first_sentence(r.get("what_it_states", "")))
             if m == "repeated":
                 text = f"The same statement as {leanb(stmt)} above, entered a second time in the file."
+            elif reason and m in ("general", "restricted", "differs"):
+                text += " \\emph{" + reason[0].upper() + reason[1:] + ".}"
             f.write(f"{leanb(stmt)} & {text} & {m} & {cite}\\\\\n\\addlinespace[1pt]\n")
         f.write("\\end{longtable}}\n")
+    counts["rows"] = len(rows)
+    counts["distinct"] = len(seen)
+    with open(os.path.join(os.path.dirname(inputs[0]), "rows-counts.json"), "w", encoding="utf-8", newline="\n") as g:
+        json.dump(counts, g, indent=1, sort_keys=True)
+        g.write("\n")
     print(len(rows), len(seen), counts)
 
 

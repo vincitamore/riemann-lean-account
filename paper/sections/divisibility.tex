@@ -15,19 +15,21 @@ Let $F$ be the formal group over $\Z_\ell$ whose logarithm is \lvS{} (\lean{ltLo
 \log_F(X)=\sum_{j\ge0}\frac{X^{\ell^{2j}}}{\ell^{j}},
 \]
 a Lubin--Tate formal group of height two \cite{lubintate1965,honda1970}. Its exponential has
-$n$-th coefficient of valuation at least $-\rho_\ell(n-1)$ \lvS{} (\lean{LemmaRA}). Hence if
-$f$ is a power series with $\ell$-integral coefficients in $X$ and we expand it in the variable
-$z=\eps\log_F(X)$ with $\eps$ a unit, the $n$-th Taylor coefficient of $f$ in $z$, multiplied
-by $n!$, has valuation at least
+$r$-th coefficient of valuation at least $-\rho_\ell(r-1)$ \lvS{} (\lean{LemmaSt}). Hence if
+$\vartheta$ is a power series with $\ell$-integral coefficients in $X$ and we expand it in the
+variable $z=\upsilon\log_F(X)$ with $\upsilon$ a unit, the $r$-th Taylor coefficient of
+$\vartheta$ in $z$, multiplied by $r!$, has valuation at least
 \[
-v_\ell(n!)-\rho_\ell\,n\ \ge\ \frac{n}{\ell-1}-\frac{n}{\ell^2-1}-(\log_\ell n+1)
-\ =\ \gamma_\ell\,n-(\log_\ell n+1).
+v_\ell(r!)-\rho_\ell\,r\ \ge\ \frac{r}{\ell-1}-\frac{r}{\ell^2-1}-(\log_\ell r+1)
+\ =\ \gamma_\ell\,r-(\log_\ell r+1).
 \]
 That is the whole reason for the exponent $a/\ell+a/\ell^3+\cdots$: derivatives in the
 logarithmic coordinate of a height-two formal group gain a factor $\ell^{\gamma_\ell}$ per
-order. The archive's general form \lvS{} bounds, for a function $U(g(z))\exp(\varepsilon b(z))$
+order. The archive's general form \lvS{} (\lean{LemmaRA}) bounds, for a function
+$U(\mathsf g(z))\exp(\pm\mathsf b(z))$
 in several variables, the valuation of a derivative of multi-order $\kappa$ by
-$\sum_i\kappa_i(\gamma_\ell-\sigma_i)$ less a logarithmic loss, and a second theorem treats
+$\sum_i\kappa_i(\gamma_\ell-\varsigma_i)$ less a logarithmic loss, with weights
+$\varsigma_i\ge0$, and a second theorem treats
 several ``letters'' at once, where the top terms take the form $\sum_{e\text{ odd}}\nu/\ell^e$
 cut off by a capacity: the same shape as the count \eqref{eq:ask}. Both are on the path of the
 final theorem \lvM. The exponential factor is of the kind that Dwork introduced
@@ -38,14 +40,14 @@ A CM elliptic curve really is used; the argument is not carried out with power s
 \begin{statement}[\lean{CM2}]\label{st:cm2}
 Let $d$ be squarefree with $d\equiv3\pmod4$ and let $L$ be a lattice with complex
 multiplication by $\Z[(1+\sqrt{-d})/2]$. For every prime $\ell\ge5$ not dividing $d$ and every
-isomorphism $\iota\colon\C\cong\C_\ell$ there is $\lambda\ne0$ such that
-$\lambda^4\iota g_2(L)$ and $\lambda^6\iota g_3(L)$ are integral in the maximal unramified
+isomorphism $\iota\colon\C\cong\C_\ell$ there is $\xi\ne0$ such that
+$\xi^4\iota g_2(L)$ and $\xi^6\iota g_3(L)$ are integral in the maximal unramified
 extension of $\Q_\ell$ and the discriminant of the resulting Weierstrass equation is a unit.
 \end{statement}
 \begin{statement}[\lean{CM3}]\label{st:cm3}
 In the situation of \cref{st:cm2}, suppose moreover that $-d$ is not a square modulo $\ell$.
-Then there is a unit $\eps$ of the maximal unramified extension of $\Q_\ell$ such that the
-local series of the curve, composed with $\eps\log_F$, has integral coefficients in that
+Then there is a unit $\upsilon$ of the maximal unramified extension of $\Q_\ell$ such that the
+local series of the curve, composed with $\upsilon\log_F$, has integral coefficients in that
 extension.
 \end{statement}
 \Cref{st:cm2} is good reduction \cite{serretate1968}; the archive derives it from global Artin
@@ -69,7 +71,7 @@ Frobenius at $\ell$ acting on the embeddings of the CM field.
 
 \subsection{Integrality of the periods}
 The periods themselves, for forms on the definite group, are finite sums over the classes of a
-genus. Their integrality rests on a statement about representations of $\GL_n$ \lvS{}
+genus. Their integrality rests on a statement about representations of general linear groups \lvS{}
 (\lean{standard_weyl_lattices_fock_dual}): the integral forms of the Weyl module and of the
 dual Weyl module are exact duals of each other under the pairing of the polynomial (Fock)
 model; compare \cite{carterlusztig1974}. Denominators coming from orders of finite groups are

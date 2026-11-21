@@ -1,6 +1,6 @@
 # Basis of the statements (source of the paper's appendix)
 
-One row per statement of the paper about the proof. Levels: M computed from the compiled archive; S the Lean statement was read and transcribed by the authors; P the Lean proof was read by the authors; D taken from a reader's report (printed as R). Generated into `sections/appendix-audit.tex` by `tools/audit_to_tex.py`.
+One row per statement of the paper about the proof. Levels: M computed from the compiled archive; S the Lean statement was read and transcribed by the authors; P the Lean proof was read by the authors; C compared by the authors with the published theorem as they know it; D taken from a reader's report (printed as R). Generated into `sections/appendix-audit.tex` by `tools/audit_to_tex.py`.
 
 | Section | Statement | Level | Where |
 |---|---|---|---|
@@ -30,10 +30,10 @@ One row per statement of the paper about the proof. Levels: M computed from the 
 | 5.2 | The record of eleven clauses | S | `SizeData₂`, `Formalism/SizeWindowBrackets/SChain.lean:17` |
 | 5.2 | The space of forms is all algebraic modular forms of the weight and level | S | `Fi`, `Development/AbelianVarietyTheory/Definitions/AutomorphicMembership/PredMemGamRanks.lean:151` |
 | 5.2 | The rescaled lattice | S | `Iu`, `NprimeDef`, `Formalism/LocalRingCardinality/DataDIVDefs.lean:17-24` |
-| 5.2 | The clauses Loss, Gain and the count for T | S | `LossBounds`, `QuotientSlopeBoundsWith`, `Count5`, `Formalism/SizeWindowBrackets/QuotientSlopeBoundsWith.lean:19-35` |
+| 5.2 | The clauses Loss, Gain, the comparison of Ee and the count for T | S | `LossBounds`, `QuotientSlopeBoundsWith`, `EComp5`, `Count5`, `Formalism/SizeWindowBrackets/QuotientSlopeBoundsWith.lean:19-35` |
 | 5.2 | The clauses Slope and Div; the clauses that bound the slopes of the lattices of forms and the variation of the heights | S | `SlopeIneq`, `DIV`, `Slopes`, `HComp`, `Formalism/RankGapBounds/MeanBoundSecondForm.lean:118-156` |
-| 5.3 | Periods of the unscaled lattice are divisible to the order of the gain | S | `adm2`, `Formalism/SharpRestriction/Divisibility/LocalQuadraticParts.lean:206` |
-| 5.3 | The gain formula | S | `gU`, `g0`, `gainP`, `VV`, `IsV`, `Formalism/SharpRestriction/GrowthBounds/IsResidueClassZero.lean:89-361`; `sg`, `Ga`, `Formalism/LocalRingCardinality/DataParams₂.lean:212-224` |
+| 5.3 | Periods of the unscaled lattice are divisible to the order of the rescaling exponent | S | `adm2`, `Formalism/SharpRestriction/Divisibility/LocalQuadraticParts.lean:206` |
+| 5.3 | The gain formula: positions along the Frobenius orbit, partners, capacities, excluded exponents, candidate primes | S | `IsV`, `Good`, `capU`, `Excl`, `g0`, `gU`, `Cand`, `VV`, `gainP`, `Formalism/SharpRestriction/GrowthBounds/IsResidueClassZero.lean:179-361`; `sg`, `Fo`, `Ga`, `Ee`, `Formalism/LocalRingCardinality/DataParams₂.lean:212-224` |
 | 5.4 | The slope inequality for nearly tight frames | S | `TheoremF`, `Formalism/HarderNarasimhan/StatementFrameF.lean` |
 | 5.4 | Its proof | P | `theoremFSharp_of`, `Formalism/HarderNarasimhan/HarderNarasimhanProofs/TheoremFSharp.lean:168-390`; `frameB_share`, `FrameHermSharpB.lean:25` |
 | 5.5 | The ledger over the lift steps | P | `divisor_inequality_assembly`, `Formalism/QuotientMetricDivisors/HermitianTwistDivisors/DivAssembly.lean:11-46` |
@@ -45,7 +45,7 @@ One row per statement of the paper about the proof. Levels: M computed from the 
 | 5.5 | The Chowla–Selberg formula and Kronecker's limit formula | S | `chowla_selberg_eta` with the hypotheses of its section, `Development/AbelianVarietyTheory/Proofs/HomogeneousIdeals/DedekindZetaEqSumRealEisenstein.lean:212-225`; `tendsto_realEisenstein_sub_pole`, `…/TendstoRealEisensteinSubPole.lean:352` |
 | 5.5 | The class number formula and the level prime | S | `ClassNumberFormula₂`, `Formalism/SharpRestriction/GlobalSchurBounds/StandardLattice.lean:453`; `LevelPrime`, `Development/AbelianVarietyTheory/Definitions/GlobalTwisting/LogCondLeThree.lean:81` |
 | 5.5 | The lattice side equals MAIN identically | S | `key_identity5`, `Formalism/SizeWindowBrackets/ChainSlopeWindows/LevelOfCongruence.lean:105` |
-| 6.1 | The height-two logarithm; the radius lemma and the rate | S | `ltLog`, `Formalism/LocalToGlobal/TorsionIntegrality/CMGoodModels/Statement.lean:35`; `LemmaRA`, `Formalism/GaussJetBounds/StatementG.lean:12` |
+| 6.1 | The height-two logarithm; the radius lemma; the general form and the rate | S | `ltLog`, `Formalism/LocalToGlobal/TorsionIntegrality/CMGoodModels/Statement.lean:35`; `LemmaSt`, `Formalism/GaussJetBounds/Statement.lean:107`; `LemmaRA`, `Formalism/GaussJetBounds/StatementG.lean:12` |
 | 6.2 | Good models of CM curves and their formal groups at inert primes | S | `CM2`, `CM3`, `…/CMGoodModels/Statement.lean:45-55` |
 | 6.2 | Good reduction is derived from Artin reciprocity | S | `cmGoodModel_of_globalArtinReciprocity`, `Development/AbelianVarietyTheory/Proofs/DecoratedLatticeProofs/CmGoodModelOfGlobalArtinReciprocity.lean:10` |
 | 6.2 | Integrality of the theta kernel at inert primes | S | `IntInert`, `Formalism/LocalToGlobal/InertKernelTheory/StatementInt.lean:18` |
@@ -57,8 +57,10 @@ One row per statement of the paper about the proof. Levels: M computed from the 
 | 7.2 | Uniqueness of Bessel models with a gap | S | `UniqGap`, `CompanionTheory/AutomorphicTheory/LocalBesselUniqueness/BesselModels/AtFormAdmOneOfSteps.lean:15` |
 | 7.2 | Siegel–Weil as a mass formula; the main row | S | `SiegelDensities`, `Formalism/UnipotentAdelicQuotients/SiegelWeilUnitaryConvergent.lean:18`; `rowMainEqP_of_siegelWeil`, `Development/AbelianVarietyTheory/Proofs/FlagMeasures/RowMainEqPOfSiegelWeil.lean:10` |
 | 7.2 | The bound for two different indices | S | `pbApplied`, `Formalism/LocalToGlobal/SiegelLatticeTheory/FlagStabilizerTensors/TheoremS.lean:19` |
+| 7.2 | In the application the parameter k of the frame is the rank parameter of the data | P | `Formalism/LocalToGlobal/SiegelLatticeTheory/FlagStabilizerTensors/TheoremSClosedP.lean:102` |
 | 8.1 | The cohomological bound and its windows | S | `VVle`, `VWinAt`, `VWin`, `Development/AutomorphicArithmetic/CharacterBoxes/ExistsPageN.lean:12-49` |
 | 8.2 | The clause through which it is used, and the weakening of the square root | P | `LinkN_at`, `DIVinN_at`, `Formalism/SharpRestriction/GlobalTheoremInputs.lean:31-63`; `divinN_of_hypV`, `vvRecord`, `Development/AutomorphicArithmetic/CharacterBoxes/DivinNOfHypV.lean:17-131` |
+| 8.2 | The two quantities in which the bound is stated | S | `BNBounds`, `Formalism/SizeWindowBrackets/SChain.lean:33` |
 | 8.2 | It is used in one place besides its producer | S | a search of the source for `DIVinN_at` |
 | 8.2 | The congruence ideal, the congruence module, and their bound | S | `ccIdeal`, `etaLoc`, `vcc`, `Formalism/SharpRestriction/LevelLetterCocycles/DataN.lean:25-225`; `chi_def`, same file, 126; `ZN`, same file, 1292; `CongBound_at`, `IsRankRPart`, `Development/AbelianVarietyTheory/BlockTheory/NonGaloisCusps/BaseSizes.lean:57-93` |
 | 8.3 | The assembly of the bound | S | `of_four_alt`, `Development/AutomorphicArithmetic/AutomorphicVarieties/ModularityArgument/ThresholdArguments/DenseThresholdCases/HVCore.lean:18-22` |
@@ -71,10 +73,12 @@ One row per statement of the paper about the proof. Levels: M computed from the 
 | 8.4 | The partial compatibility of the Galois representations | S | `AwayB`, `Development/AutomorphicArithmetic/Foundations/GaloisRepresentations/TypeConditions/WeightsConjBis.lean:26` |
 | 8.4 | The theorem and its single hypothesis | S | `galoisRepresentations_of_thetaLift`, `Development/AutomorphicArithmetic/Foundations/GaloisRepresentations/IntegralStructures/GaloisRepresentationsOfThetaLift.lean:6`; `Row0b`, `…/TypeConditions/WeightsConjBis.lean:69`; `TLiftK`, `…/GaloisRepresentations/ThetaParseval/HalfIndexLattices/TLiftK.lean:12` |
 | 9.1 | The host field and the sizes of its primes | S | `IsChiField`, `WinPair`, `PageN`, `Development/AutomorphicArithmetic/CharacterBoxes/ExistsPageN.lean:19-40` |
+| 9.1 | The host contains the imaginary quadratic field and the CM type fixes it | S | `HostRaw`, `Formalism/SharpRestriction/RamificationFrobenius/TotientGaloisClasses/ConjEMemHostFIff.lean:12` |
 | 9.2 | Supply of hosts on windows | S | `supplyChi`, `…/CharacterBoxes/SupplyChi.lean:8` |
 | 9.3 | Good pairs of primes exist on a range of scales | S | `PairGood`, `PairEx`, `…/CharacterBoxes/PairGood.lean:19-32` |
 | 9.3 | The mean square and the zero-density estimate | S | `meanSqK`, `Development/AutomorphicArithmetic/MeanSquareBounds/meanSqK.lean:51`; `zero_density_box`, `Formalism/GL3MeanSquares/GenusMeanAsymptotics/JacobiCharacterSums/CountZAll.lean:13` |
 | 9.4 | The thick set without small relations; the statement Green | S | `NoRel`, `Formalism/FrobeniusOrbits/HostThickExists.lean:13`; `noRel_image`, `hostThickExists`, `Formalism/FrobeniusOrbits/FrobeniusOrbitsProofs/ThickExists.lean:85-181`; `IsPrimeLab`, `Green`, `Development/AbelianVarietyTheory/Definitions/NonGaloisDescent/LabelDatum.lean:91-112` |
 | 10 | What each of the 186 literature statements asserts | S | the Lean statement of each row and, where it is a conjunction of named parts, the head of each part, at the path recorded for the row in `refs/rows-A.jsonl`, `rows-B.jsonl`, `rows-C.jsonl`; our descriptions are in `refs/rows-author.json` |
-| 10 | Whether each is the published theorem in general form or a special case, and its sources | D | the reference research recorded in the same three files |
+| 10 | Whether each is the published theorem in the generality of a source, a restricted form, or a different statement | C | the Lean statement of each row; the verdict and its reason are recorded in `refs/rows-scope-author.json` and printed in the table of the next appendix |
+| 10 | The sources of each row | D | the reference research recorded in the same three files |
 | 11 | What the final theorem does not use | M | `results/cut-result.txt`, `cut-in.txt.xz`, `cut-out.txt.xz`, `cut-modules.txt.xz`; statements of the named declarations read at `Formalism/ProductFormula/StatementOCCM.lean:137-160`, `Formalism/HalfLinks/Statement.lean:144`, `Formalism/JacobiWeightFamilies/Statement.lean:57`, `Formalism/StatementOC.lean:65`, `Formalism/SizeWindowBrackets/FirstPrimeNeSecondPrime.lean:47` |

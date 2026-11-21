@@ -1,0 +1,31 @@
+# One line for each module of verify/hostile, in the order of the paper's table: the module's
+# name and what its compiled file holds, in the words of the table. Read by tools/numbers.py.
+Honest nothing wrong: a theorem, a definition, an inductive type, a structure
+Plant nothing wrong: the tool the other modules use to write into a compiled file
+Axiom a proof of \lean{False} from a declared axiom, which the list of axioms shows
+Sorry a proof by \lean{sorry}, which the list of axioms shows
+FalseTheorem a theorem \lean{False} whose proof is \lean{True.intro}, added with no check
+WrongValue a definition whose value is of another type, added with no check
+UsesUnsafe a theorem whose proof uses an unsafe definition
+TamperedRecursor a recursor whose two rules were exchanged after the kernel made it
+TamperedConstructor a constructor given a false number of fields
+DupBogusLast a theorem two modules declare; the version Lean keeps has no proof
+DupBogusFirst the same; the version Lean sets aside has no proof
+MissingConstructor an inductive type that lists a constructor that does not exist
+KeyMismatch a definition stored under the name of another constant
+MissingRecursor an inductive type with no recursor, and a theorem that uses one
+TamperedInductive an inductive type whose record was altered after the kernel made it
+FakeQuotient a constant of the quotient kind with the type \lean{False}
+AfterFakeQuotient a theorem \lean{False} proved from that constant, with no axioms
+FakeInductive a constant of the inductive kind with the type \lean{False}
+ConstructorIsUnsafe an inductive type whose listed constructor is an unsafe definition
+ExportedOnly a theorem \lean{False} in the first part of a module-system file only
+ExportedFlag the same, the part replayed marked as outside the module system
+ExportedStatement in the first part, an axiom \lean{False} under the name of a true theorem
+ExportedLevels in the first part, an axiom with other universe parameters
+ExportedPartial in the first part, an axiom \lean{False} for a partial definition, not marked unsafe
+ExportedUnsafe the same for an unsafe definition
+ExportedOpaque the same for an unsafe opaque constant
+ExportedImports a first part whose import list names one module more
+CodeConstants a theorem \lean{False} in the file of compiled code
+CodeImports a file of compiled code whose import list names one module more

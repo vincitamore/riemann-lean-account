@@ -5,7 +5,7 @@ lines in lean files 17374215
 other files 3: lean/lake-manifest.json lean/lakefile.toml lean/lean-toolchain
 lines in Main.lean 12
 
-OCCURRENCES OF WORDS (whole words, anywhere in the text, comments included)
+OCCURRENCES OF WORDS (whole words, also after a dot, anywhere in the text, comments included)
   sorry 0
   admit 0
   native_decide 0
@@ -21,6 +21,32 @@ OCCURRENCES OF WORDS (whole words, anywhere in the text, comments included)
   trustCompiler 0
   lcProof 0
   sorryAx 0
+  doCheck 0
+  ofKernelEnv 0
+  reduceBool 0
+  reduceNat 0
+OTHER WORDS REPORTED (the same matching; code that adds declarations or runs at compile time)
+  addDeclCore 0 in 0 files
+  addDecl 2 in 1 files
+    lean/src/Formalism/HermitianCurvature/HermitianCurvatureProofs/CutCptCopy.lean:78
+    lean/src/Formalism/HermitianCurvature/HermitianCurvatureProofs/CutCptCopy.lean:82
+  addAndCompile 0 in 0 files
+  setEnv 0 in 0 files
+  modifyEnv 5 in 5 files
+    lean/src/BuildAid/D1.lean:4
+    lean/src/BuildAid/D2.lean:4
+    lean/src/BuildAid/D3.lean:4
+    lean/src/BuildAid/D4.lean:4
+    lean/src/BuildAid/D5.lean:4
+  evalConst 0 in 0 files
+  evalDecl 0 in 0 files
+  #eval 0 in 0 files
+  command_elab 0 in 0 files
+  term_elab 0 in 0 files
+  builtin_command_elab 0 in 0 files
+  builtin_term_elab 0 in 0 files
+  simproc 0 in 0 files
+  dsimproc 0 in 0 files
 axiom declarations 0
 partial def declarations 2
     lean/src/Formalism/HermitianCurvature/HermitianCurvatureProofs/CutCptCopy.lean:40 go
@@ -71,12 +97,71 @@ SYNTAX, ELABORATORS AND CODE RUN AT ELABORATION (declarations by keyword, with t
     lean/src/Development/AutomorphicSpectrum/Proofs/BlockDecomposition/NewformHeckeEigenvalue.lean
     lean/src/Development/AutomorphicSpectrum/Proofs/BlockDecomposition/ShuffleCup1FormulaPositiveDegree.lean
     lean/src/Development/AutomorphicSpectrum/Proofs/BlockDecomposition/TaylorDifferentialRepresentative.lean
+    lean/src/Development/EtaleCohomology/EtaleSheaves/ChasePf.lean
+    lean/src/Development/EtaleCohomology/TateTwists/EtaleTensorCycleLocallyLowersTopDegreeOfRowExact.lean
+    lean/src/Development/WeilBound/CoreStatements/HodgeTatePoints/CbBase.lean
+    lean/src/Development/WeilBound/CoreStatements/HodgeTatePoints/CcBase.lean
+    lean/src/Development/WeilBound/CoreStatements/PadicHodgeComparison/EtaleCohomologyComparison/CechPairings/FaceMapCompSuccAboveCastSucc.lean
+    lean/src/Formalism/DistinguishedUnitIdeals/DistinguishedOrderProofs/RhoMapFunctorial.lean
+    lean/src/Formalism/EllipticTorsion/EllipticTorsionProofs/Change.lean
+    lean/src/Formalism/HermitianCurvature/HermitianCurvatureProofs/CoordinateCommuteRaisingConstant.lean
+    lean/src/Formalism/HermitianCurvature/HermitianCurvatureProofs/CornerBlockActionInvariant.lean
+    lean/src/Formalism/HermitianCurvature/HermitianCurvatureProofs/EmbedLoweringConstant.lean
+    lean/src/Formalism/HermitianCurvature/HermitianCurvatureProofs/LevelNablaStarRelations.lean
+    lean/src/Formalism/HermitianCurvature/HermitianCurvatureProofs/LinearFormRadicalRankOne.lean
+    lean/src/Formalism/HermitianCurvature/HermitianCurvatureProofs/RadicalUnipotentFirstBasisEqOne.lean
+    lean/src/Formalism/HermitianCurvature/HermitianCurvatureProofs/RttUpperRelationsFromDescent.lean
+    lean/src/Formalism/LocalToGlobal/IndefiniteForms/IndefiniteTree/FunctionalLowerBoundOfConditionsNumeric.lean
+    lean/src/Formalism/LocalToGlobal/TorsionIntegrality/TorsionTranslationPowers/NonsingularJetNorms/NonsingularNorm.lean
+    lean/src/Formalism/PeriodIntegrals/UnitaryGroupMassFormula/DensityLemma/PFibreBoundV.lean
+    lean/src/Formalism/PeriodIntegrals/UnitaryGroupMassFormula/GaussianUniqueness/MulMApply.lean
+    lean/src/Formalism/PeriodIntegrals/UnitaryGroupMassFormula/LevelImageArithmetic/GlevImageOf.lean
+    lean/src/Formalism/SatakeDualWeyl/AdelicIwasawaHecke/FIwasawaC.lean
+    lean/src/Formalism/SharpRestriction/Divisibility/GeneratorPowers/FBMapPf.lean
+    lean/src/Formalism/SharpRestriction/Divisibility/LocalNonemptiness/SubsingletonRankIndicatorIff.lean
+    lean/src/ReciprocityTheory/ReductiveGroups/ArithmeticGeometry/DiscreteValuationRings/ExistsRosatiGen.lean
+    lean/src/ReciprocityTheory/ReductiveGroups/ArithmeticGeometry/ExtensionDescent/Theta1.lean
   run_cmd 5
     lean/src/BuildAid/D1.lean
     lean/src/BuildAid/D2.lean
     lean/src/BuildAid/D3.lean
     lean/src/BuildAid/D4.lean
     lean/src/BuildAid/D5.lean
+OPTIONS SET (set_option, by option, with the number of occurrences)
+  Elab.async 1
+  allowUnsafeReducibility 37
+  autoImplicit 11203
+  backward.defeqAttrib.useBackward 33
+  backward.isDefEq.respectTransparency 1879
+  backward.isDefEq.respectTransparency.types 87
+  genInjectivity 179
+  genSizeOf 1
+  genSizeOfSpec 181
+  hygiene 31
+  linter.all 38
+  linter.auxLemma 1
+  linter.deprecated 34
+  linter.dupNamespace 46
+  linter.overlappingInstances 40
+  linter.style.haveILetI 122
+  linter.style.longLine 23
+  linter.unnecessarySeqFocus 9
+  linter.unnecessarySimpa 1
+  linter.unreachableTactic 12
+  linter.unusedSectionVars 874
+  linter.unusedSimpArgs 272
+  linter.unusedTactic 12
+  linter.unusedVariables 503
+  maxHeartbeats 57556
+  maxRecDepth 34
+  maxSynthPendingDepth 7478
+  pp.fullNames 9
+  quotPrecheck 7
+  smartUnfolding 3
+  synthInstance.maxHeartbeats 7381
+  synthInstance.maxSize 51
+  warn.classDefReducibility 1
+files with a line that is the word module 0
 
 import lines 909822
 imports of modules outside the archive, by root: Batteries 3, Lean 12, Mathlib 156238

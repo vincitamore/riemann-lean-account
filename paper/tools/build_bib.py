@@ -18,6 +18,12 @@ beside the inputs adjust the result: same.json (two keys for one source), aliase
 used in the text), overrides.json (fields set by hand, each with its reason in the file).
 
 Usage: python tools/build_bib.py out.bib evidence_dir in1.jsonl [in2.jsonl ...]
+
+Where two inputs describe one source, the record read first is the one used and gives the entry
+its key, so the order of the inputs matters. The paper's bibliography is built, in the paper's
+directory, with
+    python tools/build_bib.py references.bib refs/evidence \
+        refs/rows-A.jsonl refs/rows-B.jsonl refs/rows-C.jsonl refs/account.jsonl
 """
 import html
 import json

@@ -1,0 +1,148 @@
+% The argument on one page. Build:  latexmk -pdf one-page.tex
+\PassOptionsToPackage{obeyspaces}{url}
+\documentclass[10pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\DeclareUnicodeCharacter{2082}{\textsubscript{2}}
+\usepackage{lmodern}
+\usepackage[final]{microtype}
+\usepackage[a4paper,margin=0.62in,top=0.5in,bottom=0.5in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{xcolor}
+\usepackage[colorlinks=true,urlcolor=blue!50!black]{hyperref}
+\DeclareUrlCommand\lean{\urlstyle{tt}\def\UrlFont{\ttfamily\footnotesize}}
+\newcommand{\Z}{\mathbb{Z}}\newcommand{\Q}{\mathbb{Q}}\newcommand{\F}{\mathbb{F}}
+\newcommand{\fP}{\mathfrak{P}}
+\newcommand{\re}{\operatorname{Re}}\newcommand{\Frob}{\operatorname{Frob}}
+\newcommand{\ph}{\operatorname{ph}}\newcommand{\len}{\operatorname{len}}
+\newcommand{\GL}{\mathrm{GL}}\newcommand{\U}{\mathrm{U}}\newcommand{\Sha}{\mathrm{Sha}}
+\newcommand{\ASK}{\mathrm{ASK}}\newcommand{\MAIN}{\mathrm{MAIN}}\newcommand{\Br}{\mathrm{Br}}
+\newcommand{\eps}{\varepsilon}\newcommand{\abs}[1]{\lvert #1\rvert}
+\newcommand{\step}[1]{\par\smallskip\noindent\textbf{#1}}
+\input{version}
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\linespread{0.96}
+\begin{document}
+\small
+\begin{center}
+{\large\bfseries The argument of Alp\"oge's formal proof of the Riemann Hypothesis, on one page}\\[2pt]
+{\footnotesize Qui Vincit and Fable. \paperdate, with version \paperversion{} of the paper
+\emph{The argument of Alp\"oge's formal proof of the Riemann Hypothesis: an account read from the
+Lean source}, \url{https://github.com/vincitamore/riemann-lean-account}.}
+\end{center}
+\vspace{-2pt}
+{\footnotesize Each step is a statement of the Lean archive, named in brackets and read in the
+source. The paper's Section 2 says what the machine checked; this page says what the whole
+is. Letters are those of the paper.}
+
+\step{Theorem} [\lean{LFunction_ne_zero_of_half_lt_re}, \lean{riemannHypothesis}]\textbf{.}
+\emph{For every Dirichlet character $\chi$ and every $s$ with $\re s>\tfrac12$, other than the
+pole of $\zeta$ at $1$, $L(s,\chi)\ne0$. Hence every zero of $\zeta$ other than the trivial ones
+has real part $\tfrac12$.}
+
+\step{Proof.} It suffices to treat primitive characters; the second sentence follows by the
+functional equation. Fix a small $\eps>0$. Below, $x$ is a large scale and $b=\exp(x^\eps)$.
+
+\step{1. Landau on windows} [\lean{zeroFree_of_rpow_window}]\textbf{.} For a character $\chi$ put
+$G_\chi(y)=\sum_{n\le y}\Lambda(n)\chi(n)(\tfrac yn-1)+y\tfrac{L'}{L}(1,\chi)$, with
+$-y\log y+(1+\gamma)y$ in place of the last term when $\chi=1$. Let $\mathcal K$ be a finite set
+of primitive characters, closed under inversion and containing $1$, and
+$G_{\mathcal L}=G_1+\sum_{\psi\in\mathcal K,\,\psi\ne1}\mathrm{wt}(\psi)\re G_\psi$ with positive
+weights. If for arbitrarily large $Y$ one has $G_{\mathcal L}(y)\le y^{1/2+C\eps}$ for all
+$y\in[Y,Y^{3/2}]$, then no $L(s,\psi)$, $\psi\in\mathcal K$, vanishes for
+$\re s>\tfrac12+C\eps$. So it is enough to bound $G_{\mathcal L}(x)$ from above at the scales of
+such windows.
+
+\step{2. An exact identity} [\lean{ch_balance}]\textbf{.} Let $E$ be an abelian CM field (a
+\emph{host}) with Galois group $\mathfrak G=(\Z/2)^2\times H$ and CM type $\Phi$, a subgroup of
+index two, ramified only at primes whose inertia groups and Frobenius elements lie in $\Phi$
+and at one prime $d$, whose inertia group has order two and is not in $\Phi$. For a size $a>0$,
+weights $w>0$ on $\Phi$, and a pairing $g\mapsto\rho_g$
+of $\mathfrak G\setminus\Phi$ with $\Phi$, put
+\[
+\ASK=\sum_p2\log p\!\!\sum_{i\ge1,\ \Frob_p^i\notin\Phi}\!\!\max\!\bigl(\tfrac a{p^i}-w(\rho_{p,i}),0\bigr)+(\text{a term at }d),
+\qquad
+\MAIN=a\Bigl(\log a-1-\gamma+\tfrac{L'}{L}(1,\chi_\Phi)-\tfrac1{\abs\Phi}\!\sum_{\rho\in\Phi}\!\log w(\rho)\Bigr).
+\]
+Then $\ASK-\MAIN=\frac1{\abs\Phi}\sum_{g\notin\Phi}\sum_{\psi}\overline\psi(g)\,w(\rho_g)\,G_\psi\bigl(a/w(\rho_g)\bigr)$,
+the inner sum over the characters of $\mathfrak G$. Nothing is estimated.
+
+\step{3. From the count to $G$} [\lean{ch_core}, \lean{core_gm}, \lean{GrowthSizeBound}]\textbf{.}
+Take sizes $a_t$ with $\abs{a_t/b-x}\le1$ for $t$ in a set $TT\subset H$, and $m$ systems of
+weights $w_{u_0,j}$ for each translate $u_0$: about $b$ on a thick set of density
+$\delta_T\ge x^{-\eps}$, so that $a/w\approx x$, and so small elsewhere that $a/w$ is a scale at
+which the classical zero-free region makes every $G_\psi$ negligible. If for every $u_0$
+\[
+\sum_{t\in TT}\sum_{j\le m}(\ASK-\MAIN)(a_t,t,w_{u_0,j})\ \le\ x^{C\eps}\,\Br,\qquad
+\Br=\abs{TT}\,a_E\bigl(1+\tfrac{m^2}k\bigr)+m\bigl(2nmb\,x^\eps+\abs{T_2}\,k\,b\,x^{2\eps}/n^2\bigr),\quad a_E\le2xb,
+\]
+then, the sizes $TT$ being equidistributed for the kept characters,
+$G_{\mathcal L}(x)\le x^{1/2+(C+3)\eps}+\sum\abs{G_\psi(x)}$, the sum over the characters of
+the host that are not kept. Divided by the normalisation $\abs{TT}\,m\,b\,\delta_T$ the three
+terms of $\Br$ are of sizes $x/m$, $m$ and $k/n^2$ up to $x^{O(\eps)}$. With
+$m\approx\sqrt x$ lifts and $xm\le k\le n^2\sqrt x$ all three are $x^{1/2+O(\eps)}$.
+\emph{This is the only place where $\tfrac12$ is produced.}
+
+\step{4. The upper bound} [\lean{each_unit_bound_statement}; the record \lean{SizeData}\textsubscript{\ttfamily\footnotesize 2}]\textbf{.}
+For each of many words $u$ there are: a Hermitian lattice $M_u$ of algebraic modular forms on a
+definite unitary group over $E$; the rescaling
+$N_u=\prod_\lambda\fP_\lambda^{-\lfloor e_\lambda g(u,\lambda)\rfloor}\cdot(\text{a sublattice of }M_u)$,
+the exponent $g(u,\lambda)$ a sum over the $m$ lifts of a \emph{gain} and two corrections; and a
+map $B_u$ of height at most $h(u)$, with $B_u(N_u)\subseteq P$ for one lattice $P$
+[\lean{adm2}], sending a form to the periods of its $m$-fold iterated theta lift. Four clauses
+make the chain, $\mu$ denoting the slope:
+\[
+\begin{aligned}
+&\text{(Loss)}\ \ \ASK-\mathrm{Ga}\le\mathrm{Lo};
+&&\text{(Gain)}\ \ \mu(M_u)+\mathrm{Ga}+\mathrm{Fo}-\mathrm{Ee}(u)-(\text{loss})\le\mu(N_u);\\
+&\text{(Slope)}\ \ \overline{\mu(N_u)-h(u)}-(\text{losses})\le\mu(P);
+&&\text{(Div)}\ \ \mu(P)+h(u)-\mathrm{Fo}\le\textstyle\sum_{t}\bigl(m(\ph(a_t)-a_t\log\Omega)-a_t\log T(u)\bigr)+(\text{small}).
+\end{aligned}
+\]
+Here $\mathrm{Ga}$ is the total gain net of a cost, $\mathrm{Fo}$ and $\mathrm{Ee}(u)$ are the
+totals of the corrections, the bar is the rank-weighted mean over $u$,
+$\ph(y)=y\log y-y$, $\Omega$ is a CM period and $T(u)$ a level prime. A dimension count bounds
+$\log T(u)$ from below [\lean{Count5}]; then the right side of (Div) is at most
+$\MAIN-m\ell_g\sum_ta_t$ up to an error of the first kind, by an identity
+[\lean{key_identity5}], and $\mathrm{Ee}(u)$ is $m\ell_g\sum_ta_t$ up to an error
+[\lean{EComp5}]; $\ell_g$ is a constant of the host. Chaining gives the hypothesis of step 3.
+
+\step{5. Why the four clauses hold.}
+\emph{Loss and Gain: divisibility at inert primes} [\lean{gainP}, \lean{adm2},
+\lean{admissible_level_two}, \lean{CM2}, \lean{CM3}, \lean{IntInert}, \lean{LemmaSt},
+\lean{LemmaRA}]. At a prime $\ell\ge5$ inert in
+$\Q(\sqrt{-d})$ a CM elliptic curve has good reduction and its formal group is the Lubin--Tate
+group of height two with logarithm $\sum_jX^{\ell^{2j}}/\ell^j$. For a series integral in the
+parameter, $r!$ times the $r$-th Taylor coefficient in the uniformising coordinate has
+$\ell$-adic valuation at least $\gamma_\ell r-(\log_\ell r+1)$,
+$\gamma_\ell=\ell/(\ell^2-1)=\sum_{e\ \mathrm{odd}}\ell^{-e}$. The kernel of the theta lift is
+such a series, so the periods are divisible to the order $\lfloor e_\lambda g(u,\lambda)\rfloor$,
+and the gain is a closed formula whose main term is the odd-power count of step 2.
+\emph{Slope} [\lean{TheoremF}, \lean{InputSG}, \lean{KExpansion}, \lean{UniqGap},
+\lean{SiegelDensities}, \lean{pbApplied}]. A slope inequality for nearly tight frames of maps
+between Hermitian lattices bounds $\mu(P)$ from below by the mean of $\mu(N_u)-h(u)$. The maps
+$B_u$ are compressions of Bessel--Poincar\'e series, and a relative trace formula makes their
+Gram blocks nearly those of independent random subspaces.
+\emph{Div} [\lean{BoundsMu}, \lean{divisor_inequality_assembly}, \lean{lcv_le},
+\lean{topCovolSlim2_use_alt_alt}, \lean{chowla_selberg_eta}]. Determinants factor along the $m$
+lifts; a ledger over the lifts cancels every factorial and every period but the top ones; the
+covolumes of the auxiliary lattices of integral forms are bounded by arithmetic intersection
+theory on a Shimura variety; and the mean of $\log\Omega$ is given by the Chowla--Selberg
+formula, which is how $\tfrac{L'}{L}(1,\chi_\Phi)$ reappears.
+
+\step{6. The inputs} [\lean{every_character_of_green_v_win}, \lean{supplyChi}, \lean{PairEx}]\textbf{.}
+Hosts with these properties exist at every scale of long windows, the characters that are not
+kept being bounded at the single point $x$ by a choice of the two auxiliary primes. This needs:
+(i)~a bound on Galois cohomology [\lean{VWin}]:
+$\sum_\ell\log\ell\sum_{1\le e<\lfloor x^{401}\rfloor}\len\Sha(E,\ell,e)\le\exp(x^\eps)^{1/2}$ on windows,
+proved through congruences between cusp forms and Eisenstein classes on $\U(3)$;
+(ii)~Green's parametrisation of the cuspidal characters of $\GL_\nu(\F_p)$ [\lean{Green}];
+(iii)~\rowspublished{} published theorems, each proved in the archive (the paper, Appendix~C). \hfill$\square$
+
+\step{What this page is.} A statement of the skeleton, not a proof that can be checked by hand.
+Every bracketed name below the theorem is a declaration that the final theorem depends on. The page
+omits the definitions of the lattices, of the gain and of the error terms, the size conditions,
+and the proofs; the paper gives the first three and says where each of the rest was read.
+\end{document}

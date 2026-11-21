@@ -1,9 +1,10 @@
-On 20 November 2026 Levent Alp\"oge released a Lean~4 formalisation, 17 million lines long, of
-a proof of the Riemann Hypothesis and of its analogue for every Dirichlet $L$-function, with a
-note saying that no human-readable proof has been written. We built the archive. It compiles,
-the five top theorems depend on no axiom beyond the three on which Mathlib rests, and the
-kernel accepts a replay, from an empty environment, of the 2.7 million declarations that are
-not marked unsafe or partial. This
+On 20 November 2026 Levent Alp\"oge released a Lean~4 formalisation, \linemillions{} million
+lines long, of a proof of the Riemann Hypothesis and of its analogue for every Dirichlet
+$L$-function, with a note saying that no human-readable proof has been written. We built the
+archive. It compiles, \lean{#print axioms} reports for the five top theorems no axiom beyond
+the three on which Mathlib rests, and the kernel accepts every theorem and definition of the
+import closure, \replaymillions{} million declarations in all, replayed from an empty
+environment\ifsecondrun\else; we state what that replay compared and what it did not\fi. This
 paper says what the argument is, as read from the Lean source. The exponent $\tfrac12$ comes
 from one optimisation: an upper bound, of the shape $x/m+m$, for a weighted count of prime
 powers whose Frobenius lies outside a CM type, where $m$ is the length of a chain of theta
@@ -12,6 +13,6 @@ lattices. Divisibility of periods at inert primes, which comes from the height-t
 of a CM elliptic curve, raises the slopes of lattices of algebraic modular forms. A slope
 inequality for nearly tight frames of maps, which we state in full, transfers that to a lattice
 of periods. The slope of that lattice is bounded above by a period computation that returns
-exactly the main term of the count, through the Chowla--Selberg formula. We describe each step
+exactly the main term of the count, through a dimension count and the Chowla--Selberg formula. We describe each step
 and each input, determine by machine which parts of the archive the final theorem uses, and
 identify the published theorems on which the proof rests.

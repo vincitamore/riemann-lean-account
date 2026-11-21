@@ -1,0 +1,24 @@
+REPLAY-SUMMARY
+root Mathlib
+threads unset (Lean's default: one per processor)
+modules 10498
+constants 771135
+replayed 766714
+theorems 533326
+definitions 207095
+opaque 3046
+axioms 7
+quotient-constants 4
+inductive-types 6782 in 6749 blocks
+constructors-compared 9560
+recursors-compared 6894
+sum-of-the-kinds 766714 (equals replayed: true)
+compared-with-the-kernel's-constants 766714 (every constant replayed, in both directions)
+exported-parts-compared 10498 modules, 644284 constants
+exported-axioms-of-partial-definitions-not-marked-unsafe 531 (allowed in Lean's own library only)
+code-files-read 10498 modules (they must hold no constants)
+unsafe-or-partial-not-replayed 4421
+failed 0
+names-declared-more-than-once 619, further versions 997, of which checked 997 and axioms 0
+selftest accepts-true true rejects-false true
+seconds 315

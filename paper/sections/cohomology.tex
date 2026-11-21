@@ -5,28 +5,28 @@ This section says what the formal statement is, where the slope argument uses it
 proved.
 
 \subsection{The statement}
-Let $E$ be a number field, $\ell$ a prime, and $e\ge1$. Let $S$ be the set of places of $E$
-above $\ell$ and $\infty$, and $G_S$ the Galois group of the maximal extension of $E$ unramified
-outside $S$. Define \lvS
+Let $E$ be a number field, $\ell$ a prime, and $e\ge1$. Let $\Sigma$ be the set of places of $E$
+above $\ell$ and $\infty$, and $G_\Sigma$ the Galois group of the maximal extension of $E$ unramified
+outside $\Sigma$. Define \lvS
 \[
-\Sha(E,\ell,e)=\ker\Bigl(H^1\bigl(G_S,\Q_\ell/\Z_\ell(-e)\bigr)\longrightarrow
+\Sha(E,\ell,e)=\ker\Bigl(H^1\bigl(G_\Sigma,\Q_\ell/\Z_\ell(-e)\bigr)\longrightarrow
 \prod_{v\mid\ell}H^1\bigl(E_v,\Q_\ell/\Z_\ell(-e)\bigr)\Bigr),
 \]
 the classes that are locally trivial above $\ell$, and let $\len_\ell(e)$ be its length. By
-duality this is governed by $H^2(G_S,\Z_\ell(e+1))$, and hence, through Soul\'e's Chern class
+duality this is governed by $H^2(G_\Sigma,\Z_\ell(e+1))$, and hence, through Soul\'e's Chern class
 maps \cite{soule1979}, by the even $K$-groups $K_{2e}(\cO_E)\otimes\Z_\ell$. For $E=\Q$ the
 vanishing of $K_{4i}(\Z)\otimes\Z_\ell$ for all $i$ is equivalent to Vandiver's conjecture at
 $\ell$ \cite{kurihara1992}; over $\Q(\mu_\ell)$ the conjecture concerns the eigenspaces of one
 parity \cite{washington1997}.
 
 \begin{statement}[\lean{VVle}, \lean{VWin}]\label{st:vwin}
-For the host field $E$ at scale $x$, with $t=\lfloor x^{401}\rfloor$ twists, every
-$\len_\ell(e)$ with $1\le e<t$ is finite and
+For the host field $E$ at scale $x$, with $t_0=\lfloor x^{401}\rfloor$ twists, every
+$\len_\ell(e)$ with $1\le e<t_0$ is finite and
 \[
-\sum_{\ell}\log\ell\sum_{1\le e<t}\len_\ell(e)\ \le\ \sqrt{b},\qquad b=\exp(x^{\eps}),
+\sum_{\ell}\log\ell\sum_{1\le e<t_0}\len_\ell(e)\ \le\ \sqrt{b},\qquad b=\exp(x^{\eps}),
 \]
-for all $x$ in a window $[W,W^2]$; there is $J\ge1$ such that for every large $X$ such a window
-lies in $[X^{1/J},X]$.
+for all $x$ in a window $[Y_1,Y_1^2]$; there is $J\ge1$ such that for every large $X$ such a
+window lies in $[X^{1/J},X]$.
 \end{statement}
 Nothing is averaged or discarded: every prime $\ell$ and every twist is bounded. The statement
 is far from Vandiver's conjecture, which would make part of these groups vanish for
@@ -36,12 +36,15 @@ and conductor exponential in a power of $x$, is at most exponential in a small p
 \subsection{Where it is used}
 The bound has a single use \lvP. The record of \cref{sec:cast} carries, for each lift
 level $j$, a quantity $\eta_j$: the normalised logarithm of the index of a sublattice
-$\mathrm{cut}_j$ in a lattice $T_j$, summed over the places above the level primes. The clause
+$\mathrm{cut}_j$ in a lattice $\mathcal T_j$, summed over the places above the level primes. The clause
 \lean{LinkN_at} bounds it by a size term plus the total of \cref{st:vwin},
 \[
-\eta_j\ \le\ d_j\Bigl(C\bigl(fmb\,L^2+(\log x)^2N_c\bigr)+\sum_\ell\log\ell\sum_{1\le e<t}\len_\ell(e)\Bigr),
+\eta_j\ \le\ d_j\Bigl(C\bigl(fmb\,L_x^2+(\log x)^2N_c\bigr)+\sum_\ell\log\ell\sum_{1\le e<t_0}\len_\ell(e)\Bigr),
 \]
-and the consumer needs only $\eta_j\le D_0\,C\,x^{\eps}(B_0+N_c)$ with $B_0=fmb\,x^\eps$. The
+where $d_j$ is a rank attached to the level, $L_x$ a logarithmic size parameter of the scale,
+and $B_0$, $N_c$ are the quantities that the second and third terms of the bracket of
+\cref{sec:balance} bound (\lean{BNBounds}). The consumer needs only
+$\eta_j\le D_0\,C\,x^{\eps}(B_0+N_c)$ with $B_0=fmb\,x^\eps$. The
 lemma that passes from one to the other (\lean{divinN_of_hypV}) weakens $\sqrt b$ to $b$ at
 once. \emph{So the slope argument needs from \cref{st:vwin} only that the total is at most
 $\exp(x^{\eps})$}; the square root is slack. The Sha lengths in the record are the true ones:
@@ -49,29 +52,35 @@ they are tied to the Galois-cohomological definition by a field of the base data
 (\lean{vvRecord}). In the source the weakened bound is used in one place besides its producer
 (\lean{inEta_num}).
 
-What it controls is a congruence module \lvS. At each place $w$ above a prime $\ell$ the record
+What it controls is a congruence module \lvS. At each place $\lambda$ above a prime $\ell$ the record
 has a local Hecke algebra $\mathbf T$, in spectral form: a subalgebra of the functions from a
-finite set $X$ of eigensystems to a discrete valuation ring $\cO$. A subset $Z\subset X$
+finite set $\mathcal X$ of eigensystems to a discrete valuation ring $\cO$. A subset
+$\mathcal Z\subset\mathcal X$
 consists of the eigensystems that have an automorphic point whose parameter contains a block
-of length $t$ (\lean{ZN}); these are the lifts. The \emph{congruence ideal} is the kernel of
-$\mathbf T\to\prod_{y\notin Z}\cO$ (\lean{ccIdeal}), and the local part of $\eta_j$ is the
-length of the corresponding congruence module, $V_Z\cap(L+V_{Z^c})$ modulo $L\cap V_Z$ for
-the lattice $L$ of forms (\lean{etaLoc}).
+of length $t_0$ (\lean{ZN}); these are the lifts. The \emph{congruence ideal} is the kernel of
+$\mathbf T\to\prod_{y\notin\mathcal Z}\cO$ (\lean{ccIdeal}), and the local part of $\eta_j$ is the
+length of the corresponding congruence module,
+$V_{\mathcal Z}\cap(\mathcal M+V_{\mathcal Z^c})$ modulo $\mathcal M\cap V_{\mathcal Z}$ for
+the lattice $\mathcal M$ of forms (\lean{etaLoc}).
 
 \begin{statement}[\lean{CongBound_at}]\label{st:cong}
-Let $\ell$ be large and not exceptional, $\pi\in Z$, and suppose that the Galois
-representation of $\pi$ is, over the fraction field, the sum of a representation $\rho$ of
-rank $r$ and the $t$ characters $\chi_1,\dots,\chi_t$. Then the valuation at $\pi$ of the
+Let $\ell$ be large, not exceptional, and different from the two auxiliary level primes of
+the host; assume two further conditions that we do not reproduce (\lean{WeightTie},
+\lean{HG}), and let the Galois representations of the forms be given over the ring of
+coefficients by a family satisfying a third (\lean{GoodR}). Let
+$\pi\in\mathcal Z$, and suppose that the Galois
+representation of $\pi$ is, over the fraction field, the sum of a representation $\rho$ and the
+$t_0$ characters $\chi_1,\dots,\chi_{t_0}$. Then the valuation at $\pi$ of the
 congruence ideal is at most
 \[
-\len\,\mathrm{Sel}(\rho)\;+\;\sum_{0<e<t}\len_\ell(e)\;+\;v_\ell(h_E)\;+\;t\sum_{P\in Q}v(\zeta_P-1),
+\len\,\mathrm{Sel}(\rho)\;+\;\sum_{0<e<t_0}\len_\ell(e)\;+\;v_\ell(h_E)\;+\;t_0\sum_{\mathfrak q\in\mathcal Q}v(\zeta_{\mathfrak q}-1),
 \]
 where $\mathrm{Sel}(\rho)$ is a Selmer group attached to $\rho$, $h_E$ is the class number of
-the host field and $Q$ is a finite set of auxiliary primes.
+the host field and $\mathcal Q$ is a finite set of auxiliary primes.
 \end{statement}
 This is a bound of the type of Ribet's lemma \cite{ribet1976}: a congruence between a lift and
 a form that is not a lift produces a cocycle, and cocycles are counted by Selmer groups, by the
-groups $\Sha(E,\ell,e)$ and by the class group. The twists $1\le e\le t-1$ are those of the
+groups $\Sha(E,\ell,e)$ and by the class group. The twists $1\le e\le t_0-1$ are those of the
 block: in the source the characters are $\chi_c=\chi_1\,\chi_{\mathrm{cyc}}^{-(c-1)}$, with
 $\chi_{\mathrm{cyc}}$ the cyclotomic character.
 
@@ -98,32 +107,33 @@ Vandiver's conjecture bears.
 \cite{ferrerowashington1979} that $\mu=0$ is proved in the archive, by Sinnott's method
 \cite{sinnott1984} \lvS{} (\lean{sinnott}); compare \cite{iwasawa1973}. The twists it does not
 reach are bounded crudely \lvS{} (\lean{LemmaK}): for a totally complex field
-$L\supset\mu_\ell$ and every $e\ge1$, the group $H^2(G_S,\Z_\ell(e+1))$ is finite and the
-logarithm of its order is at most an explicit function of $e$, $[L:\Q]$ and $\abs{d_L}$;
+$F\supset\mu_\ell$ and every $e\ge1$, the group $H^2(G_\Sigma,\Z_\ell(e+1))$ of $F$ is finite and the
+logarithm of its order is at most an explicit function of $e$, $[F:\Q]$ and $\abs{d_F}$;
 compare \cite{soule1979,borel1974}.
 
 \emph{One integer for all $\ell$.} For $\U(3)$ over an imaginary quadratic field there is a
 statement of the following shape \lvS{}
 (\lean{NumberU3U_s}): for $K$ imaginary quadratic there are constants $c,A$ such
-that for every twist $e$, level $N$, prime $p\ge7$ not dividing $N\,d_K$ and Galois-stable set
-of roots of unity $z$, there is a non-zero integer $NN$ with
+that for every twist $e$, level $N$, prime $p\ge7$ not dividing $N\,d_K$ and finite
+Galois-stable family $(z_o)_{o\in O}$ of roots of unity, there is a non-zero integer $NN$ with
 \[
-\log\abs{NN}\le c\cdot\#\{z\}\cdot\bigl(N(e+1)\bigr)^A\log p
+\log\abs{NN}\le c\cdot\abs O\cdot\bigl(N(e+1)\bigr)^A\log p
 \]
-such that, for every $\ell\ne2,p$, every finite set of pairwise non-isomorphic admissible
-Galois representations $\rho$ of that weight and level satisfies
+such that, for every $\ell\ne2,p$ and all finite sets $X_o$, one for each $o\in O$, of
+pairwise non-isomorphic admissible Galois representations of that weight and level,
 \[
-\abs{NN}_\ell\ \le\ \prod_{\rho}\bigl|\tr\rho(\sigma^{-1})-\mathrm{eis}\bigr|_\ell,
-\qquad \mathrm{eis}=(\mathrm Nw)^{-e}z+1+(\mathrm Nw)^{e}z^{-1},
+\abs{NN}_\ell\ \le\ \prod_{o\in O}\ \prod_{\rho\in X_o}\bigl|\tr\rho(\mathrm{Fr}_\lambda^{-1})-\mathrm{eis}(z_o)\bigr|_\ell,
+\qquad \mathrm{eis}(z)=(\mathrm N\lambda)^{-e}z+1+(\mathrm N\lambda)^{e}z^{-1},
 \]
-at a Frobenius element $\sigma$ at a place $w$ above $p$, with every factor non-zero. Here $\mathrm{eis}$
-is the trace at $\sigma$ of a reducible representation $\Psi\oplus1\oplus\Psi^{-1}$, so $NN$ is
+at a Frobenius element $\mathrm{Fr}_\lambda$ at a place $\lambda$ above $p$, with every factor non-zero. Here $\mathrm{eis}(z)$
+is the trace at $\mathrm{Fr}_\lambda$ of a reducible representation $\Psi\oplus1\oplus\Psi^{-1}$, so $NN$ is
 a congruence number between cusp forms and an Eisenstein class. Summing $\log\ell$ times the
 valuations over all $\ell$ therefore costs only $\log\abs{NN}$.
 
 \emph{From the integer to Sha.} A companion statement \lvS{} (\lean{OneCharU_s}) bounds the
-length in question by $2\sum_{\rho}v_\ell\bigl(\tr\rho(\sigma)-t_\Psi\bigr)$ over such a set of
-representations, where $t_\Psi=\Psi(\sigma)+1+\Psi(\sigma)^{-1}$, provided no admissible $\rho$ has
+length in question by $2\sum_{\rho}v_\ell\bigl(\tr\rho(\mathrm{Fr})-t_\Psi\bigr)$ over such a set of
+representations, for an element $\mathrm{Fr}$ of the Galois group and
+$t_\Psi=\Psi(\mathrm{Fr})+1+\Psi(\mathrm{Fr})^{-1}$, provided no admissible $\rho$ has
 trace exactly $t_\Psi$. Behind it is a lemma of commutative algebra \lvS{} (\lean{LemmaM}) about a
 graded complete local algebra with an augmentation: under five conditions, the length of the
 weight $-1$ part of its cotangent space is at most $2\sum_\xi v(\xi(a))$ over a finite covering
@@ -140,7 +150,7 @@ takes from the literature (\cref{sec:literature}).
 \subsection{Galois representations from theta lifts}\label{sec:galois}
 The representations needed above are supplied by one theorem of the archive \lvS{}
 (\lean{galoisRepresentations_of_thetaLift}): for a CM field $E$, a prime $\ell$ and a
-regular algebraic, polarised, cuspidal automorphic representation $\pi$ of $\GL_a$ over $E$
+regular algebraic, polarised, cuspidal automorphic representation $\pi$ of $\GL_\nu$ over $E$
 there is a continuous semisimple $\ell$-adic representation of $\Gal(\overline E/E)$ with the
 Hodge--Tate weights prescribed by $\pi$ and with stated properties at the places above $\ell$.
 In the literature this is the work of Clozel, Harris--Taylor, Shin and Chenevier--Harris
@@ -149,13 +159,14 @@ version should be recorded.
 
 First, its compatibility with $\pi$ away from $\ell$ is partial \lvS{} (\lean{AwayB}): the
 dimensions agree; the parameters are equal when $\pi$'s is a sum of characters with trivial
-monodromy; and for tame, square-free parameters at places with completion $\Q_g$, $g>16a^2$,
+monodromy; and for tame, square-free parameters with trivial monodromy at places with
+completion $\Q_p$, where $p>16\nu^2$ unless $\nu=1$,
 the characteristic polynomials on inertia agree. This is less than the theorem of Caraiani
 \cite{caraiani2012}.
 
 Second, the theorem has a single hypothesis, which the archive proves \lvS{}
 (\lean{TLiftK}, proved as \lean{tLiftK}): theta lifts exist between \emph{definite} unitary
-groups. Precisely, for a Hermitian space of rank $n$ and a skew-Hermitian space of rank
-$d\ge d_0$ over $E$, both definite, and an automorphic representation of $\U(n)$ whose weights
-satisfy an inequality against $d$, there is a lift to $\U(d)$; compare the work of J.-S.~Li
+groups. Precisely, for a Hermitian space of rank $n_1$ and a skew-Hermitian space of rank
+$n_2\ge n_0$ over $E$, both definite, and an automorphic representation of $\U(n_1)$ whose weights
+satisfy an inequality against $n_2$, there is a lift to $\U(n_2)$; compare the work of J.-S.~Li
 \cite{li1992}. Neither an eigenvariety nor a stable trace formula appears in the statement.

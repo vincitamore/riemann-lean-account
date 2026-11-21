@@ -18,31 +18,31 @@ of modulus~$1$, with positive weights $a_i$, and
 $G_F(y)=\sum_i a_i\,\re G_{\chi_i}(y)$.
 
 \begin{statement}[\lean{zeroFree_of_rpow_window}]\label{st:landau}
-Let $0<\theta<1$, $\delta>0$ and $C$ be real. Suppose that for every $Y_0$ there is $Y\ge Y_0$
-with $G_F(y)\le C\,y^{\theta}$ for all $y\in[Y,Y^{1+\delta}]$. Then $L(s,\chi_i)\neq0$ for
+Let $0<\theta<1$, $\omega>0$ and $C$ be real. Suppose that for every $Y_0$ there is $Y\ge Y_0$
+with $G_F(y)\le C\,y^{\theta}$ for all $y\in[Y,Y^{1+\omega}]$. Then $L(s,\chi_i)\neq0$ for
 every $i$ and every $s$ with $\re s>\theta$.
 \end{statement}
 
-In the application the family is a \emph{level} $\mathcal L$ \lvS: a finite set $K$ of primitive
-characters that contains the trivial character and is closed under inversion, at most one
-distinguished odd real character $\psi_K\in K$, and an integer $o\ge1$, with
+In the application the family is a \emph{level} $\mathcal L$ \lvS: a finite set $\mathcal K$ of
+primitive characters that contains the trivial character and is closed under inversion, at most
+one distinguished odd real character $\psi_{\mathcal K}\in\mathcal K$, and a natural number $o$, with
 \begin{equation}\label{eq:level}
-G_{\mathcal L}(y)=G(y)+\sum_{\psi\in K,\ \psi\neq1}\mathrm{wt}(\psi)\,\re G_\psi(y),\qquad
-\mathrm{wt}(\psi)=\begin{cases}1,&\psi=\psi_K,\\ (3o+1)^{-1},&\text{otherwise}\end{cases}
+G_{\mathcal L}(y)=G(y)+\sum_{\psi\in\mathcal K,\ \psi\neq1}\mathrm{wt}(\psi)\,\re G_\psi(y),\qquad
+\mathrm{wt}(\psi)=\begin{cases}1,&\psi=\psi_{\mathcal K},\\ (3o+1)^{-1},&\text{otherwise}\end{cases}
 \end{equation}
 (\lean{Level.Gm}). The theorem is proved level by level (\lean{zeroFreeOn_of_levels}).
 
 Landau's classical theorem \cite{landau1905} concerns a Dirichlet series with non-negative
 coefficients and needs the bound for all large $x$. The windowed form is what lets the rest of
 the proof work only at scales where suitable auxiliary fields exist. Its proof
-takes the Laplace transform of $u\mapsto G(e^u)$ and looks at its $k$-th Taylor
-coefficient at a real point $\sigma$; that coefficient is an integral of $G$ against a Gamma
-kernel which, for $k\approx(1+\delta/2)\sigma\log Y$, is concentrated in the window. A zero to
+takes the Laplace transform of $v\mapsto G(e^v)$ and looks at its Taylor coefficients at a real
+point $s_0$; the coefficient of order $N$ is an integral of $G$ against a Gamma
+kernel which, for $N\approx(1+\omega/2)s_0\log Y$, is concentrated in the window. A zero to
 the right of $\theta$ contributes a residue of a definite sign and makes these coefficients
-grow; a two-case argument on whether the zero nearest to $\sigma$ is real handles complex
+grow; a two-case argument on whether the zero nearest to $s_0$ is real handles complex
 zeros. The only input from the theory of $L$-functions is non-vanishing on $\re s\ge1$.
 
-The theorem is applied with $\delta=\tfrac12$, that is on windows $[Y,Y^{3/2}]$, and with
+The theorem is applied with $\omega=\tfrac12$, that is on windows $[Y,Y^{3/2}]$, and with
 $\theta=\tfrac12+C\eps$ for every small $\eps$.
 
 \subsection{An exact identity}\label{sec:identity}
@@ -58,7 +58,7 @@ second prime $q$, with $d\notin S$, such that every prime outside $S\cup\{d\}$ i
 the inertia group and the Frobenius element of every prime of $S$ lie in $\Phi$, and the inertia
 group at $d$ is $\{0,\sigma\}$ for a fixed element $\sigma$.
 
-Fix a size $a>0$, a translate $t\in H$, and a weight $w(\rho)>0$ for each $\rho\in\Phi$. A fixed
+Fix a size $a>0$, an element $t\in H$, and a weight $w(\rho)>0$ for each $\rho\in\Phi$. A fixed
 bijection, depending on $t$, pairs each $g\notin\Phi$ with a partner $\rho_g\in\Phi$. Put
 \begin{align}
 \ASK &= \sum_{p}2\log p\sum_{\substack{i\ge1\\ \Frob_p^{\,i}\notin\Phi}}
@@ -99,21 +99,21 @@ kinds \lvS{} (\lean{SizesA}):
   $\vartheta=\exp(-c\,x^{\eps/8})$ \lvS{} (\lean{Char_at}), the quality of the classical
   zero-free region.
 \end{itemize}
-Let $K'\subset\Psi(A_0)$ be a set of \emph{kept} characters, containing the trivial one, each
-with $\psi(\sigma)=1$, and let $\abs c\le1$. Put
+Let $\mathcal K'\subset\Psi(A_0)$ be a set of \emph{kept} characters, containing the trivial one,
+each with $\psi(\sigma)=1$, and let $\abs\beta\le1$. Put
 \[
-G_{K'}(x)=\sum_{\psi\in K'}\mathrm{wt}_c(\psi)\,\re G_\psi(x),\qquad
-\Sigma_{K'}(x)=\sum_{\psi\in\Psi(A_0)\setminus K'}\abs{G_\psi(x)},
+G_{\mathcal K'}(x)=\sum_{\psi\in\mathcal K'}\mathrm{wt}_\beta(\psi)\,\re G_\psi(x),\qquad
+\Sigma_{\mathcal K'}(x)=\sum_{\psi\in\Psi(A_0)\setminus\mathcal K'}\abs{G_\psi(x)},
 \]
-where $\mathrm{wt}_c(\psi)$ is $1$ if $\psi$ is trivial on $H$ and $c$ otherwise.
+where $\mathrm{wt}_\beta(\psi)$ is $1$ if $\psi$ is trivial on $H$ and $\beta$ otherwise.
 
 \begin{statement}[\lean{ch_core}]\label{st:core}
-Let $C\ge0$, $\eps>0$, $\abs c\le1$ and constants $M$, $K_o$, $C_E$ be given. For all
+Let $C\ge0$, $\eps>0$, $\abs\beta\le1$ and constants $M$, $K_o$, $C_E$ be given. For all
 sufficiently large $x$ the following holds. Assume the conditions on the host and the sizes
 above, the size conditions of \cref{sec:balance}, and
 \begin{enumerate}
 \item $\abs{\Psi(A_0)}\le M$, and for each kept $\psi$ that is not trivial on $H$,
-  $\bigl|\sum_{t\in TT}\psi(0,t)-c\,\abs{TT}\bigr|\le M\,x^{-1+\eps}\abs{TT}$;
+  $\bigl|\sum_{t\in TT}\psi(0,t)-\beta\,\abs{TT}\bigr|\le M\,x^{-1+\eps}\abs{TT}$;
 \item $\abs{\tfrac{L'}{L}(1,\psi)}\le K_o$ for kept $\psi\neq1$, and $\le C_E\log x$ for the
   other $\psi\in\Psi(A_0)$;
 \item for every translate $u_0\in A_0$,
@@ -122,27 +122,28 @@ above, the size conditions of \cref{sec:balance}, and
   \]
   where $\mathrm{Br}$ is the bracket of \cref{sec:balance}.
 \end{enumerate}
-Then $G_{K'}(x)\le x^{1/2+(C+3)\eps}+\Sigma_{K'}(x)$.
+Then $G_{\mathcal K'}(x)\le x^{1/2+(C+3)\eps}+\Sigma_{\mathcal K'}(x)$.
 \end{statement}
 
 The proof applies \cref{st:balance} to each term of (3). Condition (1) says that the sizes
-$TT$ see each kept character with the same weight $c$, which is what turns the sum over
-$t\in TT$ of $\psi(0,t)\,G_\psi(a_t/b)$ into $\abs{TT}\,\mathrm{wt}_c(\psi)\,G_\psi(x)$ up to an
+$TT$ see each kept character with the same weight $\beta$, which is what turns the sum over
+$t\in TT$ of $\psi(0,t)\,G_\psi(a_t/b)$ into $\abs{TT}\,\mathrm{wt}_\beta(\psi)\,G_\psi(x)$ up to an
 error; the characters that are not kept are bounded by their absolute values. The outcome is
 \begin{equation}\label{eq:reduction}
-\abs{TT}\,m\,b\,\frac{\delta_T}{2}\,\Bigl(G_{K'}(x)-\Sigma_{K'}(x)-4x^{1/2+\eps}\Bigr)\ \le\
+\abs{TT}\,m\,b\,\frac{\delta_T}{2}\,\Bigl(G_{\mathcal K'}(x)-\Sigma_{\mathcal K'}(x)-4x^{1/2+\eps}\Bigr)\ \le\
 x^{C\eps}\,\mathrm{Br}+\frac{2\abs{TT}\,m\,b}{x},
 \end{equation}
 where $\delta_T=\abs{T_2}/\abs H$ is the density of the thick set, and \cref{sec:balance}
 converts this into the statement.
 
-For a level $\mathcal L$ and a host adapted to it, $K'$ is the image of the level's characters,
-$c=(3o+1)^{-1}$ and $M=4o$. Adapted means in particular (\lean{ExceptionalCharacterKept}) that
+For a level $\mathcal L$ and a host adapted to it, $\mathcal K'$ is the image of the level's
+characters, $\beta=(3o+1)^{-1}$ and $M=4o$. Adapted means in particular
+(\lean{ExceptionalCharacterKept}) that
 the quadratic character of $\mathfrak G$ that is trivial on $H$ and on $\sigma$ is induced from
-$\psi_K$ if the level has a distinguished character, and is not kept otherwise; it and the
+$\psi_{\mathcal K}$ if the level has a distinguished character, and is not kept otherwise; it and the
 trivial character are the only kept characters that can be trivial on $H$. Then
-$G_{K'}=G_{\mathcal L}$ (\lean{gmA_eq}) and
-$\Sigma_{K'}(x)\le4o\,x^{1/2+\eps}$ (\lean{sigA_le}), the latter because the host is chosen so
+$G_{\mathcal K'}=G_{\mathcal L}$ (\lean{gmA_eq}) and
+$\Sigma_{\mathcal K'}(x)\le4o\,x^{1/2+\eps}$ (\lean{sigA_le}), the latter because the host is chosen so
 that its other characters satisfy $\abs{G_\psi(x)}\le x^{1/2+\eps}$ at the single point $x$;
 \cref{sec:hosts} explains why this is not circular. Hence \lvP{} (\lean{core_gm}), applying
 \cref{st:core} with $C=e_D+e_L+3$,
@@ -173,7 +174,7 @@ which by the two lower bounds are of sizes $x/m$, $m$ and $k/n^2$ up to factors 
 the factor $m^2/k$ is at most $m/x$ because $k\ge xm$. The first falls with the number of lifts
 and the second rises with it. At $m\approx\sqrt x$, with $k\le n^2\sqrt x$, all three are
 $x^{1/2+O(\eps)}$ and \eqref{eq:reduction} gives
-$G_{K'}(x)-\Sigma_{K'}(x)\le x^{1/2+(C+3)\eps}$ \lvS{} (\lean{GrowthSizeBound}).
+$G_{\mathcal K'}(x)-\Sigma_{\mathcal K'}(x)\le x^{1/2+(C+3)\eps}$ \lvS{} (\lean{GrowthSizeBound}).
 
 \begin{remark}
 This is the only place where $\tfrac12$ is produced. Everything that follows is devoted to

@@ -1,0 +1,90 @@
+replay program sha256 b5e3596dde657bc84d9ed580574989a80d06ae4f3faecc055ebf8ed51a2d73d5
+the hostile package builds and the crafted files are written
+  Hostile/AfterFakeQuotient.lean:11:0: 'Hostile.falseFromQuot' does not depend on any axioms
+  Hostile/Axiom.lean:12:0: 'Hostile.fromAxiom' depends on axioms: [Hostile.assumed]
+  Hostile/FalseTheorem.lean:22:0: 'Hostile.conclusion' does not depend on any axioms
+  Hostile/Sorry.lean:10:0: 'Hostile.bySorry' depends on axioms: [sorryAx]
+Hostile.Honest: leanchecker accepts (expected accepts), leanchecker --fresh accepts (expected accepts), replay accepts (expected accepts); as expected: yes
+Hostile.Plant: leanchecker accepts (expected accepts), leanchecker --fresh accepts (expected accepts), replay accepts (expected accepts); as expected: yes
+Hostile.Axiom: leanchecker accepts (expected accepts), leanchecker --fresh accepts (expected accepts), replay accepts (expected accepts); as expected: yes
+Hostile.Sorry: leanchecker accepts (expected accepts), leanchecker --fresh accepts (expected accepts), replay accepts (expected accepts); as expected: yes
+Hostile.FalseTheorem: leanchecker rejects (expected rejects), leanchecker --fresh rejects (expected rejects), replay rejects (expected rejects); as expected: yes
+    replay: Hostile.falseProved	(kernel) declaration type mismatch, 'Hostile.falseProved' has type   True but it is expected to have type   False
+    leanchecker --fresh: uncaught exception: while replaying declaration 'Hostile.falseProved':
+    leanchecker --fresh: (kernel) declaration type mismatch, 'Hostile.falseProved' has type
+Hostile.WrongValue: leanchecker rejects (expected rejects), leanchecker --fresh rejects (expected rejects), replay rejects (expected rejects); as expected: yes
+    replay: Hostile.three	(kernel) declaration type mismatch, 'Hostile.three' has type   String but it is expected to have type   Nat
+    leanchecker --fresh: uncaught exception: while replaying declaration 'Hostile.three':
+    leanchecker --fresh: (kernel) declaration type mismatch, 'Hostile.three' has type
+Hostile.UsesUnsafe: leanchecker rejects (expected rejects), leanchecker --fresh rejects (expected rejects), replay rejects (expected rejects); as expected: yes
+    replay: Hostile.fromUnsafe	(kernel) unknown constant 'Hostile.unsafeNumber'
+    leanchecker --fresh: uncaught exception: while replaying declaration 'Hostile.fromUnsafe':
+    leanchecker --fresh: (kernel) unknown constant 'Hostile.unsafeNumber'
+Hostile.TamperedRecursor: leanchecker rejects (expected rejects), leanchecker --fresh rejects (expected rejects), replay rejects (expected rejects); as expected: yes
+    replay: Hostile.Two.rec	is a recursor in the compiled files and differs from the constant the kernel produced (a recursor)
+    leanchecker --fresh: uncaught exception: Invalid recursor Hostile.Two.rec
+Hostile.TamperedConstructor: leanchecker rejects (expected rejects), leanchecker --fresh rejects (expected rejects), replay rejects (expected rejects); as expected: yes
+    replay: Hostile.Box.mk	is a constructor in the compiled files and differs from the constant the kernel produced (a constructor)
+    leanchecker --fresh: uncaught exception: Invalid constructor Hostile.Box.mk
+Hostile.DupBogusLast: leanchecker accepts (expected any), leanchecker --fresh rejects (expected rejects), replay rejects (expected rejects); as expected: yes
+    replay: Hostile.Dup.twice	(kernel) declaration type mismatch, 'Hostile.Dup.twice' has type   Nat but it is expected to have type   True
+    leanchecker --fresh: uncaught exception: while replaying declaration 'Hostile.Dup.twice':
+    leanchecker --fresh: (kernel) declaration type mismatch, 'Hostile.Dup.twice' has type
+Hostile.DupBogusFirst: leanchecker accepts (expected any), leanchecker --fresh accepts (expected any), replay rejects (expected rejects); as expected: yes
+    replay: Hostile.Dup.twice	(kernel) declaration type mismatch, 'Hostile.Dup.twice' has type   Nat but it is expected to have type   True
+Hostile.MissingConstructor: leanchecker rejects (expected any), leanchecker --fresh rejects (expected any), replay rejects (expected rejects); as expected: yes
+    replay: Hostile.Coin	Hostile.Coin.tails, listed as a constructor of Hostile.Coin, is not in the compiled files
+    replay: Hostile.onlyHeads	(kernel) unknown constant 'Hostile.Coin'
+    replay: Hostile.Coin.heads	is a constructor in the compiled files, and the kernel produced no constant of this name
+    replay: Hostile.Coin	is an inductive type in the compiled files, and the kernel produced no constant of this name
+    leanchecker --fresh: PANIC at Std.DHashMap.Internal.AssocList.get! Std.Data.DHashMap.Internal.AssocList.Basic:163:11: key is not present in hash table
+    leanchecker --fresh: leanchecker(replayFromFresh [λ]+0x115) [0x61cebb271d25]
+Hostile.KeyMismatch: leanchecker rejects (expected any), leanchecker --fresh rejects (expected any), replay rejects (expected rejects); as expected: yes
+    replay: Hostile.phantomBody	the compiled file stores under this name a constant named Hostile.Phantom
+    replay: Hostile.Phantom	(kernel) constant has already been declared 'Hostile.Phantom'
+    replay: Hostile.phantomBody	is a definition in the compiled files, and the kernel produced no constant of this name
+    replay: Hostile.Phantom	is an inductive type in the compiled files and differs from the constant the kernel produced (a definition)
+    leanchecker --fresh: uncaught exception: while replaying declaration 'Hostile.phantomNonempty':
+    leanchecker --fresh: (kernel) application type mismatch
+Hostile.MissingRecursor: leanchecker accepts (expected any), leanchecker --fresh accepts (expected any), replay rejects (expected rejects); as expected: yes
+    replay: Hostile.Bit.rec	was produced by the kernel and is not a constant of the compiled files that is neither unsafe nor partial
+Hostile.TamperedInductive: leanchecker accepts (expected any), leanchecker --fresh accepts (expected any), replay rejects (expected rejects); as expected: yes
+    replay: Hostile.Chain	is an inductive type in the compiled files and differs from the constant the kernel produced (an inductive type)
+Hostile.FakeQuotient: leanchecker accepts (expected any), leanchecker --fresh accepts (expected any), replay rejects (expected rejects); as expected: yes
+    replay: Hostile.fakeQuot	is a quotient constant in the compiled files, and the kernel produced no constant of this name
+Hostile.AfterFakeQuotient: leanchecker accepts (expected any), leanchecker --fresh rejects (expected any), replay rejects (expected rejects); as expected: yes
+    replay: Hostile.falseFromQuot	(kernel) unknown constant 'Hostile.fakeQuot'
+    replay: Hostile.fakeQuot	is a quotient constant in the compiled files, and the kernel produced no constant of this name
+    leanchecker --fresh: uncaught exception: while replaying declaration 'Hostile.falseFromQuot':
+    leanchecker --fresh: (kernel) unknown constant 'Hostile.fakeQuot'
+Hostile.FakeInductive: leanchecker accepts (expected any), leanchecker --fresh accepts (expected any), replay rejects (expected rejects); as expected: yes
+    replay: Hostile.fakeInductive	is not a member of the mutual block it names
+    replay: Hostile.fakeInductive	is an inductive type in the compiled files, and the kernel produced no constant of this name
+Hostile.ConstructorIsUnsafe: leanchecker accepts (expected any), leanchecker --fresh accepts (expected any), replay rejects (expected rejects); as expected: yes
+    replay: Hostile.Claim	Hostile.Claim.witness, listed as a constructor of Hostile.Claim, is a definition
+    replay: Hostile.claimed	(kernel) unknown constant 'Hostile.Claim'
+    replay: Hostile.Claim	is an inductive type in the compiled files, and the kernel produced no constant of this name
+Hostile.ExportedOnly: leanchecker accepts (expected any), leanchecker --fresh accepts (expected any), replay rejects (expected rejects); as expected: yes
+    replay: Hostile.exportedFalse	the first part of module Hostile.ExportedOnly holds a theorem of this name, and the part replayed holds none
+Hostile.ExportedFlag: leanchecker accepts (expected any), leanchecker --fresh accepts (expected any), replay rejects (expected rejects); as expected: yes
+    replay: Hostile.ExportedFlag	the first part of the compiled file is marked as a module-system file and the private part is not
+    replay: Hostile.exportedFalse	the first part of module Hostile.ExportedFlag holds a theorem of this name, and the part replayed holds none
+Hostile.ExportedStatement: leanchecker accepts (expected any), leanchecker --fresh accepts (expected any), replay rejects (expected rejects); as expected: yes
+    replay: Hostile.stated	the first part of module Hostile.ExportedStatement holds an axiom of this name that is neither the constant replayed nor its statement as an axiom
+Hostile.ExportedLevels: leanchecker accepts (expected any), leanchecker --fresh accepts (expected any), replay rejects (expected rejects); as expected: yes
+    replay: Hostile.levelled	the first part of module Hostile.ExportedLevels holds an axiom of this name that is neither the constant replayed nor its statement as an axiom
+Hostile.ExportedPartial: leanchecker accepts (expected any), leanchecker --fresh accepts (expected any), replay rejects (expected rejects); as expected: yes
+    replay: Hostile.spin	the first part of module Hostile.ExportedPartial holds an axiom of this name that is neither the constant replayed nor its statement as an axiom
+Hostile.ExportedUnsafe: leanchecker accepts (expected any), leanchecker --fresh accepts (expected any), replay rejects (expected rejects); as expected: yes
+    replay: Hostile.wild	the first part of module Hostile.ExportedUnsafe holds an axiom of this name that is neither the constant replayed nor its statement as an axiom
+Hostile.ExportedOpaque: leanchecker accepts (expected any), leanchecker --fresh accepts (expected any), replay rejects (expected rejects); as expected: yes
+    replay: Hostile.shut	the first part of module Hostile.ExportedOpaque holds an axiom of this name that is neither the constant replayed nor its statement as an axiom
+Hostile.ExportedImports: leanchecker accepts (expected any), leanchecker --fresh accepts (expected any), replay rejects (expected rejects); as expected: yes
+    replay: Hostile.ExportedImports	the import list of the first part of the compiled file differs from that of the private part
+Hostile.CodeConstants: leanchecker accepts (expected any), leanchecker --fresh accepts (expected any), replay rejects (expected rejects); as expected: yes
+    replay: Hostile.CodeConstants	a file of compiled code of this module holds 1 constants; Lean writes none there
+Hostile.CodeImports: leanchecker accepts (expected any), leanchecker --fresh accepts (expected any), replay rejects (expected rejects); as expected: yes
+    replay: Hostile.CodeImports	the import list of the `.ir` file differs from that of the part replayed
+axioms named Hostile.* that the replay lists for Hostile.Axiom: 1
+named theorems: Hostile.conclusion reported FAILED, Hostile.Honest.size_pos reported checked; as expected: yes
+HOSTILE-OK

@@ -9,9 +9,11 @@ source \cite{alpoge2026lean}, \filecount{} Lean files and \linecount{} lines, an
 with a timeline of twenty steps. The note says that no human-readable proof has been written.
 
 This paper does two things. It reports that the proof is correct as a formal object: we built
-the archive, it compiles, its five top theorems rest on the three standard axioms and
-nothing else, and the kernel accepts a replay, from an empty environment, of every declaration
-that is not marked unsafe or partial (\cref{sec:verification}). And it says what the argument
+the archive, it compiles, \lean{#print axioms} reports for its five top theorems the three
+standard axioms and nothing else, and the kernel accepts every theorem and definition of the
+import closure, replayed from an empty environment (\cref{sec:verification}\ifsecondrun\else,
+which also says what the replay reported in this version did not compare\fi). And it says
+what the argument
 is: an account read from the Lean source, from the final theorem down to the theorems of the
 published literature on which it rests. The release does not contain one.
 
@@ -41,12 +43,14 @@ divisible by about $p^{a/p+a/p^3+\cdots}$, where $a$ is the order of the Taylor 
 of theta functions through which they are expressed, because a CM elliptic curve has a formal
 group of height two there (\cref{sec:divisibility}). So $B_u$ still maps into the lattice $P$
 of periods a lattice $N_u$, obtained by rescaling a sublattice of $M_u$, whose slope exceeds
-that of $M_u$ by at least the count $\ASK$, up to errors. The maps $B_u$ form a nearly tight frame, by a relative trace
+that of $M_u$ by at least the count $\ASK$, up to errors and to correction terms that cancel
+later. The maps $B_u$ form a nearly tight frame, by a relative trace
 formula for Bessel--Poincar\'e series (\cref{sec:frame}), and a slope inequality for such
 frames bounds the slope of $P$ from below by the mean slope of the $N_u$ (\cref{sec:slope}).
-From above, the slope of $P$ is computed: it is $m$ times $\log(a!/\Omega^a)$ with $\Omega$ a
-CM period, and the Chowla--Selberg formula turns this into exactly $\MAIN$
-(\cref{sec:period}).
+From above, the slope of $P$ is bounded by $m$ times $\log(a!/\Omega^a)$, with $\Omega$ a
+CM period, less a term from an auxiliary level prime; a dimension count for that prime and
+the Chowla--Selberg formula for the mean of $\log\Omega$ turn this into $\MAIN$ and a
+remainder that the correction terms cancel (\cref{sec:period}).
 
 \emph{Three inputs.} The construction needs a bound on Galois cohomology in a cyclotomic tower,
 which the note calls a weakening of Vandiver's conjecture (\cref{sec:cohomology}); the

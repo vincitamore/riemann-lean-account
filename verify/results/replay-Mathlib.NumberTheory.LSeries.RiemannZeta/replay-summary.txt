@@ -1,0 +1,24 @@
+REPLAY-SUMMARY
+root Mathlib.NumberTheory.LSeries.RiemannZeta
+threads unset (Lean's default: one per processor)
+modules 4654
+constants 433827
+replayed 430239
+theorems 283889
+definitions 130092
+opaque 2739
+axioms 7
+quotient-constants 4
+inductive-types 3895 in 3864 blocks
+constructors-compared 5606
+recursors-compared 4007
+sum-of-the-kinds 430239 (equals replayed: true)
+compared-with-the-kernel's-constants 430239 (every constant replayed, in both directions)
+exported-parts-compared 4654 modules, 355332 constants
+exported-axioms-of-partial-definitions-not-marked-unsafe 519 (allowed in Lean's own library only)
+code-files-read 4654 modules (they must hold no constants)
+unsafe-or-partial-not-replayed 3588
+failed 0
+names-declared-more-than-once 255, further versions 393, of which checked 393 and axioms 0
+selftest accepts-true true rejects-false true
+seconds 77

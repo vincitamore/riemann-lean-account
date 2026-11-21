@@ -3,10 +3,10 @@
 \Cref{st:F} needs the period maps $B_u$ to form a nearly tight frame. The clause that supplies
 this is \lvS{} (\lean{InputSG}): for matrices $B_i$ with a common target of dimension
 $\abs\alpha$, weights $\gamma_i$, and the normalised Gram blocks
-$K_{ij}=(\gamma_i\gamma_j)^{1/2}B_i^*B_j$,
+$\Gamma_{ij}=(\gamma_i\gamma_j)^{1/2}B_i^*B_j$,
 \begin{align*}
-\norm{K_{ij}}_{\mathrm{HS}}^2&\le(1+\eta_0)\,\frac{d_i\,d_j}{D^*}\quad(i\ne j),&
-\norm{K_{ii}-1}_{\mathrm{HS}}^2&\le e_0\,d_i,&
+\norm{\Gamma_{ij}}_{\mathrm{HS}}^2&\le(1+\eta_0)\,\frac{d_i\,d_j}{D^*}\quad(i\ne j),&
+\norm{\Gamma_{ii}-1}_{\mathrm{HS}}^2&\le e_0\,d_i,&
 \abs\alpha&\le(1+\eta_1)\,D^*,
 \end{align*}
 where $d_i$ is the rank of the $i$-th source. Each map is nearly an isometry, and two different
@@ -16,24 +16,25 @@ orthonormal family: tightness comes from there being many indices, with $\sum_id
 than $D^*$. Passing from these three bounds to the hypotheses of \cref{st:F} is linear algebra.
 
 \subsection{The maps}
-The forms live on a definite unitary group $H=\U(W)$ of rank $k$ over the host field. The
+The forms live on a definite unitary group $\mathbf H=\U(W_0)$ of rank $k$ over the host field;
+in the application $k$ is the rank parameter of \cref{sec:balance}. The
 common target is a space of automorphic forms on an \emph{indefinite} unitary group
-$G=\U(V)$, of signature $(k+r,\,r+1)$ at each infinite place, with a fixed discrete-series type at
-infinity. The two are related by a Bessel subgroup $N\rtimes H\subset G$, attached to an
+$\mathbf G=\U(V)$, of signature $(k+r,\,r+1)$ at each infinite place, with a fixed discrete-series type at
+infinity. The two are related by a Bessel subgroup $\mathbf N\rtimes\mathbf H\subset\mathbf G$, attached to an
 isotropic flag and a vector of norm $-T(u)$: this is the setting of the Gan--Gross--Prasad
-conjectures \cite{ggp2012}. The map $P_u$ sends a form on $H$ of archimedean type $\pi_u$ to
-the Poincar\'e series on $G$ built from the Bessel function of the discrete series, and up to
-unitary changes of basis and a non-zero scalar the period map $B_u$ is a compression of $P_u$.
+conjectures \cite{ggp2012}. The map $\mathcal P_u$ sends a form on $\mathbf H$ of archimedean type $\pi_u$ to
+the Poincar\'e series on $\mathbf G$ built from the Bessel function of the discrete series, and up to
+unitary changes of basis and a non-zero scalar the period map $B_u$ is a compression of $\mathcal P_u$.
 
 \subsection{A relative trace formula}
-The pairing $\langle P_uT,P_{u'}T'\rangle$ is expanded as a convergent sum of operators
+The pairing $\langle\mathcal P_u\phi,\mathcal P_{u'}\phi'\rangle$ is expanded as a convergent sum of operators
 indexed by integral double cosets, each an archimedean orbital integral \lvS{}
 (\lean{KExpansion}); the terms that are not \emph{relevant} vanish. The three bounds are read
 off this sum.
 \begin{itemize}
 \item \emph{The identity term.} For a term whose representative lies in the unipotent group
-  $N$, the operator is a scalar \lvS{} (\lean{oot_eq}): a character value times
-  $\mathrm{vol}(N\text{-domain})\cdot\mathrm{vol}(H)/\dim\pi_u$. The normalisation of the maps
+  $\mathbf N$, the operator is a scalar \lvS{} (\lean{oot_eq}): a character value times
+  $\mathrm{vol}(\mathbf N\text{-domain})\cdot\mathrm{vol}(\mathbf H)/\dim\pi_u$. The normalisation of the maps
   makes this $1$.
 \item \emph{Different indices.} If the archimedean parameters of $u$ and $u'$ differ at every
   place, then for a relevant degenerate term every intertwining operator between the two
@@ -43,8 +44,8 @@ off this sum.
   parameters are separated by a gap of at least $120\,(2r+k+1)^3$, any two Bessel maps from a
   discrete series of $\U(k+r,r+1)$ to $\pi_u$ are proportional on smooth vectors \lvS{}
   (\lean{UniqGap}); compare \cite{sunzhu2012,jsz2010}.
-\item \emph{The Siegel--Weil formula} is used in its convergent range, for frames of $n$
-  vectors in a Hermitian space of dimension $M$ with $2n<M$, and as a mass
+\item \emph{The Siegel--Weil formula} is used in its convergent range, for frames of fewer
+  vectors than half the dimension of the Hermitian space, and as a mass
   formula \lvS{} (\lean{SiegelDensities}): the mean over $[\U(V)]$ of the theta series of
   frames with a given non-degenerate Gram matrix is the product of the local densities. The
   main term of the off-diagonal blocks is derived from it and from the uniqueness of Bessel
@@ -55,9 +56,9 @@ rows of the expansion that are large or not scalar contribute at most
 $\exp(-c\,kf\log k)$ times the main term, and the non-generic rows at most
 $2^{-(k-2r-5)}\exp\bigl(C(2r+2)^5f\log b\bigr)$ times it, then
 \[
-\norm{K_{uu'}}^2\ \le\ \bigl(1+b^{-6}\bigr)\,\frac{d_u\,d_{u'}}{D^*}.
+\norm{\Gamma_{uu'}}^2\ \le\ \bigl(1+b^{-6}\bigr)\,\frac{d_u\,d_{u'}}{D^*}.
 \]
-Here $f$ is the number of infinite places of the host. The decay is driven by the rank $k$.
+Here $f=\abs\Phi$ is the number of infinite places of the host. The decay is driven by the rank $k$.
 
 Every ingredient is standard: unfolding as in the Petersson formula, Schur orthogonality,
 decay of matrix coefficients, uniqueness of Bessel models, Siegel--Weil as a mass formula,

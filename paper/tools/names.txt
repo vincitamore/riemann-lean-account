@@ -1,0 +1,141 @@
+# Classes of the Lean names the paper cites, read by tools/check_names.py.
+# A name not listed here must be in the dependency cone of riemannHypothesis under every
+# declaration of the archive that ends with it.
+
+# Several declarations of the archive end with the cited name; the one meant is given.
+pick CM2 Formalism.L2.Th1.CM.CM2
+pick ltLog Formalism.L2.Th1.CM.ltLog
+pick KExpansion Formalism.L2.SG.TermOp.KExpansion
+pick LemmaK UpperTheory.V.LemmaK
+pick LemmaM UpperTheory.V.Alg.LemmaM
+pick SizesA Deduction.CH.SizesA
+pick ch_core Deduction.ch_core
+pick riemannHypothesis riemannHypothesis
+pick adm2 Formalism.MainNotions.LocalQuadraticParts.adm2
+pick Fi GlobalTheory.Mem.Col2.GStep.Fi
+pick Iu Formalism.BasicNotions.DV.Iu
+pick gainP Formalism.MainNotions.G.gainP
+pick gU Formalism.MainNotions.G.gU
+pick g0 Formalism.MainNotions.G.g0
+pick IsV Formalism.MainNotions.G.IsV
+pick Excl Formalism.MainNotions.G.Excl
+pick capU Formalism.MainNotions.G.capU
+pick VV Formalism.MainNotions.G.VV
+pick Good Formalism.MainNotions.G.Good
+pick sg Formalism.BasicNotions.SizeData₂.sg
+pick Ga Formalism.BasicNotions.SizeData₂.Ga
+pick Fo Formalism.BasicNotions.SizeData₂.Fo
+pick Ee Formalism.BasicNotions.SizeData₂.Ee
+pick WeightTie GlobalTheory.IndefiniteRowSideFullHecke.BaseSizes.WeightTie
+pick HG Formalism.MainNotions.N.HG
+
+# Declarations the paper says are outside the cone.
+off AskMainBalance
+off colour_balance
+off GrowthInequalityForm
+off HostFacts
+off JetsInert
+off thmBGauss
+off MeanBoundSecondForm
+off DetGain
+off DetChain
+off DetBlocks
+off BesselPeriodGGP
+off NumberSp4
+off CongruenceNumberRankThree
+off lamLow_of_classicalTheorems
+off ZetaQuarterPowerCorollary
+off RiemannHypothesisOfLowerBounds
+off RiemannHypothesisOfHalfLinks
+off WeightedSieveImpliesRH
+off WeightedSieveImpliesRHThreeParameter
+off GrowthBoundGivesRiemannHypothesis
+off RiemannHypothesisOfBalanceAndGrowthData
+
+# The other four theorems of Main.lean.
+five riemannZeta_eq_zero_re
+five LFunction_ne_zero_of_half_lt_re
+five LFunction_eq_zero_re
+five LFunction_eq_zero_re_of_isPrimitive
+
+# Declared in Mathlib or in Lean's library.
+mathlib RiemannHypothesis
+mathlib riemannZeta
+mathlib DirichletCharacter.LFunction
+mathlib propext
+mathlib Classical.choice
+mathlib Quot.sound
+mathlib sorryAx
+mathlib True
+mathlib False
+mathlib Kernel.Environment.addDeclCore
+
+# Keywords, commands, files, directories and other text.
+word sorry
+word admit
+word axiom
+word native_decide
+word implemented_by
+word extern
+word unsafe
+word opaque
+word csimp
+word partial
+word module
+word #eval
+word skipKernelTC
+word addDeclWithoutChecking
+word doCheck
+word ofReduceBool
+word checkPrimitiveDef
+word Lean/Util/CollectAxioms.lean
+word version.tex
+word #print axioms
+word .lean
+word Main.lean
+word lean.tar.gz
+word Mathlib.NumberTheory.LSeries.RiemannZeta
+word Build completed successfully
+word Main
+word --fresh
+word leanchecker --fresh
+word lean4lean
+word hostile/
+word hostile.sh
+word stock.sh
+word sample.sh
+word summary.sh
+word toolchain.sh
+word independent.sh
+word verify/results/run1/
+word paper/tools/numbers.py
+word paper/tools/check_names.py
+word lake build Main
+word leanchecker
+word LEAN_NUM_THREADS
+word Development
+word Formalism
+word GroundTheory
+word ReciprocityTheory
+word CompanionTheory
+word PositivityTheory
+word one-page.pdf
+word bash
+word curl
+word git
+word tar
+word zstd
+word elan
+word python3
+word sha256sum
+word setup.sh
+word build.sh
+word janitor.sh
+word check.sh
+word cut.sh
+word replay.sh
+word scan.py
+word cut/CutMain.lean
+word replay/ReplayMain.lean
+word verify/
+word verify/results/

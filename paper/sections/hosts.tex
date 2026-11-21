@@ -1,23 +1,25 @@
 \section{Hosts and the auxiliary characters}\label{sec:hosts}
 
 \subsection{The host field}
-Given a primitive character $\psi$, an integer $e$ and two primes $q$ and $d$, a \emph{host} is
+Given a primitive character $\psi$, an integer $e_2$ and two primes $q$ and $d$, a \emph{host} is
 a field $E$ of the following kind \lvS{} (\lean{IsChiField}): $E$ embeds in a cyclotomic field
-$\Q(\zeta_N)$ with $2^{e+2}$, the conductor of $\psi$, $q$ and $d$ all dividing $N$, and the
-automorphism $\zeta_N\mapsto\zeta_N^{a}$ fixes $E$ exactly when
+$\Q(\zeta_N)$ with $2^{e_2+2}$, the conductor of $\psi$, $q$ and $d$ all dividing $N$, and the
+automorphism $\zeta_N\mapsto\zeta_N^{r}$ fixes $E$ exactly when
 \[
-a\equiv\pm1\pmod{2^{e+2}},\qquad \psi(a)=1,\qquad \Bigl(\frac aq\Bigr)=1,\qquad
-\Bigl(\frac ad\Bigr)=1 .
+r\equiv\pm1\pmod{2^{e_2+2}},\qquad \psi(r)=1,\qquad \Bigl(\frac rq\Bigr)=1,\qquad
+\Bigl(\frac rd\Bigr)=1 .
 \]
 So the Galois group of $E$ is the product of a group of order four, coming from $q$ and $d$,
 and a group $H$ built from a layer of the cyclotomic $\Z_2$-tower and from $\psi$. It is the
-field to which \cref{st:vwin} applies.
+field to which \cref{st:vwin} applies. The host contains $\sqrt{-d}$, and $\Phi$ is the subgroup
+that fixes it (\lean{HostRaw}); so the CM field of \cref{sec:period,sec:divisibility} is
+$\Q(\sqrt{-d})$, and $\chi_\Phi$ is its quadratic character.
 
 The sizes are fixed by two parameters \lvS{} (\lean{WinPair}, \lean{PageN}): a parameter $Y$,
 which is constant on a window of scales, and the scale $x$ itself. The prime
 $q$ satisfies $q\equiv3\pmod8$ and $\tfrac12Y^{\eps/5}<\log q\le Y^{\eps/5}$; the prime $d$
 satisfies $d\equiv7\pmod{16}$ and $\log d\approx Y^{\eps/5}(\log Y)^2$, and $d+1$ is divisible
-by $q$ and by every odd prime up to $Y^{\eps/5}$; and $2^e$ lies between $x^{2+8\eps}$ and
+by $q$ and by every odd prime up to $Y^{\eps/5}$; and $2^{e_2}$ lies between $x^{2+8\eps}$ and
 $2x^{2+8\eps}$. The scales of a window lie between $Y$ and a fixed power of $Y$, so the
 conductor of $E$ exceeds every power of $x$, while the degree of $E$ is a power of $x$.
 
@@ -28,7 +30,7 @@ then hosts with the required properties exist at every scale in a set containing
 exponent $\tfrac32$.
 \end{statement}
 The only assumption about $\psi$ is its cohomological bound. The windows come from
-\cref{st:vwin}, which holds on $[Y,Y^2]$; this is why \cref{st:landau} is needed in its
+\cref{st:vwin}, which holds on windows $[Y_1,Y_1^2]$; this is why \cref{st:landau} is needed in its
 windowed form.
 
 \subsection{The auxiliary characters and the absence of a circle}
@@ -38,14 +40,14 @@ $\xi\cdot\bigl(\tfrac\cdot q\bigr)^i\bigl(\tfrac\cdot d\bigr)^j$ with $(i,j)\ne(
 characters $\xi$ whose modulus is that of $\psi$. That looks like the statement being proved.
 It is supplied by the choice of the primes:
 \begin{statement}[\lean{PairEx}]\label{st:pairs}
-For every modulus $M$, every $0<\eps<\tfrac1{52}$ and every $A\ge1$, for all large $Y$ there
-are primes $q$ and $d$ of the sizes above, prime to $M$, such that for every character $\xi$
-modulo $M$ and every $(i,j)\neq(0,0)$ the twist $\chi$ of $\xi$ satisfies
+For every modulus $M_0$, every $0<\eps<\tfrac1{52}$ and every $A\ge1$, for all large $Y$ there
+are primes $q$ and $d$ of the sizes above, prime to $M_0$, such that for every character $\xi$
+modulo $M_0$ and every $(i,j)\neq(0,0)$ the twist $\chi$ of $\xi$ satisfies
 \[
 \abs{G_\chi(y)}\le y^{1/2+\eps/2}\quad\text{and}\quad
 \Bigl|\frac{L'}{L}(1,\chi)\Bigr|\le4\log y\qquad\text{for all } Y\le y\le Y^{A},
 \]
-and such that the twists of the real characters of modulus dividing $8M$ have no zero with
+and such that the twists of the real characters of modulus dividing $8M_0$ have no zero with
 $\re s>1-\tfrac1{400}$ up to a stated height.
 \end{statement}
 There is no circle, for a reason of size: the conductors of the twists are at least
@@ -61,10 +63,10 @@ The thick set of \cref{sec:reduction} is built from Behrend's construction
 \cite{behrend1946}, which the archive takes from Mathlib \lvS{} (\lean{noRel_image},
 \lean{hostThickExists}). The property used is stronger than the absence of three-term
 progressions: for three distinct elements $s_1,s_2,s_3$ of the set and distinct non-zero
-integers $i,j$ of absolute value at most $L$, one has $j(s_2-s_1)\ne i(s_3-s_1)$.
+integers $i,j$ of absolute value at most a given bound, one has $j(s_2-s_1)\ne i(s_3-s_1)$.
 
-The statement $\mathsf{Green}$ of \cref{sec:overview} is \lvS: for every prime $g$ and every
-$d\ge1$, the cuspidal characters of $\GL_d(\F_g)$ are parametrised, without repetition, by the
-monic irreducible polynomials of degree $d$ with non-zero constant term, in a fixed labelling,
-and each has degree $\prod_{i=1}^{d-1}(g^i-1)$. This is part of Green's theorem
+The statement $\mathsf{Green}$ of \cref{sec:overview} is \lvS: for every prime $p$ and every
+$\nu\ge1$, the cuspidal characters of $\GL_\nu(\F_p)$ are parametrised, without repetition, by the
+monic irreducible polynomials of degree $\nu$ with non-zero constant term, in a fixed labelling,
+and each has degree $\prod_{i=1}^{\nu-1}(p^i-1)$. This is part of Green's theorem
 \cite{green1955}.

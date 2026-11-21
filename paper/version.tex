@@ -1,62 +1,39 @@
-% Version, date and the measured numbers quoted in the text. One place to change each.
+% Version and date. The measured numbers are in numbers.tex, which tools/numbers.py writes from
+% the results files. Three numbers are typed here because no results file holds them; each
+% says where it comes from. numbers.tex also sets \ifsecondrun: false while the results are
+% those of the first run only.
 \newcommand{\paperdate}{21 November 2026}
-\newcommand{\paperversion}{1.1}
+\newcommand{\paperversion}{1.2}
+\input{numbers}
+% Billed by the provider for the machine of the first run, from its start to its end; not a
+% measurement of the archive.
+\newcommand{\firstruncost}{26.81}
+% The first replay was started with LEAN_NUM_THREADS=28; this is our record of the command,
+% and no results file of that run holds it.
+\newcommand{\firstreplaythreads}{28}
 
-% The archive.
-\newcommand{\filecount}{175{,}187}
-\newcommand{\linecount}{17{,}374{,}215}
-\newcommand{\archivebytes}{239{,}275{,}554}
-\newcommand{\archivesha}{9631b4f020199e580ba86178cb56c6e9b09f690c2369a80dc4334aa93f49c7fc}
-\newcommand{\mathlibrev}{0df444a360eaa60ab8c11dca51a86af692955474}
-\newcommand{\leanversion}{4.33.1}
-
-% The build.
-\newcommand{\buildjobs}{183{,}893}
-\newcommand{\buildhours}{13.4}
-% The literature file: 186 theorems returning named statements; 184 distinct statements, of
-% which 99 general, 75 special cases, 5 different or undecided, 3 internal to the archive, one
-% empty slot and one the conclusion itself (tools/rows_to_tex.py prints these counts).
-\newcommand{\literaturerows}{186}
-\newcommand{\rowsdistinct}{184}
-\newcommand{\rowspublished}{179}
-\newcommand{\rowsgeneral}{99}
-\newcommand{\rowsspecial}{75}
-\newcommand{\rowsother}{5}
-
-% The dependency cone of riemannHypothesis (results/cut-result.txt and the lists cut-in.txt.xz,
-% cut-out.txt.xz). All counts are of distinct names: the lists have one line per declaring
-% module, and 39,597 theorem declarations repeat a name declared in another module.
-\newcommand{\conesize}{1{,}478{,}219}
-\newcommand{\coneprojtheorems}{1{,}075{,}015}
-\newcommand{\projtheorems}{1{,}548{,}656}
-\newcommand{\unusedtheorems}{473{,}641}
-\newcommand{\repeatedtheorems}{39{,}597}
-\newcommand{\coneprojdefs}{178{,}298}
-\newcommand{\projdefs}{331{,}347}
-\newcommand{\projnames}{1{,}905{,}922}
-\newcommand{\coneprojmodules}{147{,}489}
-\newcommand{\projmodules}{175{,}014}
-\newcommand{\unusedmodules}{27{,}698}
-\newcommand{\conemathlib}{203{,}325}
-\newcommand{\hubtheorems}{198}
-
-% The kernel replay (from verify/results/replay-summary.txt).
-\newcommand{\replaymodules}{186{,}200}
-\newcommand{\replayconstants}{2{,}701{,}132}
-\newcommand{\replaydecls}{2{,}695{,}292}
-\newcommand{\replayskipped}{5{,}840}
-\newcommand{\replayminutes}{57}
+% The outcome of the kernel replay, in words (used in the section on verification).
 \newcommand{\replaystatus}{%
-The kernel accepted every one of them: 2{,}084{,}256 theorems, 556{,}318 definitions,
-3{,}882 opaque constants, 7 axioms, the four constants of the quotient type, and 15{,}769
-inductive types, whose 19{,}159 constructors and 15{,}897 recursors agree with the ones the
-kernel generated. There was no failure. The run took \replayminutes{} minutes on 28 threads.
-The seven axioms are all declared in Lean's core library; the archive declares none, and the
-five theorems depend on three of them. In 40{,}595 cases a name is declared in more than one
-module, which Lean's import accepts when the statements agree; every version was checked, and
-no two versions of a name differ in their statement. The \replayskipped{} declarations not
-replayed are those that Lean marks unsafe or partial: 5{,}008 are the compiled forms of
-recursive definitions and the rest are programs. Lean's own replay does not check them either,
-and the kernel accepts no theorem or safe definition that refers to one.}
-% The cone of all five theorems of Main (results/cut-result.txt, cut-five-extra.txt).
-\newcommand{\conefive}{1{,}478{,}243}
+The kernel accepted every declaration sent to it: \replaytheorems{} theorems, \replaydefs{}
+definitions, \replayopaque{} opaque constants, \replayaxioms{} axioms, the quotient type with
+its \replayquot{} constants, and \replayinductives{} inductive types in \replayblocks{} blocks.
+\ifsecondrun
+The comparison found every one of the \replaydecls{} constants of the files, among them
+\replayctors{} constructors and \replayrecs{} recursors, equal to the kernel's, and nothing
+else in the kernel's environment. There was no failure. The run took \replayminutes{} minutes
+on \replaythreads{} threads.
+\else
+The \replayctors{} constructors and \replayrecs{} recursors in the files agree with the ones
+the kernel generated. There was no failure. The run took \replayminutes{} minutes on
+\firstreplaythreads{} threads.
+\fi
+The \replayaxioms{} axioms are all declared in Lean's core library; the archive declares none,
+and the five theorems depend on three of them\ifsecondrun\else, by the recorded lists of
+\cref{sec:axioms}\fi. In \replayrepeated{} cases a name is declared
+again by a further module, which Lean's import accepts for theorems with the same statement;
+every version was checked. The \replayskipped{} declarations not replayed are those that Lean
+marks unsafe or partial: \replayskippedrec{} are the compiled forms of recursive definitions
+and the rest are programs and the unsafe axioms that Lean's compiler uses. Lean's own replay
+does not check them either, and outside Lean's
+module system the kernel accepts no theorem or safe definition that refers to one;
+\cref{sec:checker} says what holds inside it.}

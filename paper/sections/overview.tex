@@ -3,7 +3,9 @@
 The top of the proof is short. \Cref{st:rh} follows from
 \cref{st:grh} for the trivial character by the functional equation, in a few dozen lines on
 Mathlib's interface. \Cref{st:grh} is obtained for every character from a statement
-\lean{ZeroFreeAll} about primitive characters, and that from a theorem with three hypotheses,
+\lean{ZeroFreeAll} about primitive characters. A theorem
+(\lean{zero_free_all_of_green_v_win}) derives that statement from three hypotheses, and with
+the passage to all characters it reads
 \begin{gather*}
 \text{\lean{every_character_of_green_v_win}}\colon\\
 \mathsf{Green}\ \longrightarrow\ \mathsf{VWin}\ \longrightarrow\ \mathsf{Nonempty}(\mathsf{HypsAlt})
@@ -19,11 +21,14 @@ each of which is in turn proved in the archive. They are the three inputs of the
   automorphic forms on unitary groups (\cref{sec:lattices,sec:frame,sec:literature}).
 \end{itemize}
 
-The body of that theorem \lvP{} applies a windowed form of Landau's theorem with window
-exponent $\lambda=\tfrac32$ to a statement $\mathsf{TopG}$, which says: for every small
+The body of that theorem \lvP{} applies a windowed form of Landau's theorem, on windows
+$[Y,Y^{3/2}]$, to a statement $\mathsf{TopG}$, which says: for every small
 $\eps>0$ there is a family of arithmetic data, indexed by scales $x$ in long windows, on which
 a condition \lean{ChainTied} holds. \lean{ChainTied} packages eleven inequalities between real
-numbers (\cref{sec:lattices}) and implies $G(x)\le x^{1/2+C\eps}$ by an argument that involves
+numbers (\cref{sec:lattices}), with size conditions and with the identification of those
+numbers with the arithmetic data of the count and with slopes and heights of lattices. The
+inequalities, with the size conditions and the identification of the count, imply
+$G(x)\le x^{1/2+C\eps}$ by an argument that involves
 no arithmetic beyond an identity of character sums (\cref{sec:analytic}).
 
 So the proof has two halves that meet in eleven real inequalities:
@@ -40,14 +45,55 @@ computation, a trace formula, a cohomological bound, auxiliary fields.\\
 \bottomrule
 \end{tabular}
 \end{center}
-The analytic half is elementary and a few hundred lines long. Almost all of the archive is the
+The analytic half is elementary. Almost all of the archive is the
 arithmetic half and the published theorems it formalises.
 
 \subsection*{Notation}
-Throughout, $x$ is a large real scale and $\eps>0$ is small and fixed; $b=\exp(x^{\eps})$;
-$m$ is the number of lifts, $x^{1/2-\eps}\le m\le x^{1/2+\eps/2}$; $E$ is the auxiliary
-(``host'') field, with Galois group $\mathfrak G=(\Z/2)^2\times H$ over $\Q$ and $n=\abs H$;
-$\Phi\subset\mathfrak G$ is a CM type; $\gamma$ is Euler's constant, $\gamma_p=p/(p^2-1)$ is
-the rate of \cref{sec:adm,sec:divisibility}, and $\gamma_i$ are the weights of a frame
-(\cref{sec:slope,sec:frame}). We write $\ph(y)=y\log y-y$, so
-that $\ph(a)=\log a!+O(\log a)$.
+In the account of the argument (\cref{sec:analytic,sec:lattices,sec:divisibility,sec:frame})
+the letters of the following table have the meaning given here, except where one is the index
+or the bound variable of a formula, or carries a subscript other than those of the table.
+\Cref{sec:cohomology,sec:literature} describe inputs in the
+notation of their sources, and there $E$, $G$, $H$, $\lambda$, $h$, $n$, $o$, $p$ and $q$ are
+also used as the sources use them. Any other letter is local to the statement or paragraph in
+which it occurs.
+\begin{center}\small
+\begin{tabular}{@{}p{0.2\textwidth}p{0.74\textwidth}@{}}
+\toprule
+$x$, $\eps$, $b$ & the scale, a large real number; a small fixed exponent; $b=\exp(x^\eps)$\\
+$m$, $k$ & the number of lifts, $x^{1/2-\eps}\le m\le x^{1/2+\eps/2}$; the rank parameter,
+  $xm\le k\le n^2x^{1/2-\eps}$\\
+$E$, $\mathfrak G$, $H$, $n$ & the host field; its Galois group $(\Z/2)^2\times H$ over $\Q$;
+  $n=\abs H$\\
+$\Phi$, $\chi_\Phi$, $f$ & the CM type, a subgroup of index two of $\mathfrak G$; its quadratic
+  character; $f=\abs\Phi=2n$, the number of infinite places of $E$\\
+$q$, $d$, $e_2$, $\sigma$ & the two primes of the host and the exponent of its $2$-power layer
+  (\cref{sec:hosts}); the non-trivial element of the inertia group at $d$\\
+$G_\chi$, $G$ & the smoothed sum over prime powers attached to a character
+  \eqref{eq:G}; $G=G_1$\\
+$\mathcal L$, $\mathcal K$, $\psi_{\mathcal K}$, $o$ & a level: its set of characters, its
+  distinguished character, its integer \eqref{eq:level}\\
+$A_0$, $TT$, $T_2$, $\delta_T$ & a subgroup of $H$; the set of top places; the thick set;
+  its density $\abs{T_2}/n$\\
+$t$, $a_t$, $w$, $u_0$ & a top place, an element of $TT$; its size; a system of weights on
+  $\Phi$; a translate in $A_0$\\
+$\mathcal K'$, $\beta$ & the kept characters and their common weight (\cref{sec:reduction})\\
+$\ASK$, $\MAIN$, $\Err$ & the count \eqref{eq:ask}, its main term \eqref{eq:main}, the error
+  of \cref{sec:balance}\\
+$u$, $M_u$, $N_u$, $B_u$ & a word; its lattice of forms; the rescaled sublattice; its period
+  map (\cref{sec:cast})\\
+$h(u)$, $T(u)$, $P$ & the height bound of $B_u$; the level prime; the lattice of periods\\
+$\lambda$, $g(u,\lambda)$ & a finite place of the coefficient field; the exponent of the
+  rescaling there, a sum of gains and corrections \eqref{eq:Nu}\\
+$p$, $h_p$, $\gamma_p$ & a rational prime; the component in $H$ of its Frobenius element;
+  $\gamma_p=p/(p^2-1)$\\
+$\ell$ & the prime of \cref{sec:divisibility} and of \cref{sec:cohomology}\\
+$\gamma$, $\Omega$, $\ph$ & Euler's constant; a CM period; $\ph(y)=y\log y-y$, so that
+  $\ph(a)=\log a!+O(\log a)$\\
+$\bar\mu$, $HH$, $u_F$, $\delta_F$, $\eta_F$, $e_F$ & the parameters of the slope inequality
+  (\cref{st:F})\\
+$t_0$, $\len_\ell(e)$ & the number of twists $\lfloor x^{401}\rfloor$; the length of
+  $\Sha(E,\ell,e)$ (\cref{sec:cohomology})\\
+\bottomrule
+\end{tabular}
+\end{center}
+The weights of a frame are written $\gamma_i$ with an index.

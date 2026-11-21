@@ -1,0 +1,10 @@
+name = "hostile"
+defaultTargets = ["Hostile", "craft"]
+
+[[lean_lib]]
+name = "Hostile"
+globs = ["Hostile.+"]
+
+[[lean_exe]]
+name = "craft"
+root = "Craft"

@@ -6,10 +6,13 @@ Usage:  python3 scan.py lean.tar.gz > scan.txt
 Streams the tarball without unpacking it and prints:
   * its size and SHA-256, the number of Lean files and of lines, the other files;
   * every occurrence, anywhere in the Lean text (comments included), of the words by which a
-    Lean development can state something without proving it or bypass the kernel;
-  * `axiom` declarations, `partial def` declarations, and declarations of syntax or elaborators;
-  * whether every import resolves, whether the import graph is acyclic, and how many files are
-    in the import closure of Main.
+    Lean development can state something without proving it, bypass the kernel, or run code
+    while a file is compiled; a word counts wherever it stands as a whole word, also after a dot;
+  * `axiom` declarations, `partial def` declarations, declarations of syntax or elaborators by
+    their keywords, the options that files set, and the files that begin with `module`;
+  * whether every import names a file of the archive or a module of a known outside package,
+    whether the import graph is acyclic, and how many files are in the import closure of Main.
+    (That the outside modules exist is shown by the build, not here.)
 
 A text scan can fail to find a defect; it cannot confirm a proof. The build, the axiom check
 and the kernel replay are what certify the theorem.
@@ -20,10 +23,18 @@ import re
 import sys
 import tarfile
 
+# Words by which something can be stated without proof or put past the kernel.
 WORDS = ["sorry", "admit", "native_decide", "implemented_by", "extern", "unsafe", "opaque", "csimp",
          "skipKernelTC", "addDeclWithoutChecking", "ofReduceBool", "ofReduceNat", "trustCompiler", "lcProof",
-         "sorryAx"]
-WORD_RX = {w: re.compile(r"(?<![\w.])" + re.escape(w) + r"(?![\w])") for w in WORDS}
+         "sorryAx", "doCheck", "ofKernelEnv", "reduceBool", "reduceNat"]
+# Words of code that adds declarations by program or runs while a file is compiled. These are
+# reported; what such code adds goes through the kernel unless it uses one of the words above.
+REPORTED = ["addDeclCore", "addDecl", "addAndCompile", "setEnv", "modifyEnv", "evalConst", "evalDecl", "#eval",
+            "command_elab", "term_elab", "builtin_command_elab", "builtin_term_elab", "simproc", "dsimproc"]
+# a whole word; a dot before it is allowed, so that `Lean.trustCompiler` and `debug.skipKernelTC` count
+WORD_RX = {w: re.compile(r"(?<![\w])" + re.escape(w) + r"(?![\w])") for w in WORDS + REPORTED}
+OPTION_RX = re.compile(r"\bset_option\s+([\w.]+)")
+MODULE_RX = re.compile(r"^module\s*$", re.M)
 AXIOM_RX = re.compile(r"^\s*(?:private\s+|protected\s+|noncomputable\s+|@\[[^\]]*\]\s*)*axiom\s", re.M)
 PARTIAL_RX = re.compile(r"^\s*(?:private\s+|protected\s+|@\[[^\]]*\]\s*)*partial\s+def\s+(\S+)", re.M)
 ELAB_RX = re.compile(r"^\s*(?:scoped\s+|local\s+)?(elab|elab_rules|macro|macro_rules|syntax|declare_syntax_cat|"
@@ -48,9 +59,11 @@ def main() -> None:
     lean_files = 0
     lines = 0
     other = []
-    hits = {w: [] for w in WORDS}
+    hits = {w: [] for w in WORDS + REPORTED}
     axioms, partials, elabs = [], [], collections.Counter()
     elab_files = collections.defaultdict(set)
+    options = collections.Counter()
+    module_files = []
     imports = {}
     main_lines = None
     with tarfile.open(path, "r|gz") as tar:
@@ -83,15 +96,25 @@ def main() -> None:
             for mm in ELAB_RX.finditer(text):
                 elabs[mm.group(1)] += 1
                 elab_files[mm.group(1)].add(name)
+            if "set_option" in text:
+                for mm in OPTION_RX.finditer(text):
+                    options[mm.group(1)] += 1
+            if MODULE_RX.search(text):
+                module_files.append(name)
 
     print(f"lean files {lean_files}")
     print(f"lines in lean files {lines}")
     print(f"other files {len(other)}: {' '.join(sorted(other))}")
     print(f"lines in Main.lean {main_lines}")
     print()
-    print("OCCURRENCES OF WORDS (whole words, anywhere in the text, comments included)")
+    print("OCCURRENCES OF WORDS (whole words, also after a dot, anywhere in the text, comments included)")
     for w in WORDS:
         print(f"  {w} {len(hits[w])}")
+        for loc in hits[w][:40]:
+            print(f"    {loc}")
+    print("OTHER WORDS REPORTED (the same matching; code that adds declarations or runs at compile time)")
+    for w in REPORTED:
+        print(f"  {w} {len(hits[w])} in {len({loc.rsplit(':', 1)[0] for loc in hits[w]})} files")
         for loc in hits[w][:40]:
             print(f"    {loc}")
     print(f"axiom declarations {len(axioms)}")
@@ -103,8 +126,14 @@ def main() -> None:
     print("SYNTAX, ELABORATORS AND CODE RUN AT ELABORATION (declarations by keyword, with their files)")
     for k in sorted(elabs):
         print(f"  {k} {elabs[k]}")
-        for fn in sorted(elab_files[k])[:40]:
+        for fn in sorted(elab_files[k]):
             print(f"    {fn}")
+    print("OPTIONS SET (set_option, by option, with the number of occurrences)")
+    for k in sorted(options):
+        print(f"  {k} {options[k]}")
+    print(f"files with a line that is the word module {len(module_files)}")
+    for fn in module_files[:40]:
+        print(f"    {fn}")
     print()
 
     # imports

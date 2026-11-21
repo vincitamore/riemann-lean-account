@@ -3,11 +3,17 @@
 Nearly every file of the archive imports nearly every other, so the import graph says nothing
 about what depends on what. The statements of this section are instead computed from the
 compiled archive: the \emph{cone} of \lean{riemannHypothesis} is the set of all declarations
-reachable from it through the type and the value of every declaration reached
-(\cref{sec:cone}). It has \conesize{} declarations, of which \conemathlib{} belong to
-Mathlib. The other four theorems of \lean{Main.lean} are derived from the same statement for
-all characters, by short arguments of their own: the cone of all five has \conefive{}
-declarations, twenty-four more.
+reachable from it through the type and the value of every declaration reached, the link
+between an inductive type and its constructors, and the structure of a projection
+(\cref{sec:cone}). It has \conesize{} declarations: \conearchive{} of the archive and
+\ifsecondrun
+\conemathlib{} of Mathlib and \coneother{} of Lean's library and the other packages.
+\else
+\conerest{} of Mathlib, of the packages it depends on and of Lean's own library.
+\fi
+The other four theorems of \lean{Main.lean} are derived from the same statement for all
+characters, by short arguments of their own: the cone of all five has \conefive{}
+declarations, \conefiveextra{} more.
 
 \begin{table}[ht]
 \centering
@@ -15,25 +21,33 @@ declarations, twenty-four more.
 \toprule
  & in the archive & in the cone & share\\
 \midrule
-Theorems & \projtheorems & \coneprojtheorems & 69\%\\
-Definitions & \projdefs & \coneprojdefs & 54\%\\
-Modules that declare something & \projmodules & \coneprojmodules & 84\%\\
+Theorems & \projtheorems & \coneprojtheorems & \theoremshare\\
+Definitions & \projdefs & \coneprojdefs & \defshare\\
+Modules that declare something & \projmodules & \coneprojmodules & \moduleshare\\
 \bottomrule
 \end{tabular}
 \caption{The archive and the cone of \texttt{riemannHypothesis}, counted by distinct names. A
 module is counted in the cone if it declares at least one declaration of the cone. The
-definitions include 621 compiled forms of recursive definitions, none of them in the
-cone.}\label{tab:cone}
+definitions include \projunsaferec{} compiled forms of recursive definitions, none of them in
+the cone.}\label{tab:cone}
 \end{table}
 
 So about a third of the archive's theorems, \unusedtheorems{} of them, are not used by the
 final theorem. They are compiled and checked by the kernel like the rest
 (\cref{sec:verification}); they are simply not on the path. Of the archive's \filecount{}
-files, \unusedmodules{} declare nothing that is in the cone. By top-level directory they number
-22{,}037 of 141{,}928 in \lean{Development}, 3{,}224 of 18{,}254 in \lean{Formalism}, 1{,}814
-of 8{,}507 in \lean{GroundTheory}, 360 of 3{,}845 in \lean{ReciprocityTheory}, 140 of 2{,}027
-in \lean{CompanionTheory} and 106 of 449 in \lean{PositivityTheory}; these totals count every
-file, including the 173 that declare nothing at all.
+files, \unusedmodules{} declare nothing that is in the cone%
+\ifsecondrun
+. By top-level directory they number
+\modsDevelopmentUnused{} of \modsDevelopmentAll{} in \lean{Development},
+\modsFormalismUnused{} of \modsFormalismAll{} in \lean{Formalism}, \modsGroundTheoryUnused{}
+of \modsGroundTheoryAll{} in \lean{GroundTheory}, \modsReciprocityTheoryUnused{} of
+\modsReciprocityTheoryAll{} in \lean{ReciprocityTheory}, \modsCompanionTheoryUnused{} of
+\modsCompanionTheoryAll{} in \lean{CompanionTheory} and \modsPositivityTheoryUnused{} of
+\modsPositivityTheoryAll{} in \lean{PositivityTheory}; these totals count every file,
+including the \emptymodules{} that declare nothing at all.
+\else
+, the \emptymodules{} that declare nothing at all among them.
+\fi
 
 What is unused includes earlier and parallel forms of steps that are on the path. Each of the
 following was confirmed outside the cone by its full name.
@@ -73,5 +87,5 @@ the literature (\cref{sec:literature}), \hubtheorems{} in all with the auxiliary
 the cone: the proof term of the final theorem refers to every one of them.
 
 The archive declares no axiom of its own, on the path or off it: its \projnames{} declared
-names are theorems, definitions, inductive types with their constructors and recursors, and two
-opaque constants, and nothing else. The two opaque constants are outside the cone.
+names are theorems, definitions, inductive types with their constructors and recursors, and
+\projopaque{} opaque constants (\coneprojopaque{} of them in the cone), and nothing else.

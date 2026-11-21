@@ -12,24 +12,32 @@ them is the conclusion itself, non-vanishing of every Dirichlet $L$-function to 
 $\tfrac12$, returned under the hypothesis of \cref{st:vwin}. One is an empty slot, the
 proposition \lean{True}. Three are statements in the archive's own terms that correspond to no
 single published theorem. The remaining \rowspublished{} are formal statements of published
-results. We read each Lean statement; its comparison with the theorem its name refers to is
-taken from reports on the literature that are published with this paper
-(\cref{app:audit,app:rows}):
+results. We compared each with the theorem its name refers to. The comparison rests on the Lean
+statement, which we read, and on the published theorem as we know it; we did not open the
+papers for it. \Cref{app:rows} gives the reason for each verdict, so that each can be checked:
 \begin{center}
 \begin{tabular}{@{}lr@{}}
 \toprule
-The published theorem in general form & \rowsgeneral\\
-A special case of it, restricted to what the proof uses & \rowsspecial\\
-A different statement, or one whose relation to its name is undecided & \rowsother\\
+The published theorem, in the generality of a cited source & \rowsgeneral\\
+A special case of it, or a weaker form, restricted to what the proof uses & \rowsspecial\\
+Not a statement of the cited literature as it stands & \rowsother\\
 \bottomrule
 \end{tabular}
 \end{center}
-The special cases follow a pattern. Results on automorphic forms are stated for totally complex
-base fields or for unitary groups of CM extensions; results on real groups for $\U(p,q)$;
-results on $\GL_n$ over local fields in characteristic zero; depth-zero cases replace general
-ones; results on the characters of $\GL_n(\F_q)$ are stated for prime fields. The proof was
-evidently formalised to the extent it needs and no further. A reader who wants to use one of
-these formalisations elsewhere should read its statement first.
+The restricted statements follow a pattern. Results on automorphic forms are stated for totally
+complex base fields or for unitary groups of CM extensions; results on real groups for
+$\U(p,q)$; results on $\GL_n$ over local fields in characteristic zero; theorems about
+reductive groups are stated for $\GL_n$, and depth-zero cases replace general ones; results on
+the characters of $\GL_n(\F_q)$ are stated for prime fields. The Galois representations
+attached to automorphic representations are stated with only part of the compatibility away
+from $\ell$ that the literature proves: equal dimension, equality when the local parameter is
+a sum of characters with trivial monodromy, and agreement on inertia for tame, square-free
+parameters at large primes. The three statements that differ are a
+global consequence of the local theorem of Gelfand and Kazhdan, a form of the rapid decay of
+cusp forms in Sobolev norms, and a statement named after the local zeta integrals of the
+doubling method that contains the global identity instead. The proof was evidently formalised
+to the extent it needs and no further. A reader who wants to use one of these formalisations
+elsewhere should read its statement first.
 
 \subsection{By area}
 \emph{Class field theory and Galois cohomology.} Global Artin reciprocity
@@ -126,6 +134,6 @@ The certificate for the Riemann Hypothesis does not depend on any of these names
 accurate: the kernel checked a closed term of type \lean{RiemannHypothesis}, whatever its
 intermediate statements are called. But the archive's worth beyond that one theorem depends on
 them a great deal. If the formal statements are what \cref{app:rows} reports, the archive
-contains verified proofs of \rowspublished{} published theorems, \rowsgeneral{} of them in
-general form. That is a second result, separable from the first, and each row can be checked
-independently against the published theorems it names.
+contains verified proofs of \rowspublished{} published theorems, \rowsgeneral{} of them in the
+generality of their sources. That is a second result, separable from the first, and each row
+can be checked independently against the published theorems it names.

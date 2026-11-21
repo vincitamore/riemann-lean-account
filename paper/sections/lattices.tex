@@ -31,10 +31,16 @@ an archimedean type of automorphic form. For each $u$ there are \lvS:
 \item a sublattice of $M_u$ of forms ``ramified at $T$'', where $T=T(u)$ is an auxiliary level
   prime, and its rescaling
   \begin{equation}\label{eq:Nu}
-  N_u\;=\;\Bigl(\prod_{w}\fP_w^{-\lfloor e_w\,g(u,w)\rfloor}\Bigr)\cdot(\text{that sublattice}),
+  N_u\;=\;\Bigl(\prod_{\lambda}\fP_\lambda^{-\lfloor e_\lambda\,g(u,\lambda)\rfloor}\Bigr)\cdot(\text{that sublattice}),
   \end{equation}
-  where $w$ runs over finite places of the coefficient field, $e_w$ is a ramification index
-  and $g(u,w)\ge0$ is the \emph{gain} at $w$ (\lean{Iu}, \lean{NprimeDef});
+  where $\lambda$ runs over finite places of the coefficient field, $e_\lambda$ is a ramification
+  index, and the exponent is a sum over the $m$ lifts,
+  \[
+  g(u,\lambda)=\sum_{j=1}^{m}\bigl(\mathrm{gain}_j(\lambda)+\mathrm{fo}_j(\lambda)-\mathrm{ee}_j(u,\lambda)\bigr),
+  \]
+  of the \emph{gain} at $\lambda$ for the $j$-th lift (\cref{sec:adm}) and of two correction
+  terms, of which the second depends on the word (\lean{Iu}, \lean{NprimeDef}, \lean{sg}).
+  The record does not make $g(u,\lambda)$ non-negative;
 \item a map $B_u$ from the space of $M_u$ to a fixed space $W$, sending a form to the periods
   of its $m$-fold iterated theta lift against test vectors;
 \item a real number $h(u)$ bounding the height of $B_u$.
@@ -48,57 +54,94 @@ The final theorem requires, for the family at each scale, a record of eleven cla
 &\ASK(u_0)-\mathrm{Ga}(u_0)\ \le\ \mathrm{Lo}, \tag{\textsf{Loss}}\label{eq:loss}\\
 &\mu(M_u)+\mathrm{Ga}(u_0)+\mathrm{Fo}-\mathrm{Ee}(u)-\mathrm{Lo}_5(u)\ \le\ \mu(N_u),
    \tag{\textsf{Gain}}\label{eq:gain}\\
-&s-\log\abs I-\frac{1}{1-\delta'}\Bigl(4u_F\log\bigl(1+\tfrac{HH}{u_F}\bigr)
-     +(\eta+4\sqrt e)\,HH\Bigr)\ \le\ \mu(P), \tag{\textsf{Slope}}\label{eq:slope}\\
+&\bar\mu-\log\abs I-\frac{1}{1-\delta_F}\Bigl(4u_F\log\bigl(1+\tfrac{HH}{u_F}\bigr)
+     +(\eta_F+4\sqrt{e_F})\,HH\Bigr)\ \le\ \mu(P), \tag{\textsf{Slope}}\label{eq:slope}\\
 &\mu(P)+h(u)-\mathrm{Fo}\ \le\ \sum_{t\in TT}\Bigl(m\bigl(\ph(a_t)-a_t\log\Omega\bigr)-a_t\log T(u)\Bigr)
      +(\text{small}). \tag{\textsf{Div}}\label{eq:div}
 \end{align}
-Here $\mathrm{Ga}(u_0)$ is the total gain, a sum of the local gains weighted by $\log$ of the
-residue characteristics; $s$ is the rank-weighted mean over $u$ of $\mu(N_u)-h(u)$; the term
-marked small is an error of the kind of \cref{sec:balance}, with a factor $x^{e_D\eps}$; and the
-remaining letters are correction terms that cancel or are small. Read in order: the count is at
-most the total gain \eqref{eq:loss}; the gain is the amount by which the slope of $N_u$ exceeds
-that of $M_u$ \eqref{eq:gain}; the mean slope of the $N_u$, less heights, is at most the slope
+Here a sum over $\lambda$ weighted by $2e_\lambda$ times a normalised logarithm of the norm of
+$\lambda$ turns the three parts of the exponent into three real numbers: $\mathrm{Ga}(u_0)$,
+the total gain, from which a cost $\tau_\lambda$ at each place is first subtracted;
+$\mathrm{Fo}$; and $\mathrm{Ee}(u)$ (\lean{Ga}, \lean{Fo}, \lean{Ee}). Further, $\bar\mu$ is the
+rank-weighted mean over $u$ of $\mu(N_u)-h(u)$; the term marked small is an error of the kind
+of \cref{sec:balance}, with a factor $x^{e_D\eps}$; and $\mathrm{Lo}$, $\mathrm{Lo}_5(u)$ are
+losses that are small. Read in order: the count is at most the total gain \eqref{eq:loss};
+rescaling raises the slope of $N_u$ above that of $M_u$ by the total gain and the two
+corrections \eqref{eq:gain}; the mean slope of the $N_u$, less heights, is at most the slope
 of $P$ \eqref{eq:slope}; and the slope of $P$ is at most the period term on the right of
-\eqref{eq:div}. Three further clauses close the chain. One bounds $\mu(M_u)$ from below and
+\eqref{eq:div}. The term $\mathrm{Fo}$ enters \eqref{eq:gain} and \eqref{eq:div} with opposite
+signs and cancels. The term $\mathrm{Ee}(u)$ is not small, and it is cancelled otherwise, as
+follows.
+
+Four further clauses close the chain. One bounds $\mu(M_u)$ from below and
 $\mu_{\max}(M_u)$ from above by error terms (\lean{Slopes}); one bounds the variation with $u$
-of $h(u)+\sum_ta_t\log T(u)$ by error terms (\lean{HComp}); and one bounds $\log T(u)$ from
-below by a dimension count (\lean{Count5}, \cref{sec:period}), after which an exact identity
-shows that the right side of \eqref{eq:div} is $\MAIN$ up to an error term (\cref{st:key}).
-The rest are size conditions.
+of $h(u)+\sum_ta_t\log T(u)$ by error terms (\lean{HComp}); one bounds $\log T(u)$ from
+below by a dimension count (\lean{Count5}, \cref{sec:period}); and one (\lean{EComp5}) says
+that $\mathrm{Ee}(u)$ equals $m\,\ell_g\sum_ta_t$ up to an error term, where
+$\ell_g$ is the logarithm of the product of two auxiliary level primes of the host. The lower bound
+for $\log T(u)$ contains the term $m\,\ell_g$, so after the dimension count the right side of
+\eqref{eq:div} is at most $\MAIN-m\,\ell_g\sum_ta_t$ up to an error term, by an exact identity
+(\cref{st:key}); and the term $m\,\ell_g\sum_ta_t$, which is not an error term,
+cancels $-\mathrm{Ee}(u)$ in \eqref{eq:gain}. The remaining three clauses are positivity and
+size conditions.
 
 \subsection{Why $N_u$ still maps into $P$}\label{sec:adm}
-Rescaling the sublattice by negative powers of primes raises its slope by the total gain, less
-what passing to the sublattice costs, but it is only useful if the rescaled lattice is still
+Rescaling the sublattice by negative powers of primes raises its slope by the total gain and
+the two corrections, less what passing to the sublattice costs, but it is only useful if the
+rescaled lattice is still
 mapped into $P$ by $B_u$. This is the statement
 \lvS{} (\lean{adm2}):
 \begin{quote}
-for every form $\varphi$ in the unscaled sublattice, every place $w$ and every integral test
-vector $F$, the period of the lift of $\varphi$ against $F$ is $0$ or has $w$-adic valuation at
-least $\lfloor e_w\,g(u,w)\rfloor$.
+for every form $\varphi$ in the unscaled sublattice, every place $\lambda$ and every integral test
+vector $F$, the period of the lift of $\varphi$ against $F$ is $0$ or has $\lambda$-adic valuation at
+least $\lfloor e_\lambda\,g(u,\lambda)\rfloor$.
 \end{quote}
 It is proved by \lean{admissible_level_two}, and it is where the arithmetic of
 \cref{sec:divisibility} is spent.
 
-The gain is a closed formula \lvS{} (\lean{gainP}, \lean{gU}). At a prime $p$ and on a
-Frobenius orbit carrying top places $s$ with sizes $\alpha_s$ (the sizes $a_s$ less a fixed
-constant), its main form is
-\begin{equation}\label{eq:gU}
-g_U=\gamma_p\sum_{s}\alpha_s\;-\;\sum_{s\ \text{not exceptional}}\ \sum_{e\ \mathrm{odd}}
-\min\Bigl(\frac{\alpha_s}{p^{e}},\,c_s(e)\Bigr)\;-\;\delta,
-\qquad \gamma_p=\frac{p}{p^2-1}=\sum_{e\ \mathrm{odd}}\frac1{p^{e}},
-\end{equation}
-with capacities $c_s(e)$ fixed by the weights, a correction $\delta$ of lower order, and the
-second sum omitting a class of places defined by a parity condition along the orbit
-(\lean{IsV}). Beside it stands
+The gain is a closed formula \lvS{} (\lean{gainP}), one for each of the $m$ lifts. It is used
+at the primes of two of the classes into which the host sorts the primes, the inert class and
+one other; at the rest the gain is $0$, and it is replaced by $0$ at a set of dropped primes,
+which contains every prime of the inert class for which $h_p$ below has odd order and is not
+$0$. For a prime $p$ let $h_p\in H$ be the
+component in $H$ of its Frobenius element. The top places are the elements $t$ of $TT$; they
+fall into orbits under translation by $h_p$ (by $2h_p$ for the primes of one class), and each
+orbit has a fixed base point. Call a
+place of \emph{even position} if the least number of steps of $h_p$ that leads to it from the
+base point of its orbit is even (\lean{IsV}; positions are used only at primes of the inert
+class). For a top place $t$ and $e\ge1$ the
+\emph{partner} is the place
+$t+e\,h_p$ (taken on a second copy of the places when $p$ is of that class and $e$ is odd), and
+the \emph{capacity} $c_t(e)$ is the weight at the partner less an amount that depends on the
+lift (\lean{capU}). On one orbit, with sizes $\alpha_t$ equal to $a_t$ less a fixed constant, put
+\begin{align}
+g_U&=\gamma_p\sum_{t}\alpha_t\;-\;\sum_{t\ \text{of odd position}}\ \sum_{e\ \mathrm{odd}}
+\min\Bigl(\frac{\alpha_t}{p^{e}},\,c_t(e)\Bigr)\;-\;\delta_p,
+\qquad \gamma_p=\frac{p}{p^2-1}=\sum_{e\ \mathrm{odd}}\frac1{p^{e}},\label{eq:gU}\\
+g_0&=\sum_{t}\ \sum_{e\ \mathrm{odd},\ \text{not excluded}}\max\Bigl(\frac{\alpha_t}{p^{e}}-c_t(e),\,0\Bigr)-\delta_p ,\notag
+\end{align}
+the sums over the top places $t$ of the orbit (\lean{gU}, \lean{g0}). Here $\delta_p$ is a
+correction of lower order that depends on the orbit, and an odd $e$ is \emph{excluded} for $t$
+if the partner of $t$ at $e$ is another top place, on the first copy, and $e$ is the least
+positive exponent that reaches it (\lean{Excl}). The formula gives $0$ if $p$ is of the inert
+class with $h_p=0$, or if $p$ exceeds a bound. Otherwise it gives
 \[
-g_0=\sum_{s}\ \sum_{e\ \mathrm{odd},\ \text{not excluded}}\max\Bigl(\frac{\alpha_s}{p^{e}}-c_s(e),\,0\Bigr)-\delta .
+\sum_{\text{orbits in }VV}\max\bigl(g_U-\mathrm{Pr},\,g_0,\,0\bigr)
+\;+\;\sum_{\text{other orbits}}\max\bigl(g_0,\,0\bigr),
 \]
-On a designated set of good orbits (\lean{VV}) the gain is
-$\max(g_U-\mathrm{Pr},\,g_0,\,0)$, with a penalty $\mathrm{Pr}$; on the others it is
-$\max(g_0,0)$; and it is zero at primes above a bound and at the primes of one excluded class.
-Since $\gamma_p\alpha_s=\sum_{e\,\mathrm{odd}}\alpha_s/p^e$, at the places that are not omitted
-both forms are $\sum_{e\,\mathrm{odd}}\max(\alpha_s/p^e-c_s(e),0)$ up to the corrections. This
+with a penalty $\mathrm{Pr}$. The set $VV$ of orbits (\lean{VV}) is empty unless $p$ is a
+\emph{candidate}, that is a prime of the inert class below a bound whose orbits have length at
+least $x^{\eps/4}$ and which, if it is above a second bound, has no power within a small
+ratio of the first, fixed at each scale, and a smallness condition holds; then it is the
+set of orbits that satisfy a regularity condition on the positions of their top places
+(\lean{Good}).
+
+Since $\gamma_p\alpha_t=\sum_{e\,\mathrm{odd}}\alpha_t/p^e$, a place of odd position
+contributes to $g_U$, as it does to $g_0$ at the exponents that are not excluded,
+\[
+\sum_{e\,\mathrm{odd}}\max\bigl(\alpha_t/p^e-c_t(e),\,0\bigr),
+\]
+and a place of even position contributes the whole of $\gamma_p\alpha_t$. This
 is the shape of the count \eqref{eq:ask}, in which only odd powers of Frobenius occur because
 $\Phi$ has index two, with the capacity in the place of the weight. That is why
 \eqref{eq:loss} holds with a small loss. The divisibility of \cref{sec:divisibility} supplies
@@ -113,24 +156,25 @@ statement we met.
 Let $K$ be a totally complex number field, $P$ a Hermitian lattice over $\cO_K$ in a $K$-space
 $W$, and for $i$ in a finite set $I$ let $N_i$ be a Hermitian lattice in a $K$-space $V_i$ and
 $B_i\colon V_i\to W$ a $K$-linear map with $B_i(N_i)\subseteq P$ and $\htt(B_i)\le h_i$ whenever
-$B_i\ne0$. Let $s\in\R$, $u\ge0$ and $HH\ge0$ satisfy
+$B_i\ne0$. Let $\bar\mu\in\R$, $u_F\ge0$ and $HH\ge0$ satisfy
 \[
-s\sum_i\rk N_i\le\sum_i\rk N_i\,\bigl(\mu(N_i)-h_i\bigr),\qquad
-\mu_{\max}(N_i)-h_i\le s+u,\qquad s-\mu_{\min}(P)\le HH .
+\bar\mu\sum_i\rk N_i\le\sum_i\rk N_i\,\bigl(\mu(N_i)-h_i\bigr),\qquad
+\mu_{\max}(N_i)-h_i\le\bar\mu+u_F,\qquad \bar\mu-\mu_{\min}(P)\le HH .
 \]
-Suppose that at one infinite place $v$, after a change of bases and after extending $W_v$ to a
-space $W_v'$ in which the added part has dimension at most a fraction $\delta<1$ of the total,
+Suppose that at one infinite place $v$, after a change of bases, after extending $W_v$ to a
+space $W_v'$ in which the added part has dimension at most a fraction $\delta_F<1$ of the
+total, and after extending each $B_i$ to a map into $W_v'$, arbitrarily on the added part,
 there are weights $\gamma_i>0$
 with
-\[
-\sum_i\norm{\gamma_iB_i^*B_i-1}_{\mathrm{HS}}^2\le e\sum_i\rk N_i,\quad e\le\tfrac14,
-\qquad
-\tr(Q^2)\le(1+\eta)\,\frac{(\tr Q)^2}{\dim W_v'},\quad Q=\sum_i\gamma_iB_iB_i^* .
-\]
+\begin{gather*}
+\sum_i\norm{\gamma_iB_i^*B_i-1}_{\mathrm{HS}}^2\le e_F\sum_i\rk N_i,\qquad e_F\le\tfrac14,\\
+\tr(Q^2)\le(1+\eta_F)\,\frac{(\tr Q)^2}{\dim W_v'},\qquad Q=\sum_i\gamma_iB_iB_i^* .
+\end{gather*}
 Then
 \[
-\mu(P)\ \ge\ s-\log\abs I-\frac1{1-\delta}\Bigl(4u\log\bigl(1+\tfrac{HH}{u}\bigr)+(\eta+4\sqrt e)\,HH\Bigr).
+\mu(P)\ \ge\ \bar\mu-\log\abs I-\frac1{1-\delta_F}\Bigl(4u_F\log\bigl(1+\tfrac{HH}{u_F}\bigr)+(\eta_F+4\sqrt{e_F})\,HH\Bigr),
 \]
+the term $4u_F\log(1+HH/u_F)$ being read as $0$ when $u_F=0$.
 \end{statement}
 
 The classical slope inequality says that an injective map $\varphi\colon N\to P$ of height $h$
@@ -141,14 +185,14 @@ images together nearly fill the target evenly.
 
 The proof runs level
 by level. For each $\tau\in[0,HH]$: cut each $N_i$ at the step of its Harder--Narasimhan
-filtration of slope $s-\tau+h_i$; a Markov inequality (\lean{frameB_share}) shows that the parts
-cut away have at most the share $u/(u+\tau)$ of the total rank; the classical inequality, in
+filtration of slope $\bar\mu-\tau+h_i$; a Markov inequality (\lean{frameB_share}) shows that the parts
+cut away have at most the share $u_F/(u_F+\tau)$ of the total rank; the classical inequality, in
 its $\mu_{\min}$ form, sends what is kept into the step of the filtration of $P$ of slope
-$s-\tau$; and a lemma of linear algebra on nearly tight frames shows that the images of what is
-kept span all but a share $\eta+4u/(u+\tau)+4\sqrt e$ of the frame space. So the filtration of
-$P$ at slope $s-\tau$ has almost full rank for every $\tau$, and integrating over $\tau$ gives
-the bound: $\int4u/(u+\tau)\,d\tau$ is the term $4u\log(1+HH/u)$ and $\int(\eta+4\sqrt e)\,d\tau$
-is the term $(\eta+4\sqrt e)\,HH$. The term $\log\abs I$ is a slack: the form of the theorem
+$\bar\mu-\tau$; and a lemma of linear algebra on nearly tight frames shows that the images of what is
+kept span all but a share $\eta_F+4u_F/(u_F+\tau)+4\sqrt{e_F}$ of the frame space. So the filtration of
+$P$ at slope $\bar\mu-\tau$ has almost full rank for every $\tau$, and integrating over $\tau$ gives
+the bound: $\int4u_F/(u_F+\tau)\,d\tau$ is the term $4u_F\log(1+HH/u_F)$ and $\int(\eta_F+4\sqrt{e_F})\,d\tau$
+is the term $(\eta_F+4\sqrt{e_F})\,HH$. The term $\log\abs I$ is a slack: the form of the theorem
 without it is also proved, and the form with it is obtained by discarding a non-negative
 quantity.
 
@@ -164,9 +208,12 @@ of the slopes of $m$ auxiliary lattices $M'_1,\dots,M'_m$, one for each lift. Th
 bounded below by a theorem \lvS{} (\lean{lamLow_of_hypotheses_alt_alt}) whose hypotheses are
 seven statements of the literature, each proved in the archive: rapid decay of cusp forms,
 the Siegel--Weil formula for unitary groups in two forms
-\cite{weil1965,ichino2004,ichino2007}, the local zeta integrals of the doubling method
-\cite{psrallis1987}, their unramified computation, a finiteness theorem of Bernstein and
-Zelevinsky, and the formal degree of a representation of a compact group. The identities have
+\cite{weil1965,ichino2004,ichino2007}, the basic identity of the doubling method
+\cite{psrallis1987} with the continuation of the Siegel Eisenstein series (under a name that
+refers to the local zeta integrals; see \cref{sec:literature}), the unramified computation of
+the local doubling integral, a finiteness theorem of Bernstein and Zelevinsky, and
+Harish-Chandra's formula for the formal degree of a discrete series representation of a
+unitary group. The identities have
 the shape of the Rallis inner product formula \cite{rallis1984}.
 
 \emph{A ledger.} The clause \eqref{eq:div} is assembled from one inequality per lift $j$ and
@@ -185,15 +232,20 @@ kind, and a large one. $M'_j$ is a lattice of integral forms on a moduli space a
 every finite place \lvS{} (\lean{cuspA}). Its covolume is bounded through a chain of slope
 comparisons \lvS{} (\lean{lcv_le}): the covolume is at most minus the slope of a ``good''
 sublattice cut out by an orthogonal idempotent; the complementary ``bad'' part has rank share
-at most $3\exp(-x^{\eps'})$; the slope of the lattice of that type is at least a core slope
+at most $3\exp(-x^{\eps_z/7})$, with $\eps_z$ an exponent of the scale; the slope of the lattice
+of that type is at least a core slope
 less a small error; and the core slope is at least minus a main term, which is within a small
-error of $\sum_\tau(p-q)\,\mathrm{anchor}_\tau\,\log\Omega$. The theorem that assembles this
-\lvS{} (\lean{topCovolSlim2_use_alt_alt}) takes as hypotheses resolution of singularities and
+error of $(p'-q')\sum_\tau\mathrm{anchor}_\tau\,\log\Omega$, with two integers $p'$, $q'$ of the
+datum of the indefinite group and a sum over an index $\tau$ of that datum. The theorem that assembles this
+\lvS{} (\lean{topCovolSlim2_use_alt_alt}) has fifteen hypotheses. Among them are resolution of
+singularities and
 principalisation in characteristic zero \cite{hironaka1964}, an arithmetic Hilbert--Samuel
 statement \cite{gilletsoule1992,zhang1995,abbesbouche1995}, a bigness statement of Moriwaki,
 toroidal compactifications \cite{faltingschai1990,lan2013}, Riemann--Roch for nef bundles,
 semi-negativity of the Lie algebra of a semi-abelian scheme, Zarhin's trick, a statement of
-Fargues, heights of Chow forms, and Grothendieck's deformation theory. So the slope argument
+Fargues, and Grothendieck's deformation theory; one hypothesis is a bundle of twenty-eight
+further statements, among them heights of Chow forms and the vanishing theorems of
+Kawamata--Viehweg and Nadel. So the slope argument
 is not lattice theory and automorphic forms alone: it rests on arithmetic intersection theory
 on a Shimura variety. Each of these statements is proved inside the archive.
 
@@ -214,24 +266,29 @@ classes is a mass times an index times $(T^k-1)^f$ \lvS{} (\lean{ClassNumberForm
 lower bound for $\log T(u)$ is the clause \lvS{}
 (\lean{Count5}),
 \[
-\sum_{j=1}^m\frac1f\sum_{\rho}\log\frac{w_j(\rho)\,v}{\pi}+m\,\ell_g-c\Bigl(L_a+\frac{m^2L_a}{k}\Bigr)\ \le\ \log T(u).
+\sum_{j=1}^m\frac1f\sum_{\rho}\log\frac{w_j(\rho)\,v}{\pi}+m\,\ell_g-c\Bigl(L_a+\frac{m^2L_a}{k}\Bigr)\ \le\ \log T(u),
 \]
+where $f=\abs\Phi$, the numbers $v$ and $\ell_g$ are constants of the data, $L_a$ is a
+logarithmic size parameter and $c$ a constant of the record.
 
 \begin{statement}[\lean{key_identity5}]\label{st:key}
-With the notation above, the divisor sum on the right of \eqref{eq:div}, less $\sum_ta_t$
-times the lower bound for $\log T$, plus a term that cancels a comparison term, equals
+With the notation above, the sum $m\sum_t\bigl(\ph(a_t)-a_t\log\Omega\bigr)$ on the right of
+\eqref{eq:div}, less $\sum_ta_t$ times the lower bound for $\log T$ just displayed, plus
+$m\,\ell_g\sum_ta_t$, equals
 \[
 \MAIN(u_0)\;+\;\Bigl(\sum_ta_t\Bigr)\,c\,\Bigl(L_a+\frac{m^2L_a}{k}\Bigr).
 \]
 \end{statement}
 The $\log(\pi/v)$ inside $\log\Omega$ cancels the $\log(v/\pi)$ of the count. There is no
-discrepancy term: the lattice side returns the analytic main term \eqref{eq:main} identically,
-and what is left is an error of the shape of the first term of the bracket of
-\cref{sec:balance}, with the same factor $1+m^2/k$.
+discrepancy term: the lattice side returns the analytic main term \eqref{eq:main} identically.
+What is left is the term $m\,\ell_g\sum_ta_t$, which the clause \lean{EComp5} sets against
+$\mathrm{Ee}(u)$ (\cref{sec:cast}), and an error of the shape of the first term of the bracket
+of \cref{sec:balance}, with the same factor $1+m^2/k$.
 
 \subsection{Chaining}
 From \eqref{eq:loss}, \eqref{eq:gain}, \eqref{eq:slope}, \eqref{eq:div} and \cref{st:key},
-with the clauses that bound $\mu(M_u)$ and the variation of $h(u)$, for every translate $u_0$,
+with the four clauses that bound $\mu(M_u)$, the variation of $h(u)$, $\log T(u)$ and the
+difference between $\mathrm{Ee}(u)$ and $m\,\ell_g\sum_ta_t$, for every translate $u_0$,
 \[
 \ASK(u_0)\ \le\ \MAIN(u_0)+\Err ,
 \]

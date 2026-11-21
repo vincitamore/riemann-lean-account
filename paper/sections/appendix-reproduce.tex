@@ -4,45 +4,84 @@ Everything needed to repeat \cref{sec:verification} is in the repository
 \begin{center}
 \url{https://github.com/vincitamore/riemann-lean-account}
 \end{center}
-together with the source of this paper, the reading notes, the delegated reports and the audit.
-The archive itself is not redistributed there; it is fetched from the author's site and checked
-against the hash of \cref{sec:verification}.
+together with the source of this paper, the reading notes, the delegated reports, the reviews
+of the replay program and the audit. The archive itself is not redistributed there; it is
+fetched from the author's site and checked against the hash of \cref{sec:verification}.
 
 \subsection*{Requirements}
-A Linux machine with at least 32 cores, 128\,GB of memory and 150\,GB of free disk gives the
-times quoted here. The scripts in \lean{verify/} assume \lean{bash} with \lean{git},
+The first build ran on a rented Linux machine with \buildthreads{} threads whose memory was
+limited to 128\,GB, and that is what gives the build time quoted here; the scripts' comments
+estimate 150\,GB of free disk.
+The scripts in \lean{verify/} assume \lean{bash} with \lean{git},
 \lean{curl}, \lean{zstd}, \lean{tar} and \lean{sha256sum}, and \lean{python3} for the scan;
 \lean{setup.sh} installs \lean{elan} if it is absent.
 
 \subsection*{Steps}
 \begin{enumerate}
 \item \lean{setup.sh} downloads the fourteen parts, concatenates them, checks the SHA-256,
-  unpacks, installs the pinned toolchain and fetches the Mathlib build cache for the pinned
-  commit.
+  unpacks, installs the pinned toolchain and compiles Mathlib from source at the pinned commit
+  (or, on request, fetches its build cache).
 \item \lean{scan.py} is the static inspection of \cref{sec:verification}: it reads the
   downloaded file without unpacking it and needs nothing else.
+\item \lean{toolchain.sh} compares the installed toolchain with the release archive on GitHub.
 \item \lean{build.sh} runs \lean{lake build Main} with every log line time-stamped and records
   the exit code.
 \item \lean{janitor.sh} must run beside the build. Lake writes, for every module, a file listing
-  the module's whole import closure; for this tree those files would total about 900\,GB. The
-  script deletes each one once its module's compiled file exists, which Lake tolerates. With it
-  the disk peaks near 110\,GB.
+  the module's whole import closure%
+\ifsecondrun
+, \setupfilemb{}\,MB on average here; for this tree those
+  files would total about \setupallgb{}\,GB. The script deletes each one once its module's
+  compiled file exists, which Lake tolerates. With it the disk in use peaked at
+  \diskpeak{}\,GB.
+\else
+, and by the script's estimate those files would for this tree exceed the disk by a wide
+  margin. The script deletes each
+  one once its module's compiled file exists, which Lake tolerates.
+\fi
+\item \lean{summary.sh} extracts from the logs and the built tree the facts of the build that
+  this paper quotes.
 \item \lean{check.sh} prints the statement of the main theorem, the module in which Mathlib's
   statement is declared, and the axioms of the five theorems.
 \item \lean{cut.sh} builds and runs the program \lean{cut/CutMain.lean}, which computes the
   dependency cone of \cref{sec:cone} and writes the list of every declaration of the archive
   inside it and outside it.
 \item \lean{replay.sh} builds and runs the program \lean{replay/ReplayMain.lean}, the kernel
-  replay of \cref{sec:verification}. Our run used 28 threads, set with
-  \lean{LEAN_NUM_THREADS}.
+  replay of \cref{sec:replay}. The number of threads is set with \lean{LEAN_NUM_THREADS}.
+\item \lean{hostile.sh} builds the modules of \lean{hostile/} and runs Lean's checker and the
+  replay program on each (\cref{tab:hostile}).
+\item \lean{stock.sh} runs \lean{leanchecker --fresh} and the replay program on Mathlib, and
+  \lean{sample.sh} runs \lean{leanchecker} on a sample of the archive's modules
+  (\cref{sec:checker}).
+\item \lean{independent.sh} fetches \lean{lean4lean} at a fixed commit, builds it with the
+  archive's toolchain, and runs it on the modules of \lean{hostile/}, on the closure of the
+  statement and on the same sample.
 \end{enumerate}
-The outputs of our own run are in \lean{verify/results/}, with an index that says how each
-file was produced: the scan, the head and tail of the build log, the output of the check, the
-cone summary with the complete lists of declarations inside and outside the cone (compressed),
-the replay summary with the lists of axioms and of declarations not replayed, and the output
-of the corollaries file.
+The outputs of our runs are in \lean{verify/results/}, with an index that says what
+wrote each file\ifsecondrun; those of the first run are in \lean{verify/results/run1/}\fi.
+\ifsecondrun\else
+In this version the files for the archive are those of the first build, and not all of them
+were written by the scripts in their present form. The summary of the build was assembled by
+hand from the build log, which was not kept, in a shorter form than \lean{summary.sh} now
+writes. The cone was computed by the program as published with version~1.1, whose traversal
+is the present one; the present program prints more. The replay was made by the first form
+of the replay program, which is published beside its output. Steps of the list above that
+concern a sample of the archive's modules belong to the second run and are not reported
+here.
+\fi
+Every number in
+this paper that was measured is read from those files by \lean{paper/tools/numbers.py}, which
+also checks that they agree with one another, apart from three that no file holds and that
+are typed with their provenance in \lean{version.tex}; and \lean{paper/tools/check_names.py}
+checks every Lean name cited in the paper against the lists of declarations inside and
+outside the cone.
 
 \subsection*{Cost}
-The build took \buildhours{} hours of wall time on 32 cores, the cone about ten minutes and the
-replay \replayminutes{} minutes. On rented hardware the whole verification cost under thirty US
-dollars.
+\ifsecondrun
+The second run took \mathlibminutes{} minutes to compile Mathlib and \buildhours{} hours to
+build the archive on \buildthreads{} threads; the replay then took \replayminutes{} minutes.
+On rented hardware the two runs together cost about \totalcost{} US dollars.
+\else
+The build took \buildhours{} hours on \buildthreads{} threads and the replay \replayminutes{}
+minutes. The provider billed \firstruncost{} US dollars for that machine, from its start to
+its end.
+\fi

@@ -1,0 +1,7 @@
+release archive https://github.com/leanprover/lean4/releases/download/v4.33.1/lean-4.33.1-linux.tar.zst
+release archive sha256 890afd185370f85666025b883914ab4f4b339136f8c96167b69cfb62aecaf235
+files in the release archive 17493
+files in the installed toolchain 17493
+files that differ, or are in one and not the other: 0
+sha256 of the compiled Init/Prelude: 209c92068069ae74fa74e162003883bb1b7cece7e9ceda0dd86a727156167b9d
+sha256 of the list of the installed files and their hashes: 641073626a02aad62ee63c0d1f893b98f5fa80cb620c0240ef055cea33e5cde5

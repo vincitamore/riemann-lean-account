@@ -26,10 +26,9 @@ def extraOf : ConstantInfo → List Name
   | .ctorInfo v => [v.induct]
   | _ => []
 
-/-- The constants occurring in an expression. Lean's own `Expr.getUsedConstants` keeps only a
-small direct-mapped cache of visited subterms, so on a term with heavy sharing it revisits
-subterms without bound; on this archive it did not finish. This version keeps the full set of
-visited nodes, by address, and is linear in the size of the term as a graph. -/
+/-- The constants occurring in an expression. The traversal keeps the set of visited nodes, by
+address, and is linear in the size of the term as a graph; it uses an explicit stack, so the
+depth of a term does not matter. -/
 unsafe def usedConstsImpl (e : Expr) : Array Name := Id.run do
   let mut visited : Std.HashSet USize := {}
   let mut out : Std.HashSet Name := {}
@@ -157,6 +156,18 @@ def main (args : List String) : IO Unit := do
   let mut thmIn := 0
   let mut defAll := 0
   let mut defIn := 0
+  -- the same counts by distinct name: a name can be declared in several modules, because Lean
+  -- lets an auxiliary theorem be declared again in every module that needs it
+  let mut namesSeen : Std.HashSet Name := {}
+  let mut nameAll := 0
+  let mut nameIn := 0
+  let mut thmNameAll := 0
+  let mut thmNameIn := 0
+  let mut defNameAll := 0
+  let mut defNameIn := 0
+  let mut unsafeRec := 0
+  -- per top-level directory: modules, modules that declare something, modules that touch the cone
+  let mut modRoot : Std.HashMap Name (Nat × Nat × Nat) := {}
   -- per probe: how many declarations end in that name, how many of those are in the cone, and
   -- the first few full names of each kind (counters, not arrays: some names are very common)
   let mut byShort : Std.HashMap String (Nat × Nat × Array Name × Array Name) := {}
@@ -193,6 +204,19 @@ def main (args : List String) : IO Unit := do
         | .thmInfo _ => thmAll := thmAll + 1; if inC then thmIn := thmIn + 1
         | .defnInfo _ => defAll := defAll + 1; if inC then defIn := defIn + 1
         | _ => pure ()
+        if !namesSeen.contains n then
+          namesSeen := namesSeen.insert n
+          nameAll := nameAll + 1
+          if inC then nameIn := nameIn + 1
+          match ci with
+          | .thmInfo _ => thmNameAll := thmNameAll + 1; if inC then thmNameIn := thmNameIn + 1
+          | .defnInfo _ =>
+            defNameAll := defNameAll + 1
+            if inC then defNameIn := defNameIn + 1
+            match n with
+            | .str _ s => if s == "_unsafe_rec" then unsafeRec := unsafeRec + 1
+            | _ => pure ()
+          | _ => pure ()
         if isHub then
           match ci with
           | .thmInfo _ => hub := hub.push (n, inC)
@@ -208,16 +232,45 @@ def main (args : List String) : IO Unit := do
       | _ => pure ()
     let (ta, tb) := tot.getD root (0, 0)
     tot := tot.insert root (ta + a, tb + b)
+    if isProj then
+      let (r1, r2, r3) := modRoot.getD root (0, 0, 0)
+      modRoot := modRoot.insert root (r1 + 1, if a > 0 then r2 + 1 else r2, if touched then r3 + 1 else r3)
     if isProj && a > 0 then
       modsAll := modsAll.insert m
       if touched then modsIn := modsIn.insert m
+  -- the cone itself, by where each name is declared
+  let mut coneArchive := 0
+  let mut coneMathlib := 0
+  let mut coneOther := 0
+  for n in c do
+    let r := (modOf env n).getRoot
+    if projRoots.contains r then coneArchive := coneArchive + 1
+    else if r == `Mathlib then coneMathlib := coneMathlib + 1
+    else coneOther := coneOther + 1
   let mut out := s!"CONE-SIZE {c.size}\nCONE-SIZE-FIVE-THEOREMS {cAll.size}\nCONSTANTS-SCANNED {seenConsts}\n"
+  out := out ++ s!"CONE-NAMES archive {coneArchive} mathlib {coneMathlib} other {coneOther}\n"
+  -- the axioms among the constants of each cone: what the theorems depend on, computed from the
+  -- terms and not from the lists of axioms that compiled files record
+  let axiomsOf (s : Std.HashSet Name) : List String :=
+    ((s.toList.filter fun n => match env.find? n with
+      | some (.axiomInfo _) => true
+      | _ => false).map toString).toArray.qsort (· < ·) |>.toList
+  out := out ++ s!"CONE-AXIOMS {axiomsOf c}\n"
+  out := out ++ s!"CONE-AXIOMS-FIVE-THEOREMS {axiomsOf cAll}\n"
+  out := out ++ "COUNTS-BY-NAME (each name once, however many modules declare it)\n"
+  out := out ++ s!"  PROJECT-NAMES total {nameAll} in-cone {nameIn}\n"
+  out := out ++ s!"  PROJECT-THEOREM-NAMES total {thmNameAll} in-cone {thmNameIn} repeated-declarations {thmAll - thmNameAll}\n"
+  out := out ++ s!"  PROJECT-DEFINITION-NAMES total {defNameAll} in-cone {defNameIn} compiled-recursion-forms {unsafeRec}\n"
+  out := out ++ "COUNTS-BY-DECLARATION (a name once for each module that declares it)\n"
   out := out ++ "BY-ROOT root total-constants in-cone\n"
   for (r, (a, b)) in tot.toList do
     out := out ++ s!"  {r} {a} {b}\n"
   out := out ++ s!"PROJECT-THEOREMS total {thmAll} in-cone {thmIn}\n"
   out := out ++ s!"PROJECT-DEFINITIONS total {defAll} in-cone {defIn}\n"
   out := out ++ s!"PROJECT-MODULES with-constants {modsAll.size} touching-cone {modsIn.size}\n"
+  out := out ++ "MODULES-BY-ROOT root modules declaring-something touching-cone\n"
+  for (r, (r1, r2, r3)) in modRoot.toList do
+    out := out ++ s!"  {r} {r1} {r2} {r3}\n"
   out := out ++ "SHORT-NAME-PROBES name: declarations-with-that-last-component in-cone [up to 6 in cone] [up to 3 not in cone]\n"
   for s in shortProbes do
     let (k, kin, ins, outs) := byShort.getD s (0, 0, #[], #[])

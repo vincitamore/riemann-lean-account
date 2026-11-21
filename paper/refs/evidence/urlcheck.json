@@ -3,6 +3,7 @@
  "key:clozel2011construction": "url-confirmed\thttps://api.zbmath.org/v1/document/_search?search_string=an%3A1255.11027&page=0&results_per_page=1",
  "key:labesse2011changement": "url-confirmed\thttps://mathscinet.ams.org/mrlookup?au=Labesse&ti=Changement%20de%20base%20CM&year=&format=bibtex",
  "key:lean4checker": "url-confirmed\thttps://api.github.com/repos/leanprover/lean4checker",
+ "key:lean4lean": "url-confirmed\thttps://arxiv.org/abs/2403.14064",
  "key:riemann1859anzahl": "url-confirmed\thttps://de.wikisource.org/wiki/%C3%9Cber_die_Anzahl_der_Primzahlen_unter_einer_gegebenen_Gr%C3%B6%C3%9Fe",
  "zbl:0003.19902": "url-confirmed\thttps://api.zbmath.org/v1/document/_search?search_string=an%3A0003.19902&page=0&results_per_page=1",
  "zbl:0029.19906": "url-confirmed\thttps://api.zbmath.org/v1/document/3045783",

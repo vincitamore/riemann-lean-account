@@ -168,6 +168,7 @@ lang1990cyclotomic	crossref-agrees	10.1007/978-1-4612-0987-4
 langlands1976functional	crossref-agrees	10.1007/BFb0079929
 lazarsfeld2004positivity	crossref-agrees	10.1007/978-3-642-18808-4
 lean4checker	url-confirmed	https://api.github.com/repos/leanprover/lean4checker
+lean4lean	url-confirmed	https://arxiv.org/abs/2403.14064
 lelong1957integration	inspected-by-hand	Bull. Soc. Math. France 85 (1957), 239-262, as on Numdam (BSMF_1957__85__239_0); Crossref's volume 79 is wrong [was: crossref-differs volume 85 vs 79]
 li1990theta	crossref-agrees	10.1215/S0012-7094-90-06135-6
 li1992nonvanishing	crossref-agrees	10.1515/crll.1992.428.177

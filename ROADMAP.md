@@ -3,15 +3,34 @@
 Open work that this repository makes possible. Each item says what exists here to start from.
 None of it has been done by us unless it says so.
 
-## 1. An independent build
+## 1. The corrected replay over the whole archive, an independent kernel, and an independent build
 
-We know of no other build of the archive. A second one, on different hardware, would be worth
-having. `verify/` contains everything needed; the build took 13.4 hours on 32 cores and about
-110 GB of disk with `janitor.sh` running. Compare your results with `verify/results/`.
+The replay of the whole archive reported in version 1.2 was made with the first form of our
+program, which compared less with the kernel's output than the corrected program does (see
+the paper, Section 2). The corrected program's run over the archive is under way, on a second
+build, and version 1.3 will report it.
 
-A build that also compiles Mathlib from source, instead of using the community cache, would
-close the last gap in the build itself. The kernel replay here already re-checks every Mathlib
-declaration the archive imports, from an empty environment, but it does not re-elaborate them.
+Everything we ran uses the kernel inside Lean 4.33.1. The check most worth adding is a
+run of an independent implementation of the kernel over the whole import closure of `Main`:
+lean4lean with `--fresh`, or an export of the environment checked by an external checker. We
+ran lean4lean on the modules of `verify/hostile/` and on the closure of the Mathlib module that
+declares the statement (`verify/independent.sh`); on the archive it is a matter of processor
+time that we did not have.
+
+Lean's own `leanchecker --fresh Main` would make the full replay independent of our program.
+It has not been run on the archive. It runs on one thread. On Mathlib it used
+36 minutes of processor time and our program
+31; the first replay of the archive took 57
+minutes on 28 threads, so this is a matter of a day or more of one
+processor, with the memory to hold the whole environment. We intend to make that run on the
+second build.
+
+The replay program (`verify/replay/ReplayMain.lean`, 582 lines) has been
+reviewed four times by the model that wrote it (`notes/review-replay-program-A.md` to `-D.md`)
+and by no person. A person's review is wanted.
+
+The build is ours. `verify/` contains everything needed for another; ours took 13.4
+hours on 32 threads. Compare your results with `verify/results/`.
 
 ## 2. A proof a person can read
 
@@ -30,8 +49,8 @@ notes in `notes/` give the path through the source for each step.
 ## 3. Weakening the inputs to what is used
 
 `verify/results/cut-in.txt.xz` lists every declaration of the archive that is in the dependency
-cone of the final theorem, and `cut-out.txt.xz` the 640,666 declared names (661,669
-declarations, counting a name once for each module that declares it) that are not. Several inputs are used far below their
+cone of the final theorem, and `cut-out.txt.xz` the 640,666 declared names that are
+not. Several inputs are used far below their
 strength. The cohomological bound, for example, is proved with a square root that the consumer
 discards at once (Section 8.2 of the paper). Replacing each input by the weakest statement that
 still closes the proof would shorten it and show which of the deep theorems are essential.
@@ -41,15 +60,18 @@ question can be asked of any intermediate theorem.
 
 ## 4. Auditing the formalised literature, one statement at a time
 
-The archive proves 179 named statements of published theorems. Appendix C of the paper says
-what each Lean statement asserts and whether it is the published theorem in general form (99),
-a special case (75) or a variant (5). The records behind that table are in `paper/refs/`
-(`rows-A.jsonl`, `rows-B.jsonl`, `rows-C.jsonl`, with the Lean path of every statement, and
-`rows-author.json`).
+The archive proves 179 named statements of published theorems. Appendix C of the
+paper says what each Lean statement asserts and gives our comparison with the theorem its name
+refers to: the published theorem in the generality of a source (90), a restricted
+form (86), or a statement that differs (3), with the reason for each
+verdict. The records behind that table are in `paper/refs/` (`rows-A.jsonl`, `rows-B.jsonl`,
+`rows-C.jsonl`, with the Lean path of every statement; `rows-author.json`, what each asserts;
+`rows-scope-author.json`, the comparison).
 
-Each row can be checked independently by one person who knows the theorem: read the Lean
-statement, read the paper it is named after, and say whether they agree. The scope column of
-our table is the part of this repository most in need of a second reader.
+We made the comparison from the Lean statements and from the theorems as we know them, without
+opening the papers. Each row can be checked independently by one person who knows the theorem:
+read the Lean statement, read the paper it is named after, and say whether they agree. That
+column is the part of this repository most in need of a second reader.
 
 ## 5. Extracting the library
 
@@ -87,10 +109,9 @@ papers before a formalisation relies on them.
 
 ## 7. The two programs as general tools
 
-`verify/cut/CutMain.lean` and `verify/replay/ReplayMain.lean` were written because the standard
-means did not finish on a tree of this size: Lean's helper for the constants used by a term
-stalls on proof terms this large and this shared, and the toolchain's `leanchecker` re-imports
-the whole import closure for every module. Both programs are short and do not depend on this
+`verify/cut/CutMain.lean` and `verify/replay/ReplayMain.lean` were written because the
+toolchain's `leanchecker` re-imports the whole import closure for every module, which does not
+finish on a tree of this size. Both programs are short and do not depend on this
 archive:
 
 - the cut computes the declaration-level dependency cone of any theorem, with a traversal that

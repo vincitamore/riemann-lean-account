@@ -7,7 +7,7 @@ import sys
 
 from leanfmt import leanb
 
-LEVEL = {"S": r"\textsf{S}", "P": r"\textsf{P}", "D": r"\textsf{R}", "M": r"\textsf{M}"}
+LEVEL = {"S": r"\textsf{S}", "P": r"\textsf{P}", "D": r"\textsf{R}", "M": r"\textsf{M}", "C": r"\textsf{C}"}
 
 SUBS = [
     ("\\", r"\textbackslash{}"), ("&", r"\&"), ("%", r"\%"), ("#", r"\#"), ("_", r"\_"),
@@ -71,7 +71,9 @@ def main(src: str, dst: str) -> None:
             "This appendix records the basis of the paper's statements about the proof. "
             "\\textsf{M}: computed from the compiled archive. \\textsf{S}: the Lean statement was "
             "read and transcribed by the authors. \\textsf{P}: the Lean proof was read by the "
-            "authors. \\textsf{R}: taken from a reader's report on the source, published with this "
+            "authors. \\textsf{C}: the Lean statement was compared by the authors with the "
+            "published theorem as they know it, without opening the papers. \\textsf{R}: taken "
+            "from a reader's report, published with this "
             "paper. Paths are relative to the archive's \\lean{src} directory, and a line number "
             "follows a colon; paths beginning \\lean{results/} are in \\lean{verify/} of the "
             "repository of \\cref{app:reproduce}, and those beginning \\lean{refs/} beside the "
