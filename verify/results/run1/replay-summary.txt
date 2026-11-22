@@ -1,0 +1,16 @@
+REPLAY-SUMMARY
+modules 186200
+constants 2701132
+replayed 2695292
+theorems 2084256
+definitions 556318
+opaque 3882
+axioms 7
+inductive-types 15769 in 15734 blocks
+constructors-compared 19159
+recursors-compared 15897
+unsafe-or-partial-not-replayed 5840
+failed 0
+names-declared-more-than-once 40595, other versions also checked 40595, of which with a different type 0
+selftest accepts-true true rejects-false true
+seconds 3427

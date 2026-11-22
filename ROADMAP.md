@@ -3,34 +3,34 @@
 Open work that this repository makes possible. Each item says what exists here to start from.
 None of it has been done by us unless it says so.
 
-## 1. The corrected replay over the whole archive, an independent kernel, and an independent build
+## 1. Another kernel over the whole archive, Lean's own checker, and an independent build
 
-The replay of the whole archive reported in version 1.2 was made with the first form of our
-program, which compared less with the kernel's output than the corrected program does (see
-the paper, Section 2). The corrected program's run over the archive is under way, on a second
-build, and version 1.3 will report it.
+The full replay uses the kernel inside Lean 4.33.1. The check most worth adding is a
+run of another implementation of the kernel over the whole import closure of `Main`: lean4lean
+with `--fresh`, or an export of the environment checked by an external checker, which would
+share less with Lean than lean4lean does. We ran lean4lean on the modules of
+`verify/hostile/`, on the closures of the two Mathlib modules that declare what the statements
+are about, on the archive's module `Statements`, and on a sample of the archive's modules
+against their imports (`verify/independent.sh`). On the closure of the module that declares
+`RiemannHypothesis` it used 6.9 times the processor time of
+`leanchecker --fresh`, both measured beside the build; by that ratio and the estimate below,
+the whole archive would need roughly 100 hours of one processor.
 
-Everything we ran uses the kernel inside Lean 4.33.1. The check most worth adding is a
-run of an independent implementation of the kernel over the whole import closure of `Main`:
-lean4lean with `--fresh`, or an export of the environment checked by an external checker. We
-ran lean4lean on the modules of `verify/hostile/` and on the closure of the Mathlib module that
-declares the statement (`verify/independent.sh`); on the archive it is a matter of processor
-time that we did not have.
+Lean's own `leanchecker --fresh Main` would check the declarations independently of our
+program, though it makes none of the comparisons our program adds. It runs on one thread. On
+Mathlib it used 37 minutes of processor time and our program
+31; our replay of the archive took 12 hours of
+processor time, so by that ratio it needs roughly 15 hours of one
+processor, and the memory to hold the whole environment; the ratio was measured beside the
+build and the hours were not. Such a run was started on the second machine and had not ended
+when this version was made.
 
-Lean's own `leanchecker --fresh Main` would make the full replay independent of our program.
-It has not been run on the archive. It runs on one thread. On Mathlib it used
-36 minutes of processor time and our program
-31; the first replay of the archive took 57
-minutes on 28 threads, so this is a matter of a day or more of one
-processor, with the memory to hold the whole environment. We intend to make that run on the
-second build.
-
-The replay program (`verify/replay/ReplayMain.lean`, 582 lines) has been
+The replay program (`verify/replay/ReplayMain.lean`, 594 lines) has been
 reviewed four times by the model that wrote it (`notes/review-replay-program-A.md` to `-D.md`)
 and by no person. A person's review is wanted.
 
-The build is ours. `verify/` contains everything needed for another; ours took 13.4
-hours on 32 threads. Compare your results with `verify/results/`.
+Both builds are ours. `verify/` contains everything needed for another; the second took
+16.0 hours on 32 threads. Compare your results with `verify/results/`.
 
 ## 2. A proof a person can read
 
@@ -60,7 +60,7 @@ question can be asked of any intermediate theorem.
 
 ## 4. Auditing the formalised literature, one statement at a time
 
-The archive proves 179 named statements of published theorems. Appendix C of the
+The archive proves 179 statements named after published theorems. Appendix C of the
 paper says what each Lean statement asserts and gives our comparison with the theorem its name
 refers to: the published theorem in the generality of a source (90), a restricted
 form (86), or a statement that differs (3), with the reason for each
@@ -110,9 +110,10 @@ papers before a formalisation relies on them.
 ## 7. The two programs as general tools
 
 `verify/cut/CutMain.lean` and `verify/replay/ReplayMain.lean` were written because the
-toolchain's `leanchecker` re-imports the whole import closure for every module, which does not
-finish on a tree of this size. Both programs are short and do not depend on this
-archive:
+toolchain's `leanchecker`, in its ordinary mode, imports the whole import closure again for
+every module: at the rate of our sample the archive would take about 15 days,
+and a name with many modules under it does not fit in memory. Both programs are short and do
+not depend on this archive:
 
 - the cut computes the declaration-level dependency cone of any theorem, with a traversal that
   is linear in the size of each proof term;

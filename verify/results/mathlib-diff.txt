@@ -1,0 +1,54 @@
+script sha256 b3fc22b4830c45ccbdecbb96d38e8a3c1909631addc58be0ce14271e64cf110c
+Mathlib commit 0df444a360eaa60ab8c11dca51a86af692955474
+cache fetched, ended 2026-11-22T17:02:21Z; the last lines its tool printed:
+    Decompressing 8689 already-cached file(s) (1 already decompressed)
+    No files to download
+    Decompressed 8689 already-cached file(s)
+    Completed successfully in 7193 ms!
+constants in the import closure of Mathlib, cached build: 772126
+constants in the import closure of Mathlib, built from source: 772132
+sha256 of the list of names, cached build: 54b473cbd6dc5cabebfcc62d16a7d8782fd9977a95efed20082c5b24cbf45279
+sha256 of the list of names, built from source: 4cadca748bea38efce1bdd52491b8bcf0e459829870b3c8589c51ea6c096d4b6
+ONLY IN THE BUILD FROM SOURCE 8
+  T- Mathlib.Algebra.Homology.BifunctorHomotopy _private.Mathlib.Algebra.Homology.BifunctorHomotopy.0.HomologicalComplex.mapBifunctorMapHomotopy.comm₁._abel_1_4
+  T- Mathlib.Algebra.Homology.BifunctorHomotopy _private.Mathlib.Algebra.Homology.BifunctorHomotopy.0.HomologicalComplex.mapBifunctorMapHomotopy.comm₁._simp_1_3
+  T- Mathlib.Algebra.MvPolynomial.Rename _private.Mathlib.Algebra.MvPolynomial.Rename.0.MvPolynomial.coeff_killCompl._simp_1_1
+  T- Mathlib.Computability.PartrecCode _private.Mathlib.Computability.PartrecCode.0.Nat.Partrec.Code.evaln_mono._simp_1_18
+  T- Mathlib.Computability.PartrecCode _private.Mathlib.Computability.PartrecCode.0.Nat.Partrec.Code.evaln_mono._simp_1_19
+  T- Mathlib.RingTheory.MvPolynomial.MonomialOrder _private.Mathlib.RingTheory.MvPolynomial.MonomialOrder.0.MonomialOrder.sPolynomial_decomposition._simp_1_1
+  T- Mathlib.RingTheory.MvPolynomial.MonomialOrder _private.Mathlib.RingTheory.MvPolynomial.MonomialOrder.0.MonomialOrder.sPolynomial_decomposition._simp_1_4
+  T- Mathlib.RingTheory.MvPolynomial.MonomialOrder _private.Mathlib.RingTheory.MvPolynomial.MonomialOrder.0.MonomialOrder.sPolynomial_decomposition._simp_1_5
+ONLY IN THE CACHED BUILD 2
+  T- Mathlib.Algebra.Homology.BifunctorHomotopy _private.Mathlib.Algebra.Homology.BifunctorHomotopy.0.HomologicalComplex.mapBifunctorMapHomotopy.comm₁._abel_1_3
+  T- Mathlib.RingTheory.MvPolynomial.MonomialOrder _private.Mathlib.RingTheory.MvPolynomial.MonomialOrder.0.MonomialOrder.sPolynomial_decomposition._simp_1_3
+IN BOTH 772124
+IN BOTH, TYPES WITH DIFFERENT HASHES 2
+  T- Mathlib.RingTheory.MvPolynomial.MonomialOrder _private.Mathlib.RingTheory.MvPolynomial.MonomialOrder.0.MonomialOrder.sPolynomial_decomposition._simp_1_2
+  T- Mathlib.Combinatorics.SimpleGraph.Walk.Operations SimpleGraph.Walk.take.eq_2
+IN BOTH, VALUES WITH DIFFERENT HASHES 6
+  T- Mathlib.Algebra.MvPolynomial.Rename MvPolynomial.coeff_killCompl
+  T- Mathlib.Algebra.Homology.BifunctorHomotopy HomologicalComplex.mapBifunctorMapHomotopy.comm₁
+  T- Mathlib.RingTheory.MvPolynomial.MonomialOrder MonomialOrder.sPolynomial_decomposition
+  T- Mathlib.RingTheory.MvPolynomial.MonomialOrder _private.Mathlib.RingTheory.MvPolynomial.MonomialOrder.0.MonomialOrder.sPolynomial_decomposition._simp_1_2
+  T- Mathlib.Combinatorics.SimpleGraph.Walk.Operations SimpleGraph.Walk.take.eq_2
+  D- Mathlib.Computability.PartrecCode Nat.Partrec.Code.evaln_mono._f
+THE STATEMENTS THAT DIFFER, AS THE CACHED BUILD HAS THEM
+    _private.Mathlib.RingTheory.MvPolynomial.MonomialOrder.0.MonomialOrder.sPolynomial_decomposition._simp_1_2 :
+    ∀ {R : Type u} {σ : Type u_1} [inst : CommSemiring R] (p : MvPolynomial σ R) (a : R),
+      MvPolynomial.C a * p = a • p
+    SimpleGraph.Walk.take.eq_2 :
+    ∀ {V : Type u} {G : SimpleGraph V} {u v : V} (p : G.Walk u v),
+      p.take 0 =
+        match v, p, 0 with
+        | .(u), SimpleGraph.Walk.nil, x => SimpleGraph.Walk.nil
+        | v, p, 0 => SimpleGraph.Walk.nil.copy ⋯ ⋯
+        | v, SimpleGraph.Walk.cons h q, n.succ => SimpleGraph.Walk.cons h (q.take n)
+    [SimpleGraph.Walk.take is a definition]
+THE STATEMENTS THAT DIFFER, AS THE BUILD FROM SOURCE HAS THEM
+    _private.Mathlib.RingTheory.MvPolynomial.MonomialOrder.0.MonomialOrder.sPolynomial_decomposition._simp_1_2 :
+    ∀ {α : Sort u_1} {a' : α} {P Q : α → Prop},
+      (∀ (a : α), a = a' ∨ Q a → P a) = (P a' ∧ ∀ (a : α), Q a → P a)
+    SimpleGraph.Walk.take.eq_2 :
+    ∀ {V : Type u} {G : SimpleGraph V} {u v : V} (p : G.Walk u v),
+      (v = u → p ≍ SimpleGraph.Walk.nil → False) → p.take 0 = SimpleGraph.Walk.nil.copy ⋯ ⋯
+    [SimpleGraph.Walk.take is a definition]

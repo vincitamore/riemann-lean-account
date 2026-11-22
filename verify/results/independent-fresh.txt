@@ -1,1 +1,2 @@
 lean4lean --fresh Mathlib.NumberTheory.LSeries.RiemannZeta: exit 0; elapsed 4592.011 s, processor time 3912.672 s user and 200.743 s system; checked 420595 declarations
+lean4lean --fresh Mathlib.NumberTheory.LSeries.DirichletContinuation: exit 0; elapsed 1690.232 s, processor time 1574.827 s user and 74.240 s system; checked 460458 declarations

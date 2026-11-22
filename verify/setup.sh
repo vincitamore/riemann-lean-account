@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Fetches the archive from its author's site, checks its hash, unpacks it, installs the pinned
 # toolchain and provides Mathlib at the pinned commit: compiled from source, or, with
-# MATHLIB=cache, from the community's prebuilt cache (faster by about an hour on 32 threads).
+# MATHLIB=cache, from the community's prebuilt cache (the build from source took 19 minutes on 32 threads).
 # Run in an empty working directory with about 150 GB free:   bash setup.sh
 # The source build writes its log to mathlib-build.log in that directory.
 set -uo pipefail

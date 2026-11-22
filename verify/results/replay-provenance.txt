@@ -1,0 +1,9 @@
+program sha256 5e695c0b2bb77f494fba42c876556b44f7dac679c1d9111eacf93589cc8e3393
+toolchain Lean (version 4.33.1, x86_64-unknown-linux-gnu, commit 819816b2e0a3bf405af45ae5c7af2491d8f5bee6, Release)
+root Main
+threads 32
+compiled files of the archive: 175187
+sha256 of the compiled file of Main: 9146dfb4148e24d2252e04c50742f3e49dd126dfcc5006d10bf5f873ddf796ad
+started 2026-11-22T10:59:46Z
+elapsed 6971.449 s, processor time 43358.790 s user and 785.856 s system
+exit code 0

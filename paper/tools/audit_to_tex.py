@@ -69,12 +69,14 @@ def main(src: str, dst: str) -> None:
         f.write("\\section{Basis of the statements}\\label{app:audit}\n\n")
         f.write(
             "This appendix records the basis of the paper's statements about the proof. "
-            "\\textsf{M}: computed from the compiled archive. \\textsf{S}: the Lean statement was "
-            "read and transcribed by the authors. \\textsf{P}: the Lean proof was read by the "
+            "\\textsf{M}: computed from the compiled files, of the archive or, where the row says "
+            "so, of Mathlib. \\textsf{S}: the Lean statement was "
+            "read and transcribed by the authors. \\textsf{P}: the Lean source was read by the "
             "authors. \\textsf{C}: the Lean statement was compared by the authors with the "
             "published theorem as they know it, without opening the papers. \\textsf{R}: taken "
             "from a reader's report, published with this "
-            "paper. Paths are relative to the archive's \\lean{src} directory, and a line number "
+            "paper. Paths are relative to the archive's \\lean{src} directory, except in the row "
+            "on \\lean{lean4lean}, where they are relative to its repository; a line number "
             "follows a colon; paths beginning \\lean{results/} are in \\lean{verify/} of the "
             "repository of \\cref{app:reproduce}, and those beginning \\lean{refs/} beside the "
             "source of this paper.\n\n"

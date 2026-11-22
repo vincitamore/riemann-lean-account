@@ -1,9 +1,17 @@
-CONE-SIZE 1478219
-CONE-SIZE-FIVE-THEOREMS 1478243
-CONSTANTS-SCANNED 2741727
+CONE-SIZE 1478220
+CONE-SIZE-FIVE-THEOREMS 1478244
+CONSTANTS-SCANNED 2741733
+CONE-NAMES archive 1265256 mathlib 203036 other 9928
+CONE-AXIOMS [Classical.choice, Quot.sound, propext]
+CONE-AXIOMS-FIVE-THEOREMS [Classical.choice, Quot.sound, propext]
+COUNTS-BY-NAME (each name once, however many modules declare it)
+  PROJECT-NAMES total 1905922 in-cone 1265256
+  PROJECT-THEOREM-NAMES total 1548656 in-cone 1075015 repeated-declarations 39597
+  PROJECT-DEFINITION-NAMES total 331347 in-cone 178298 compiled-recursion-forms 621
+COUNTS-BY-DECLARATION (a name once for each module that declares it)
 BY-ROOT root total-constants in-cone
   Lake 7 0
-  Mathlib 569989 203325
+  Mathlib 569995 203326
   Init 66124 9674
   ProofWidgets 1182 0
   Development 1254110 856267
@@ -28,6 +36,18 @@ BY-ROOT root total-constants in-cone
 PROJECT-THEOREMS total 1588253 in-cone 1093609
 PROJECT-DEFINITIONS total 331347 in-cone 178298
 PROJECT-MODULES with-constants 175014 touching-cone 147489
+MODULES-BY-ROOT root modules declaring-something touching-cone
+  GroundTheory 8507 8506 6693
+  PositivityTheory 449 447 343
+  Development 141928 141877 119891
+  Formalism 18254 18233 15030
+  Main 1 1 1
+  Statements 1 1 0
+  ReciprocityTheory 3845 3825 3485
+  Lemmata 167 167 158
+  Supplements 3 1 1
+  BuildAid 5 0 0
+  CompanionTheory 2027 1956 1887
 SHORT-NAME-PROBES name: declarations-with-that-last-component in-cone [up to 6 in cone] [up to 3 not in cone]
   riemannHypothesis: 2 1 [riemannHypothesis] [UpperTheory.FinalTheorems.riemannHypothesis]
   rhOfAll: 1 1 [rhOfAll] []

@@ -21,4 +21,4 @@ unsafe-or-partial-not-replayed 4421
 failed 0
 names-declared-more-than-once 619, further versions 997, of which checked 997 and axioms 0
 selftest accepts-true true rejects-false true
-seconds 315
+seconds 311

@@ -8,7 +8,9 @@ log=$1; mlog=${2:-}; jlog=${3:-}
 echo "MACHINE"
 grep -m1 'model name' /proc/cpuinfo
 echo "threads available $(nproc)"
-echo "memory $(awk '/MemTotal/ {printf "%.0f GB", $2 / 1048576}' /proc/meminfo)"
+echo "memory $(awk '/MemTotal/ {printf "%.0f GB", $2 / 1048576}' /proc/meminfo) (of the host, if this is a container)"
+lim=$(cat /sys/fs/cgroup/memory.max 2>/dev/null || cat /sys/fs/cgroup/memory/memory.limit_in_bytes 2>/dev/null)
+case "$lim" in ''|max) echo "memory-limit none found" ;; *) echo "memory-limit $(awk -v b="$lim" 'BEGIN {printf "%.0f GB", b / 1e9}') (of this container, in units of 10^9 bytes)" ;; esac
 echo "BUILD OF Main ($log)"
 grep -a -m1 '^START ' "$log"
 grep -a 'Build completed successfully' "$log" | tail -1
@@ -18,10 +20,10 @@ echo "oleans $(find lean/.lake/build/lib/lean -name '*.olean' | wc -l)"
 echo "failed-marks $(grep -a -c '✖' "$log")"
 echo "error-lines $(grep -a -c -E '^[0-9]+ error:' "$log")"
 echo "warnings $(grep -a -c 'warning:' "$log")"
-echo "compiled-bytes $(find lean/.lake/build/lib/lean -type f -printf '%s\n' | awk '{s += $1} END {print s}')"
+echo "compiled-bytes $(find lean/.lake/build/lib/lean -type f -printf '%s\n' | awk '{s += $1} END {printf "%.0f\n", s}')"
 if [ -n "$jlog" ]; then
   echo "disk-peak-GB $(grep -a -o 'disk [0-9.]*G used' "$jlog" | grep -o '[0-9.]*' | sort -n | tail -1)"
-  echo "setup-files-measured $(awk '$2 == "removed" && $4 == "bytes" {n += $3; b += $5} END {printf "%d files %d bytes\n", n, b}' "$jlog")"
+  echo "setup-files-measured $(awk '$2 == "removed" && $4 == "bytes" {n += $3; b += $5} END {printf "%.0f files %.0f bytes\n", n, b}' "$jlog")"
 fi
 echo "TOOLCHAIN AND PACKAGES"
 cat lean/lean-toolchain

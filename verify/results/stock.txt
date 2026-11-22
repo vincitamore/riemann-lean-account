@@ -1,5 +1,5 @@
-replay program sha256 b5e3596dde657bc84d9ed580574989a80d06ae4f3faecc055ebf8ed51a2d73d5
-leanchecker --fresh Mathlib.NumberTheory.LSeries.RiemannZeta: exit 0; elapsed 661.896 s, processor time 644.311 s user and 13.248 s system
-replay Mathlib.NumberTheory.LSeries.RiemannZeta: exit 0; elapsed 79.294 s, processor time 475.639 s user and 10.303 s system; constants 433827 replayed 430239 failed 0 
-leanchecker --fresh Mathlib: exit 0; elapsed 2175.235 s, processor time 2124.297 s user and 27.774 s system
-replay Mathlib: exit 0; elapsed 320.756 s, processor time 1822.999 s user and 34.392 s system; constants 771135 replayed 766714 failed 0 
+replay program sha256 5e695c0b2bb77f494fba42c876556b44f7dac679c1d9111eacf93589cc8e3393
+leanchecker --fresh Mathlib.NumberTheory.LSeries.RiemannZeta: exit 0; elapsed 601.128 s, processor time 571.485 s user and 21.164 s system
+replay Mathlib.NumberTheory.LSeries.RiemannZeta: exit 0; elapsed 84.525 s, processor time 486.996 s user and 11.050 s system; constants 433827 replayed 430239 failed 0 
+leanchecker --fresh Mathlib: exit 0; elapsed 2267.789 s, processor time 2191.225 s user and 39.868 s system
+replay Mathlib: exit 0; elapsed 317.696 s, processor time 1815.566 s user and 33.342 s system; constants 771135 replayed 766714 failed 0 

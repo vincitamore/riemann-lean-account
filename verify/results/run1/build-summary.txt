@@ -1,0 +1,25 @@
+START 1795191011 threads=32
+1795191017 ✔ [8705/9402] Built Formalism.SizeWindowBrackets.RealSlopeBoundsSplit (1.5s)
+1795191022 ✔ [8706/9402] Built Formalism.HermitianLattices.StatementJac (6.2s)
+...
+1795239292 ✔ [183890/183893] Built Supplements.Kernels.MainTheoremsCritical (19s)
+1795239311 ✔ [183891/183893] Built Supplements.Kernels.MainTheoremsAll (19s)
+1795239341 ✔ [183892/183893] Built Main (25s)
+1795239342 Build completed successfully (183893 jobs).
+LAKE-EXIT 0
+END 1795239342
+
+oleans 175187
+failed-marks 0
+warnings 489061
+leanprover/lean4:v4.33.1
+Lean (version 4.33.1, x86_64-unknown-linux-gnu, commit 819816b2e0a3bf405af45ae5c7af2491d8f5bee6, Release)
+   "name": "mathlib",
+   "manifestFile": "lake-manifest.json",
+   "inputRev": "0df444a360eaa60ab8c11dca51a86af692955474",
+   "inherited": false,
+   "rev": "0df444a360eaa60ab8c11dca51a86af692955474",
+   "rev": "b7eb3304aeae834b12dda98993a37f6a41f6f0bb",
+   "rev": "5f4d51b81cbd3f6b32b156bfad9056621a040404",
+32
+model name	: AMD EPYC 9575F 64-Core Processor

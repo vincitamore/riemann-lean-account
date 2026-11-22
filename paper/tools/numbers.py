@@ -116,13 +116,14 @@ def main() -> None:
     second = (res / "run1").is_dir()
     build_facts(build, "build", "build-summary.txt")
     put("leanversion", grab(build, r"leanprover/lean4:v([0-9.]+)", "the Lean version"), "build-summary.txt")
-    # the revision of the manifest entry named mathlib (summary.sh prints every entry)
-    mrev = re.search(r'"inputRev": "([0-9a-f]{40})"[^{}]*"name": "mathlib"|"name": "mathlib"[^{}]*"inputRev": "([0-9a-f]{40})"', build)
+    # the revision of the manifest entry named mathlib: in lake-manifest.json, and so in the
+    # lines summary.sh prints, an entry's "inputRev" is the line after its "name"
+    mrev = re.search(r'"name": "mathlib",?\s*\n\s*"inputRev": "([0-9a-f]{40})"', build)
     if not mrev and len(re.findall(r'"inputRev": "[0-9a-f]{40}"', build)) == 1:
-        mrev = re.search(r'"inputRev": "([0-9a-f]{40})"()', build)
+        mrev = re.search(r'"inputRev": "([0-9a-f]{40})"', build)
     if not mrev:
         sys.exit("numbers.py: cannot find the Mathlib revision in build-summary.txt")
-    put("mathlibrev", mrev.group(1) or mrev.group(2), "build-summary.txt")
+    put("mathlibrev", mrev.group(1), "build-summary.txt")
     if second:
         ms = int(grab(build, r"^MATHLIB-START (\d+)", "the start of the Mathlib build"))
         me = int(grab(build, r"^MATHLIB-END (\d+)", "the end of the Mathlib build"))
@@ -137,6 +138,8 @@ def main() -> None:
             sys.exit("numbers.py: build-summary.txt has no measurement of the setup files")
         put("setupfilemb", f"{int(sf.group(2)) / int(sf.group(1)) / 1e6:.1f}", "build-summary.txt: bytes over files")
         put("setupallgb", str(round(int(sf.group(2)) / int(sf.group(1)) * files / 1e9)), "computed: that size for every module")
+        put("memorylimit", grab(build, r"^memory-limit (\d+) GB", "the container's memory limit"), "build-summary.txt")
+        put("compiledgb", str(round(int(grab(build, r"^compiled-bytes (\d+)", "the size of the compiled files")) / 1e9)), "build-summary.txt: compiled-bytes")
         first = res / "run1" / "build-summary.txt"
         build_facts(first.read_text(encoding="utf-8"), "firstbuild", "run1/build-summary.txt")
 
@@ -222,6 +225,8 @@ def main() -> None:
     if "MODULES-BY-ROOT" in cut:
         block = cut.split("MODULES-BY-ROOT", 1)[1].split("SHORT-NAME-PROBES", 1)[0]
         total_files = 0
+        named = ("Development", "Formalism", "GroundTheory", "ReciprocityTheory", "CompanionTheory", "PositivityTheory")
+        other_unused, other_roots, named_unused = 0, 0, 0
         for line in block.splitlines()[1:]:
             p = line.split()
             if len(p) == 4:
@@ -229,8 +234,17 @@ def main() -> None:
                 total_files += allm
                 put("mods" + root + "All", fmt(allm), "cut-result.txt MODULES-BY-ROOT")
                 put("mods" + root + "Unused", fmt(allm - touch), "modules of the directory minus those touching the cone")
+                if root in named:
+                    named_unused += allm - touch
+                elif allm - touch:
+                    other_unused += allm - touch
+                    other_roots += 1
         if total_files != files:
             sys.exit(f"numbers.py: MODULES-BY-ROOT adds up to {total_files}, not {files}")
+        if named_unused + other_unused != files - mods_in:
+            sys.exit("numbers.py: the unused modules by directory do not add up to the total")
+        put("modsOtherUnused", str(other_unused), "cut-result.txt MODULES-BY-ROOT: unused modules outside the six directories named")
+        put("modsOtherRoots", ["no", "one", "two", "three", "four", "five", "six", "seven"][other_roots], "the directories they are in")
     elif second:
         sys.exit("numbers.py: the second run's cut-result.txt has no MODULES-BY-ROOT table")
     hub = re.search(r"LITERATURE-HUB theorems (\d+) not-in-cone (\d+)", cut)
@@ -268,7 +282,7 @@ def main() -> None:
     put("replaydefs", fmt(kinds["definitions"]), "replay-summary.txt")
     put("replayopaque", fmt(kinds["opaque"]), "replay-summary.txt")
     put("replayaxioms", str(kinds["axioms"]), "replay-summary.txt")
-    put("replayquot", str(quot), "computed: the constants replayed less those of the other kinds; checked to be 4")
+    put("replayquot", str(quot), "replay-summary.txt: quotient-constants (in the first run's format, the constants replayed less those of the other kinds); checked to be 4")
     put("replayinductives", fmt(int(ind.group(1))), "replay-summary.txt")
     put("replayblocks", fmt(int(ind.group(2))), "replay-summary.txt")
     put("replayctors", fmt(kinds["constructors-compared"]), "replay-summary.txt")
@@ -290,6 +304,8 @@ def main() -> None:
             sys.exit("numbers.py: a further version of a repeated name is an axiom; the text says every version was checked")
         ex = re.search(r"^exported-parts-compared (\d+) modules, (\d+) constants", rep, re.M)
         put("replayexportedmodules", fmt(int(ex.group(1))), "replay-summary.txt")
+        if int(ex.group(1)) != r("modules") - files:
+            sys.exit("numbers.py: the modules whose exported parts were compared are not exactly the modules outside the archive")
         put("replayexported", fmt(int(ex.group(2))), "replay-summary.txt")
         for label in ("CONE-AXIOMS", "CONE-AXIOMS-FIVE-THEOREMS"):
             if grab(cut, rf"^{label} (\[.*\])$", "the axioms of the cone") != "[Classical.choice, Quot.sound, propext]":
@@ -312,15 +328,185 @@ def main() -> None:
                 sys.exit(f"numbers.py: unexpected report on a theorem: {l}")
         put("replayconeconstants", fmt(int(grab(targets[0], r"depends on (\d+) constants", "the dependencies"))), "replay-targets.txt")
         put("replayconeagrees", "true" if int(grab(targets[0], r"depends on (\d+) constants", "the dependencies")) == cone else "false", "compared with CONE-SIZE")
-        # the first run's replay, of the tree built with Mathlib from the cache
+        # The two runs compared. The first took Mathlib from the cache, the second compiled it;
+        # the text says that they agree on the archive and differ by some theorems of Mathlib.
         rep1 = (res / "run1" / "replay-summary.txt").read_text(encoding="utf-8")
-        same = all(grab(rep1, rf"^{k} (\d+)", k) == grab(rep, rf"^{k} (\d+)", k)
-                   for k in ("modules", "constants", "replayed", "theorems", "definitions", "opaque", "axioms",
-                             "constructors-compared", "recursors-compared", "unsafe-or-partial-not-replayed", "failed"))
-        put("replayrunsagree", "true" if same else "false", "the counts of the two replays compared")
-        if not same:
-            sys.exit("numbers.py: the two replays' counts differ; the text says they agree")
+        cut1 = (res / "run1" / "cut-result.txt").read_text(encoding="utf-8")
+
+        def by_root(text: str) -> dict:
+            rows = {}
+            for l in text.split("BY-ROOT", 1)[1].splitlines()[1:]:
+                mm = re.match(r"^  (\S+) (\d+) (\d+)$", l)
+                if not mm:
+                    break
+                rows[mm.group(1)] = (int(mm.group(2)), int(mm.group(3)))
+            return rows
+        r1, r2 = by_root(cut1), by_root(cut)
+        if set(r1) != set(r2) or any(r1[k] != r2[k] for k in r1 if k != "Mathlib"):
+            sys.exit("numbers.py: the two runs differ outside Mathlib; the text says they do not")
+        extra = r2["Mathlib"][0] - r1["Mathlib"][0]
+        extra_cone = r2["Mathlib"][1] - r1["Mathlib"][1]
+        if extra < 0 or extra_cone < 0:
+            sys.exit("numbers.py: Mathlib from source declares fewer constants than the cached build")
+        put("mathlibextra", str(extra), "cut-result.txt and run1/cut-result.txt: constants of Mathlib")
+        put("mathlibextracone", str(extra_cone), "the same, in the cone")
+        cone_diff = cone - int(grab(cut1, r"^CONE-SIZE (\d+)", "the first cone"))
+        if cone_diff != extra_cone or cone_diff < 0:
+            sys.exit("numbers.py: the two cones differ by other than Mathlib's extra constants in the cone")
+        put("mathlibextraconewords", "one constant" if cone_diff == 1 else f"{cone_diff} constants",
+            "cut-result.txt and run1/cut-result.txt: CONE-SIZE")
+        # how the two builds of Mathlib differ (mathlib-diff.txt, the output of mathlib-diff.sh)
+        md = (res / "mathlib-diff.txt").read_text(encoding="utf-8")
+        aux = re.compile(r"^_private\.(.+)\.0\.(.+)\._(simp|abel)_\d+_\d+$")
+
+        def section(head: str) -> list:
+            # the indented lines that follow the line "<head> <count>", checked against the count
+            mm = re.search(rf"^{re.escape(head)} (\d+)\n((?:  .*\n)*)", md, re.M)
+            if not mm:
+                sys.exit(f"numbers.py: mathlib-diff.txt has no section {head}")
+            rows_ = [l[2:].split(" ", 2) for l in mm.group(2).splitlines()]
+            if any(len(r_) != 3 for r_ in rows_):
+                sys.exit(f"numbers.py: mathlib-diff.txt, section {head}: a line is not kind, module, name")
+            if len(rows_) != int(mm.group(1)):
+                sys.exit(f"numbers.py: mathlib-diff.txt, section {head}: the count and the lines disagree")
+            return rows_, int(mm.group(1))
+        only_src, src_n = section("ONLY IN THE BUILD FROM SOURCE")
+        only_cache, cache_n = section("ONLY IN THE CACHED BUILD")
+        if src_n - cache_n != extra:
+            sys.exit("numbers.py: mathlib-diff.txt does not account for the difference between the two builds")
+        proofs = set()
+        for kind, module, name in only_src + only_cache:
+            mm = aux.match(name)
+            if kind != "T-" or not module.startswith("Mathlib.") or not mm:
+                sys.exit(f"numbers.py: {name} is not a private auxiliary theorem of simp or abel in Mathlib; the text says all are")
+            proofs.add(mm.group(2))
+        put("mathlibonlysource", str(src_n), "mathlib-diff.txt")
+        put("mathlibonlycache", str(cache_n), "mathlib-diff.txt")
+        put("mathlibdiffproofs", str(len(proofs)), "mathlib-diff.txt: the declarations whose proofs these lemmas belong to")
+        # among the constants both builds have: statements and values by Lean's hash
+        common = int(grab(md, r"^IN BOTH (\d+)$", "the constants in both builds"))
+        tot_cache = int(grab(md, r"^constants in the import closure of Mathlib, cached build: (\d+)", "the cached build's constants"))
+        tot_src = int(grab(md, r"^constants in the import closure of Mathlib, built from source: (\d+)", "the source build's constants"))
+        if common != tot_cache - cache_n or common != tot_src - src_n:
+            sys.exit("numbers.py: mathlib-diff.txt: the constants in both builds are not the totals less those in one only")
+        tdiff, tdiff_n = section("IN BOTH, TYPES WITH DIFFERENT HASHES")
+        vdiff, vdiff_n = section("IN BOTH, VALUES WITH DIFFERENT HASHES")
+        # What may differ, and is described in the text: an auxiliary lemma of simp or abel (the
+        # same name can hold another lemma when the numbering shifted); an equation that Lean
+        # generates for a definition (name.eq_N); a theorem in whose proof the auxiliary lemmas
+        # occur; an auxiliary definition under such a theorem's name, which holds its proof.
+        # Anything else stops this script.
+        eqn = re.compile(r"^[^_].*\.eq_\d+$")
+        t_aux = [n_ for k_, _, n_ in tdiff if k_ == "T-" and aux.match(n_)]
+        t_eqn = [n_ for k_, _, n_ in tdiff if k_ == "T-" and eqn.match(n_)]
+        if len(t_aux) + len(t_eqn) != tdiff_n:
+            sys.exit(f"numbers.py: a statement differs between the two builds of Mathlib that is neither an auxiliary lemma nor a generated equation: {tdiff}")
+        # a name ending in .eq_N is an equation of a definition only if the constant before .eq_N
+        # is a definition; mathlib-diff.sh prints that for each build, with the two statements
+        shown = md.split("THE STATEMENTS THAT DIFFER, AS THE CACHED BUILD HAS THEM", 1)
+        if len(shown) != 2 or "THE STATEMENTS THAT DIFFER, AS THE BUILD FROM SOURCE HAS THEM" not in shown[1]:
+            sys.exit("numbers.py: mathlib-diff.txt does not print the statements that differ")
+        shown_cache, shown_src = shown[1].split("THE STATEMENTS THAT DIFFER, AS THE BUILD FROM SOURCE HAS THEM", 1)
+        for n_ in t_aux + t_eqn:
+            if f"    {n_} :" not in shown_cache or f"    {n_} :" not in shown_src:
+                sys.exit(f"numbers.py: mathlib-diff.txt does not print the statement of {n_} in both builds")
+        for n_ in t_eqn:
+            if any(f"    [{n_.rsplit('.eq_', 1)[0]} is a definition]" not in part for part in (shown_cache, shown_src)):
+                sys.exit(f"numbers.py: {n_} is not an equation of a definition; the text says it is")
+        t_names = set(n_ for _, _, n_ in tdiff)
+        v_same_as_t = [n_ for _, _, n_ in vdiff if n_ in t_names]
+        v_parent_thm = [n_ for k_, _, n_ in vdiff if n_ not in t_names and k_ == "T-" and n_ in proofs]
+        v_parent_def = [n_ for k_, _, n_ in vdiff if n_ not in t_names and k_ == "D-"
+                        and any(n_.startswith(p_ + "._") for p_ in proofs)]
+        if len(v_same_as_t) + len(v_parent_thm) + len(v_parent_def) != vdiff_n or len(v_same_as_t) != tdiff_n:
+            sys.exit(f"numbers.py: values differ between the two builds of Mathlib beyond what the text describes: {vdiff}")
+        if set(v_parent_thm) | set(n_.rsplit("._", 1)[0] for n_ in v_parent_def) != proofs:
+            sys.exit("numbers.py: the proofs that differ are not exactly those in which the auxiliary lemmas occur")
+        put("mathlibcommon", fmt(common), "mathlib-diff.txt: IN BOTH")
+        put("mathlibtypesdiffer", str(tdiff_n), "mathlib-diff.txt: statements with different hashes")
+        put("mathlibvaluesdiffer", str(vdiff_n), "mathlib-diff.txt: values with different hashes")
+        small = ["no", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"]
+        t_parts, t_short = [], []
+        if t_aux:
+            t_parts.append(("a further auxiliary lemma, to whose generated name the two builds gave different lemmas" if len(t_aux) == 1
+                            else f"{small[len(t_aux)]} further auxiliary lemmas, to whose generated names the two builds gave different lemmas"))
+            t_short.append("one further auxiliary lemma" if len(t_aux) == 1 else f"{small[len(t_aux)]} further auxiliary lemmas")
+        if t_eqn:
+            if len(t_eqn) != 1:
+                sys.exit("numbers.py: more than one generated equation differs; the text is written for one")
+            t_parts.append(f"\\texttt{{{t_eqn[0].replace('_', chr(92) + '_')}}}, one of the equations that Lean itself generates "
+                           "for a definition, which the two builds state in different forms; both forms are printed in the results")
+            t_short.append(f"one equation that Lean generates for a definition (`{t_eqn[0]}`), which the two builds state in different forms")
+        if tdiff_n == 0:
+            t_sentence = "the hash of the statement is the same in both for every one"
+            t_short_s = "no statement differs"
+        else:
+            t_sentence = f"the hash of the statement is the same in both for all but {small[tdiff_n]}: " + ", and ".join(t_parts)
+            t_short_s = "statements differ only in " + " and ".join(t_short)
+        ordinal = ["", "first", "second", "third", "fourth", "fifth", "sixth"]
+        if vdiff_n == 0:
+            v_sentence, v_short_s = "The hash of every value is the same.", "and no proof"
+        else:
+            if len(v_parent_def) == 1 and len(v_parent_thm) + 1 == len(proofs) < len(ordinal):
+                holders = (f"{small[len(v_parent_thm)]} of the {small[len(proofs)]} theorems in whose proofs the auxiliary lemmas "
+                           f"occur, and an auxiliary definition under the name of the {ordinal[len(proofs)]}")
+            elif not v_parent_def and len(v_parent_thm) == len(proofs):
+                holders = f"the {small[len(proofs)]} theorems in whose proofs the auxiliary lemmas occur"
+            else:
+                sys.exit("numbers.py: the values that differ do not have the shape the text is written for")
+            v_sentence = (f"The hash of the value differs for {small[vdiff_n]}: "
+                          + ("these " + small[tdiff_n] + ", " if tdiff_n else "") + holders + ".")
+            v_short_s = "and proofs only in those and in the proofs in which the auxiliary lemmas occur"
+        put("mathlibhashnote", f"Among the {fmt(common)} constants that both builds have, {t_sentence}. {v_sentence} "
+            "The hash is the 32-bit one that each compiled file stores with each term; it does not see the names of "
+            "bound variables, their annotations, or metadata, and nothing here recomputes it. Equal hashes are "
+            "evidence that two terms are equal, not a proof of it.", "mathlib-diff.txt, in words")
+        put("mathlibhashshort", f"Among the {fmt(common)} constants both have, by Lean's 32-bit hash, {t_short_s}, {v_short_s}",
+            "the same, for the README")
+        # the lists of the archive's declarations and modules are the same in the two builds
+        for name in ("cut-in.txt.xz", "cut-out.txt.xz", "cut-modules.txt.xz"):
+            if lzma.open(res / name).read() != lzma.open(res / "run1" / name).read():
+                sys.exit(f"numbers.py: {name} differs between the two builds; the text says the lists are identical")
+        for k in ("modules", "definitions", "opaque", "axioms", "constructors-compared", "recursors-compared",
+                  "unsafe-or-partial-not-replayed", "failed", "inductive-types"):
+            if grab(rep1, rf"^{k} (\d+)", k) != grab(rep, rf"^{k} (\d+)", k):
+                sys.exit(f"numbers.py: the two replays differ in {k}; the text says they agree there")
+        ind1 = re.search(r"^inductive-types (\d+) in (\d+) blocks", rep1, re.M)
+        if not ind1 or ind1.groups() != ind.groups():
+            sys.exit("numbers.py: the two replays differ in inductive types or blocks")
+        r1 = lambda k: int(grab(rep1, rf"^{k} (\d+)", k))
+        if r1("replayed") - sum(r1(k) for k in ("theorems", "definitions", "opaque", "axioms", "constructors-compared",
+                                                 "recursors-compared")) - int(ind1.group(1)) != quot:
+            sys.exit("numbers.py: the first replay's kinds do not leave the four constants of the quotient type")
+        for k in ("constants", "replayed", "theorems"):
+            if int(grab(rep, rf"^{k} (\d+)", k)) - int(grab(rep1, rf"^{k} (\d+)", k)) != extra:
+                sys.exit(f"numbers.py: the two replays differ in {k} by other than Mathlib's extra theorems")
+        put("replayrunsagree", "true", "the counts of the two replays compared: equal but for Mathlib's extra theorems")
+        put("firstconesize", fmt(int(grab(cut1, r"^CONE-SIZE (\d+)", "the first cone"))), "run1/cut-result.txt")
+        for name in ("replay-skipped.txt", "replay-axioms.txt", "cut-five-extra.txt"):
+            a = sorted((res / "run1" / name).read_text(encoding="utf-8").split())
+            b = sorted((res / name).read_text(encoding="utf-8").split())
+            if a != b:
+                sys.exit(f"numbers.py: {name} differs between the two runs")
         put("firstreplayminutes", str(round(int(grab(rep1, r"^seconds (\d+)", "seconds")) / 60)), "run1/replay-summary.txt")
+        # The duration of the cone step. cut.sh records no time; file-times.txt holds the time at
+        # which the machine last wrote each results file. The step ran from the end of the step
+        # before it (corollaries.sh, whose last file is targets.txt) to its own last file.
+        times = dict((l.split()[0], int(l.split()[1])) for l in
+                     (res / "file-times.txt").read_text(encoding="utf-8").splitlines() if l.strip())
+        cut_end = max(times[n] for n in ("cut-result.txt", "cut-hub.txt", "cut-modules.txt", "cut-in.txt", "cut-out.txt"))
+        cut_secs = cut_end - times["targets.txt"]
+        if not 0 < cut_secs < 86400 or times["targets.txt"] < times["corollaries.txt"]:
+            sys.exit("numbers.py: file-times.txt does not give a usable duration for the cone step")
+        put("cuthours", f"{cut_secs / 3600:.1f}", "file-times.txt: from targets.txt to the last cut file")
+        # The second machine's cost up to the last step reported: the provider's hourly price,
+        # 1.12 US dollars, times the hours from the machine's start, 2026-11-21 15:09 UTC
+        # (1795273740), to the last time in file-times.txt. The price and the start are typed
+        # here: no results file holds them. Computed, not billed.
+        run_hours = (max(times.values()) - 1795273740) / 3600
+        if not 0 < run_hours < 200:
+            sys.exit("numbers.py: file-times.txt gives no usable end for the second machine's run")
+        put("secondruncost", str(round(run_hours * 1.12)), "computed: 1.12 dollars an hour from the machine's start to the last time in file-times.txt")
     else:
         dup = re.search(r"^names-declared-more-than-once (\d+), other versions also checked (\d+), of which with a different type (\d+)", rep, re.M)
         if dup.group(1) != dup.group(2) or dup.group(3) != "0":
@@ -371,13 +557,13 @@ def main() -> None:
     order = [l.split(" ", 1)[0] for l in (here / "tools" / "hostile-rows.txt").read_text(encoding="utf-8").splitlines()
              if l.strip() and not l.startswith("#")]
     by_name = {h[0]: h for h in hrows}
-    # the independent kernel on the same modules (independent-hostile.txt)
+    # lean4lean on the same modules (independent-hostile.txt)
     ind_host = (res / "independent-hostile.txt").read_text(encoding="utf-8")
     irows = {m[0]: m for m in re.findall(r"^Hostile\.(\w+): lean4lean (\w+), lean4lean --fresh (\w+) \(a sound replay: (\w+)\)$", ind_host, re.M)}
     if sorted(irows) != sorted(desc):
         sys.exit("numbers.py: independent-hostile.txt does not cover the hostile modules")
     if any(irows[h[0]][1] != "accepts" or irows[h[0]][2] != "accepts" for h in hrows if h[4] == "accepts"):
-        sys.exit("numbers.py: the independent kernel rejects a control")
+        sys.exit("numbers.py: lean4lean rejects a control")
     put("independentfreshrejects", str(sum(1 for h in bad_rows if irows[h[0]][2] == "rejects")), "independent-hostile.txt")
     put("independentdefaultrejects", str(sum(1 for h in bad_rows if irows[h[0]][1] == "rejects")), "independent-hostile.txt")
     with open(dst.parent / "hostile-table.tex", "w", encoding="utf-8", newline="\n") as f:
@@ -393,20 +579,163 @@ def main() -> None:
         f.write("\\caption{The modules built to test the checkers, and what each checker does with each. "
                 "The first \\hostilecontrols{} are controls, which a checker should accept; a sound "
                 "replay rejects the others. The ordinary mode of \\texttt{leanchecker} examines the "
-                "named module and trusts its imports; \\texttt{lean4lean} is the independent kernel "
-                "of \\cref{sec:checker}.}\\label{tab:hostile}\n\\end{table}\n")
+                "named module and trusts its imports; \\texttt{lean4lean} is the second implementation "
+                "of the kernel of \\cref{sec:checker}.}\\label{tab:hostile}\n\\end{table}\n")
     ifresh = (res / "independent-fresh.txt").read_text(encoding="utf-8")
-    m = re.search(r"^lean4lean --fresh Mathlib\.NumberTheory\.LSeries\.RiemannZeta: exit (\d+); elapsed ([0-9.]+) s", ifresh, re.M)
-    if not m or m.group(1) != "0":
-        sys.exit("numbers.py: the independent kernel did not accept the closure of the statement")
-    put("independentfreshminutes", str(round(float(m.group(2)) / 60)), "independent-fresh.txt")
+    for root in ["Mathlib.NumberTheory.LSeries.RiemannZeta"] + (["Mathlib.NumberTheory.LSeries.DirichletContinuation"] if second else []):
+        ms = re.findall(rf"^lean4lean --fresh {re.escape(root)}: exit (\d+); elapsed ([0-9.]+) s", ifresh, re.M)
+        if len(ms) != 1 or ms[0][0] != "0":
+            sys.exit(f"numbers.py: lean4lean --fresh on {root}: not exactly one line, or not accepted")
+        m = ms[0]
+        if root.endswith("RiemannZeta"):
+            put("independentfreshminutes", str(round(float(m[1]) / 60)), "independent-fresh.txt")
     if second:
-        isamp = (res / "independent-sample-summary.txt").read_text(encoding="utf-8")
-        ichecked = int(grab(isamp, r"^modules checked (\d+)", "the independent sample size"))
-        iaccepted = int(grab(isamp, r"^accepted (\d+)", "the number the independent kernel accepted"))
-        put("independentsampleok", "all of them" if iaccepted == ichecked else fmt(iaccepted), "independent-sample-summary.txt")
-        put("independentsampleaccepted", fmt(iaccepted), "independent-sample-summary.txt")
-        put("independentsample", fmt(ichecked), "independent-sample-summary.txt")
+        chk = (res / "check.txt").read_text(encoding="utf-8")
+        for name, module in (("RiemannHypothesis", "Mathlib.NumberTheory.LSeries.RiemannZeta"),
+                             ("riemannZeta", "Mathlib.NumberTheory.LSeries.RiemannZeta"),
+                             ("DirichletCharacter.LFunction", "Mathlib.NumberTheory.LSeries.DirichletContinuation")):
+            if f"{name} is declared in (some {module})" not in chk and f"{name} is declared in some {module}" not in chk:
+                sys.exit(f"numbers.py: check.txt does not say that {name} is declared in {module}")
+        # the statements written out in check.sh elaborate against the theorems (a failure makes
+        # lean exit with an error), the definitions of Statements.lean are printed in full, and
+        # both checkers accept the module Statements
+        if not re.search(r"^CHECK-EXIT 0$", chk, re.M):
+            sys.exit("numbers.py: check.sh did not end with exit code 0")
+        for name in ("RiemannZetaZerosOnLine", "DirichletLNonvanishingRightOfHalf", "DirichletLZerosOnLine", "PrimitiveDirichletLZerosOnLine"):
+            if f"def {name} : Prop :=" not in chk:
+                sys.exit(f"numbers.py: check.txt does not print the definition {name}")
+        for line in ("leanchecker Statements: exit 0", "lean4lean Statements: exit 0"):
+            if line not in chk:
+                sys.exit(f"numbers.py: check.txt does not have the line '{line}'")
+    # The two samples (sample.sh, independent.sh sample) and sample-exact.sh. Each checker, in
+    # its ordinary mode, takes a name as a prefix: it checks the module of that name and every
+    # module whose name extends it, importing the closure once for each, all at once. On a name
+    # with many modules under it the system killed the process at the container's memory limit
+    # (exit code 137), which is no verdict. sample-exact.sh lists the modules under every name
+    # (sample-prefixes.txt) and, for a name whose process was killed, calls the checker's
+    # function for one module on the module of that name and on each module under it
+    # (sample-exact.txt). Any other exit code, or a module not accepted there, stops this script.
+    def sample_outcome(listfile: str, checker: str, prefix: str) -> None:
+        rows = [l.split() for l in (res / listfile).read_text(encoding="utf-8").splitlines() if l.strip()]
+        if any(len(r) != 3 for r in rows) or len(set(r[0] for r in rows)) != len(rows):
+            sys.exit(f"numbers.py: {listfile} is not one line a name")
+        drawn = [l.strip() for l in (res / "sample-modules.txt").read_text(encoding="utf-8").splitlines() if l.strip()]
+        if sorted(drawn) != sorted(r[0] for r in rows):
+            sys.exit(f"numbers.py: {listfile} does not cover the names drawn")
+        cone_modules = set(lzma.open(res / "cut-modules.txt.xz", "rt", encoding="utf-8").read().split())
+        if drawn.count("Main") != 1 or not set(drawn) - {"Main"} <= cone_modules:
+            sys.exit("numbers.py: the sample is not Main and modules of the cone; the text says it is")
+        summary = (res / listfile.replace(".txt", "-summary.txt")).read_text(encoding="utf-8")
+        if grab(summary, r"^logs that mention a panic (\d+)", "the count of panics") != "0":
+            sys.exit(f"numbers.py: {checker} panicked on a module of the sample")
+        if int(grab(summary, r"^modules checked (\d+)", "the sample size")) != len(rows):
+            sys.exit(f"numbers.py: {listfile} and its summary disagree on the number of names")
+        oom = re.search(r"^processes killed for memory in the container during the step (\d+) -> (\d+)", summary, re.M)
+        under: dict[str, set] = {}
+        for l in (res / "sample-prefixes.txt").read_text(encoding="utf-8").splitlines():
+            if not l.strip():
+                continue
+            name, mod = l.split()
+            if name not in drawn or not mod.startswith(name + "."):
+                sys.exit(f"numbers.py: sample-prefixes.txt: {mod} is not a module under a name of the sample")
+            under.setdefault(name, set()).add(mod)
+        # every module of the cone whose name extends a drawn name must be listed there
+        drawn_set = set(drawn)
+        for mod in cone_modules:
+            parts = mod.split(".")
+            for i in range(1, len(parts)):
+                name = ".".join(parts[:i])
+                if name in drawn_set and mod not in under.get(name, set()):
+                    sys.exit(f"numbers.py: sample-prefixes.txt does not list {mod} under {name}")
+        exact_text = (res / "sample-exact.txt").read_text(encoding="utf-8")
+        for mod, ok in (("Hostile.Honest", True), ("Hostile.FalseTheorem", False)):
+            mm = re.search(rf"^route-test {checker} {re.escape(mod)} exit (\d+) ", exact_text, re.M)
+            if not mm or (mm.group(1) == "0") != ok:
+                sys.exit(f"numbers.py: sample-exact.txt does not show that the route for {checker} gives the right verdict on {mod}")
+        exact: dict[str, dict] = {}
+        exact_secs = []
+        for l in exact_text.splitlines():
+            p = l.split()
+            if len(p) >= 5 and p[0] == checker and p[1] in drawn_set and p[3].isdigit() and p[4].isdigit():
+                if p[2] in exact.setdefault(p[1], {}):
+                    sys.exit(f"numbers.py: sample-exact.txt has two lines for {checker} on {p[2]}")
+                exact[p[1]][p[2]] = p[3]
+                exact_secs.append(int(p[4]))
+        not_ok = [(r[0], r[1]) for r in rows if r[1] != "0"]
+        for m, code in not_ok:
+            if code != "137":
+                sys.exit(f"numbers.py: {checker} ended with code {code} on {m}: not a kill; the text does not cover it")
+            want = {m} | under.get(m, set())
+            if len(want) < 2:
+                sys.exit(f"numbers.py: {checker} was killed on {m}, which has no module under it; the text explains the kill by those modules")
+            if set(exact.get(m, {})) != want:
+                sys.exit(f"numbers.py: {checker}: {m} and the modules under it were not all checked one by one")
+            if any(c != "0" for c in exact[m].values()):
+                sys.exit(f"numbers.py: {checker} did not accept every module under {m} when they were checked one by one")
+        if set(exact) != set(m for m, _ in not_ok):
+            sys.exit(f"numbers.py: sample-exact.txt and {listfile} disagree on the names checked one module at a time")
+        k = len(not_ok)
+        if k > 1:
+            sys.exit(f"numbers.py: {k} names of {checker} were killed; the text is written for one")
+        if k and (not oom or int(oom.group(2)) - int(oom.group(1)) != k):
+            sys.exit(f"numbers.py: a process of {checker} ended with code 137, but the container's counter of kills for memory did not rise by one; the text says memory")
+        # the same name alone on the machine (sample-alone.txt): killed again, and how much memory
+        # the container held when it was
+        alone_gb = None
+        if k:
+            am = re.search(rf"^DONE-STEP probe {checker} {re.escape(not_ok[0][0])} exit (\d+) seconds (\d+) max-anon-bytes (\d+) oom_kill (\d+)$",
+                           (res / "sample-alone.txt").read_text(encoding="utf-8"), re.M)
+            if not am or am.group(1) != "137":
+                sys.exit(f"numbers.py: sample-alone.txt does not record {checker} killed alone on the name")
+            alone_gb = f"{int(am.group(3)) / 1e9:.1f}"
+            put(prefix + "alonegb", alone_gb, "sample-alone.txt: the container's anonymous memory at its highest, in units of 10^9 bytes")
+            put(prefix + "aloneseconds", am.group(2), "sample-alone.txt")
+            put(prefix + "exactmin", str(min(exact_secs)), "sample-exact.txt: the fewest seconds a module took")
+            put(prefix + "exactmax", str(max(exact_secs)), "sample-exact.txt: the most seconds a module took")
+        covered = set(drawn).union(*under.values()) if under else set(drawn)
+        put(prefix + "sample", fmt(len(rows)), listfile)
+        put(prefix + "sampledrawn", fmt(len(rows) - 1), listfile)
+        put(prefix + "sampleaccepted", fmt(len(rows) - k), f"{listfile}: exit code 0")
+        put(prefix + "samplekilled", str(k), f"{listfile}: exit code 137")
+        put(prefix + "sampleatatime", grab(summary, r"^processes at a time (\d+)", "the processes at a time"), "the sample's summary")
+        put(prefix + "prefixnames", fmt(sum(1 for n in drawn if under.get(n))), "sample-prefixes.txt: names of the sample with modules under them")
+        put(prefix + "prefixmodules", fmt(len(covered) - len(drawn)), "sample-prefixes.txt: the modules under those names that are not themselves names of the sample")
+        put(prefix + "covered", fmt(len(covered)), "the names of the sample and the modules under them")
+        names_with = sum(1 for n in drawn if under.get(n))
+        if names_with == 0:
+            pnote = "None of the names has a module under it."
+        elif names_with == 1:
+            pnote = (f"One of the names has modules under it, {fmt(len(covered) - len(drawn))} of them, so that the names "
+                     f"cover {fmt(len(covered))} modules.")
+        else:
+            pnote = (f"{fmt(names_with)} of the names have modules under them, so that the names cover "
+                     f"{fmt(len(covered))} modules.")
+        put(prefix + "prefixnote", pnote, "sample-prefixes.txt, in words")
+        if k == 0:
+            note, short = "It accepted all of them.", ""
+        else:
+            m = not_ok[0][0]
+            n_under = len(under[m])
+            put(prefix + "killedimports", str(n_under + 1), "the modules that the name on which the process was killed covers")
+            first = (f"It accepted the {fmt(len(rows) - 1)} names that are single modules. On the remaining name " if names_with == 1
+                     else f"It accepted {fmt(len(rows) - 1)} of the names. On the remaining name, which has {n_under} modules under it, ")
+            how = (" Lean's interpreter ran the function." if checker == "lean4lean" else "")
+            secs = (f"in {min(exact_secs)} to {max(exact_secs)} seconds each" if min(exact_secs) != max(exact_secs)
+                    else f"in {min(exact_secs)} seconds each")
+            note = (first + "the system killed the process at the container's memory limit (exit code~137), "
+                    f"which is no verdict of the checker; the command imports the closure {n_under + 1} times at once there. "
+                    f"Run by itself, it was killed in the same way; the container's anonymous memory, read once a second, "
+                    f"had reached {alone_gb}\\,GB of its limit of \\memorylimit\\,GB. We then called the function that the checker applies to "
+                    f"one module, \\texttt{{replayFromImports}}, on that module and on each of the {n_under} under it, "
+                    f"one at a time; it accepted all {n_under + 1}, {secs}.{how} Called in that way it also rejects a test "
+                    f"module of \\cref{{tab:hostile}} that it must reject and accepts one that it must accept.")
+            short = (f". For one name, with {n_under} modules under it, the command imports the closure {n_under + 1} times "
+                     f"at once and the system killed it at the container's memory limit, also when it ran by itself; the "
+                     f"checker's function for one module was then called on each of the {n_under + 1} in turn and accepted all")
+        put(prefix + "samplenote", note, f"{listfile}, sample-prefixes.txt and sample-exact.txt, in words")
+        put(prefix + "sampleshort", short, "the same, for the README")
+    if second:
+        sample_outcome("independent-sample.txt", "lean4lean", "independent")
 
     # Lean's own checker (stock.txt, sample-summary.txt, sample.txt) and the toolchain
     stock = (res / "stock.txt").read_text(encoding="utf-8")
@@ -424,9 +753,18 @@ def main() -> None:
         put("stockreplay" + key + "minutes", str(max(1, round(float(m2.group(2)) / 60))), "stock.txt")
         put("stockreplay" + key + "cpuminutes", str(round((float(m2.group(3)) + float(m2.group(4))) / 60)), "stock.txt: processor time")
         cpu_ratio = (float(m.group(3)) + float(m.group(4))) / (float(m2.group(3)) + float(m2.group(4)))
+        if key == "rz":
+            fresh_rz_cpu = float(m.group(3)) + float(m.group(4))
     if second:
+        put("freshratio", f"{cpu_ratio:.2f}", "stock.txt: leanchecker --fresh's processor time on Mathlib over the replay's")
         put("freshestimatehours", str(round(replay_cpu_s * cpu_ratio / 3600)),
             "computed: the replay's processor time times the ratio of the two programs' processor times on Mathlib")
+        l4 = re.search(r"^lean4lean --fresh Mathlib\.NumberTheory\.LSeries\.RiemannZeta: exit 0; elapsed [0-9.]+ s, processor time ([0-9.]+) s user and ([0-9.]+) s system",
+                       ifresh, re.M)
+        l4_ratio = (float(l4.group(1)) + float(l4.group(2))) / fresh_rz_cpu
+        put("independentratio", f"{l4_ratio:.1f}", "independent-fresh.txt and stock.txt: lean4lean's processor time on the closure of the statement's module over leanchecker --fresh's")
+        put("independentestimatehours", str(round(replay_cpu_s * cpu_ratio * l4_ratio / 3600, -1)).split(".")[0],
+            "computed: the estimate for leanchecker --fresh times that ratio, to the nearest ten hours")
     msum = (res / "replay-Mathlib" / "replay-summary.txt").read_text(encoding="utf-8")
     ex = re.search(r"^exported-parts-compared (\d+) modules, (\d+) constants", msum, re.M)
     if ex.group(1) != grab(msum, r"^modules (\d+)", "the modules of Mathlib's closure"):
@@ -442,16 +780,14 @@ def main() -> None:
     if second:
         samp = (res / "sample-summary.txt").read_text(encoding="utf-8")
         checked = int(grab(samp, r"^modules checked (\d+)", "the sample size"))
-        accepted = int(grab(samp, r"^accepted (\d+)", "the number accepted"))
-        if "Main accepted" not in samp:
-            sys.exit("numbers.py: Lean's checker did not accept Main")
-        put("stocksample", fmt(checked), "sample-summary.txt")
-        put("stocksampledrawn", fmt(checked - 1), "sample-summary.txt")
-        put("stocksampleok", "all of them" if accepted == checked else fmt(accepted), "sample-summary.txt")
-        put("stocksampleaccepted", fmt(accepted), "sample-summary.txt")
-        secs = int(grab(samp, r"^seconds, summed over the modules (\d+)", "the time of the sample"))
-        put("stockpermodule", str(round(secs / checked)), "sample-summary.txt: seconds a module")
-        put("stockfulldays", fmt(round(secs / checked * files / 86400)), "computed: that rate over every module, in processor-days")
+        sample_outcome("sample.txt", "leanchecker", "stock")
+        if checked != sum(1 for l in (res / "sample.txt").read_text(encoding="utf-8").splitlines() if l.strip()):
+            sys.exit("numbers.py: sample-summary.txt and sample.txt disagree on the number of modules")
+        elapsed = int(grab(samp, r"^elapsed seconds (\d+)", "the elapsed time of the sample"))
+        put("stocksampleminutes", str(round(elapsed / 60)), "sample-summary.txt: elapsed seconds / 60")
+        put("stockfulldays", fmt(round(elapsed / checked * files / 86400)), "computed: the sample's elapsed time a module, at its number of processes at a time, over every module, in days")
+        # the earlier run of the sample step (sample-earlier.txt, ten at a time, output not kept)
+        # is kept for the record; nothing in the text is taken from it
     tool = (res / "toolchain.txt").read_text(encoding="utf-8")
     if grab(tool, r"^files that differ, or are in one and not the other: (\d+)", "the toolchain comparison") != "0":
         sys.exit("numbers.py: the toolchain differs from the release")

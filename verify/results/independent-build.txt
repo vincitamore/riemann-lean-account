@@ -1,0 +1,6 @@
+lean4lean commit 5518bf83860bab48e8d53f1f447cdd6c50c30c3f 2026-08-03T23:21:54-07:00
+made for leanprover/lean4:v4.33.0-rc2; built here with leanprover/lean4:v4.33.1
+✔ [58/59] Built Main:c.o (463ms)
+✔ [59/59] Built lean4lean:exe (2.6s)
+Build completed successfully (59 jobs).
+INDEPENDENT-BUILT

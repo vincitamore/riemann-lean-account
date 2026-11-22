@@ -1,0 +1,9 @@
+modules checked 501
+accepted 500
+not accepted 1
+Main accepted
+seconds, summed over the modules 37147
+processes at a time 10
+elapsed seconds 3730
+processes killed for memory in the container during the step 1 -> 2
+logs that mention a panic 0

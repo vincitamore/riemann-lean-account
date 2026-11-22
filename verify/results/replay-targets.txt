@@ -1,0 +1,5 @@
+riemannHypothesis: a theorem, checked by the kernel; it depends on 1478222 constants; axioms: [Classical.choice, Quot.sound, propext]
+riemannZeta_eq_zero_re: a theorem, checked by the kernel; it depends on 1478224 constants; axioms: [Classical.choice, Quot.sound, propext]
+LFunction_ne_zero_of_half_lt_re: a theorem, checked by the kernel; it depends on 1478214 constants; axioms: [Classical.choice, Quot.sound, propext]
+LFunction_eq_zero_re: a theorem, checked by the kernel; it depends on 1478227 constants; axioms: [Classical.choice, Quot.sound, propext]
+LFunction_eq_zero_re_of_isPrimitive: a theorem, checked by the kernel; it depends on 1478217 constants; axioms: [Classical.choice, Quot.sound, propext]

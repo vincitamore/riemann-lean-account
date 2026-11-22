@@ -1,4 +1,4 @@
-replay program sha256 b5e3596dde657bc84d9ed580574989a80d06ae4f3faecc055ebf8ed51a2d73d5
+replay program sha256 5e695c0b2bb77f494fba42c876556b44f7dac679c1d9111eacf93589cc8e3393
 the hostile package builds and the crafted files are written
   Hostile/AfterFakeQuotient.lean:11:0: 'Hostile.falseFromQuot' does not depend on any axioms
   Hostile/Axiom.lean:12:0: 'Hostile.fromAxiom' depends on axioms: [Hostile.assumed]
@@ -38,7 +38,7 @@ Hostile.MissingConstructor: leanchecker rejects (expected any), leanchecker --fr
     replay: Hostile.Coin.heads	is a constructor in the compiled files, and the kernel produced no constant of this name
     replay: Hostile.Coin	is an inductive type in the compiled files, and the kernel produced no constant of this name
     leanchecker --fresh: PANIC at Std.DHashMap.Internal.AssocList.get! Std.Data.DHashMap.Internal.AssocList.Basic:163:11: key is not present in hash table
-    leanchecker --fresh: leanchecker(replayFromFresh [λ]+0x115) [0x61cebb271d25]
+    leanchecker --fresh: leanchecker(replayFromFresh [λ]+0x115) [0x600a3a2e0d25]
 Hostile.KeyMismatch: leanchecker rejects (expected any), leanchecker --fresh rejects (expected any), replay rejects (expected rejects); as expected: yes
     replay: Hostile.phantomBody	the compiled file stores under this name a constant named Hostile.Phantom
     replay: Hostile.Phantom	(kernel) constant has already been declared 'Hostile.Phantom'
@@ -85,6 +85,6 @@ Hostile.CodeConstants: leanchecker accepts (expected any), leanchecker --fresh a
     replay: Hostile.CodeConstants	a file of compiled code of this module holds 1 constants; Lean writes none there
 Hostile.CodeImports: leanchecker accepts (expected any), leanchecker --fresh accepts (expected any), replay rejects (expected rejects); as expected: yes
     replay: Hostile.CodeImports	the import list of the `.ir` file differs from that of the part replayed
-axioms named Hostile.* that the replay lists for Hostile.Axiom: 1
+axioms named Hostile.* that the replay lists for Hostile.Axiom: 1 (expected 1)
 named theorems: Hostile.conclusion reported FAILED, Hostile.Honest.size_pos reported checked; as expected: yes
 HOSTILE-OK

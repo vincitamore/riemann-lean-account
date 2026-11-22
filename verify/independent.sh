@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
-# Runs an independent implementation of Lean's kernel where it can be run in practical time.
+# Runs a second implementation of Lean's kernel where it can be run in practical time.
 #
 # lean4lean (https://github.com/digama0/lean4lean) is a type checker for Lean 4 written in Lean 4.
-# Type inference, definitional equality and the checking of inductive types are its own, and not
-# the code of the kernel inside Lean, which is written in C++. It does use Lean's representation
-# of terms, with Lean's functions for substitution on them, and Lean's reader of compiled files.
+# Its authors describe it as derived directly from the C++ code of the kernel inside Lean and as
+# likely to share errors with it, so it is not a fully independent implementation. Type
+# inference, definitional equality and the checking of inductive types are written in Lean
+# there. It uses Lean's representation of terms, with Lean's functions for substitution on
+# them, and Lean's reader of compiled files.
 # Its command line is that of leanchecker. It is fetched at a fixed commit, which was made for
 # Lean v4.33.0-rc2, and built here with the archive's toolchain.
 #
@@ -16,8 +18,9 @@
 #        --fresh on a module of Mathlib, by default the one that declares RiemannHypothesis:
 #        every declaration in its import closure is checked           -> out-dir/independent-fresh.txt
 #   bash independent.sh sample out-dir [processes]
-#        after sample.sh: the same modules of the archive, one process a module, each module's
-#        own declarations checked against its imports                 -> out-dir/independent-sample.txt
+#        after sample.sh: the same names, one process a name. lean4lean takes a name as a
+#        prefix, as leanchecker does: each module whose name extends it is checked against
+#        its imports (sample-exact.sh)                                -> out-dir/independent-sample.txt
 . "$HOME/.elan/env"
 work=$(pwd); bin="$work/lean4lean/.lake/build/bin/lean4lean"
 commit=5518bf83860bab48e8d53f1f447cdd6c50c30c3f
@@ -59,16 +62,27 @@ fresh)
   rm -f "$out/independent-time.tmp"
   ;;
 sample)
+  # The checker's output on each module is kept, a panic is made fatal, and the container's
+  # count of processes killed for memory is read before and after.
   out=$(cd "$2" && pwd); par=${3:-8}
   cd lean || exit 1
-  xargs -P "$par" -I{} sh -c 's=$(date +%s); lake env "$0" "$1" > /dev/null 2>&1 < /dev/null; echo "$1 $? $(( $(date +%s) - s ))"' "$bin" {} \
+  rm -rf "$out/independent-sample-logs"; mkdir -p "$out/independent-sample-logs"
+  oom() { awk '$1 == "oom_kill" {print $2}' /sys/fs/cgroup/memory.events 2>/dev/null; }
+  before=$(oom); start=$(date +%s)
+  export LEAN_ABORT_ON_PANIC=1
+  xargs -P "$par" -I{} sh -c 's=$(date +%s); lake env "$0" "$1" > "$2/independent-sample-logs/$1.log" 2>&1 < /dev/null; echo "$1 $? $(( $(date +%s) - s ))"' "$bin" {} "$out" \
     < "$out/sample-modules.txt" > "$out/independent-sample.txt"
+  after=$(oom)
   {
     echo "modules checked $(wc -l < "$out/independent-sample.txt")"
     echo "accepted $(awk '$2 == 0' "$out/independent-sample.txt" | wc -l)"
     echo "not accepted $(awk '$2 != 0' "$out/independent-sample.txt" | wc -l)"
     echo "Main $(awk '$1 == "Main" {print ($2 == 0) ? "accepted" : "not accepted"}' "$out/independent-sample.txt")"
     echo "seconds, summed over the modules $(awk '{s += $3} END {print s}' "$out/independent-sample.txt")"
+    echo "processes at a time $par"
+    echo "elapsed seconds $(( $(date +%s) - start ))"
+    echo "processes killed for memory in the container during the step ${before:-unknown} -> ${after:-unknown}"
+    echo "logs that mention a panic $(grep -l -a PANIC "$out/independent-sample-logs"/*.log 2>/dev/null | wc -l)"
   } > "$out/independent-sample-summary.txt"
   cat "$out/independent-sample-summary.txt"
   ;;

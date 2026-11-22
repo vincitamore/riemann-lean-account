@@ -1,9 +1,11 @@
 \section{What was verified by machine}\label{sec:verification}
 
 Apart from the statements transcribed in \cref{sec:statements}, the description of the
-elaborators in \cref{sec:scan} and the account of the reviews in \cref{sec:checker}, every
-result in this section was computed by a program: on the archive, or, where we say so, on
-Mathlib and on test modules. The programs and their output are public (\cref{app:reproduce}).
+elaborators in \cref{sec:scan}, the account of the reviews in \cref{sec:checker}, and what
+is said of how Lean and \lean{lean4lean} work, which rests on the reviews and on our reading
+of their source, every result in this section was computed by a program: on the archive, or,
+where we say so, on Mathlib and on test modules. The programs and their output are public
+(\cref{app:reproduce}).
 
 \subsection{The archive}
 The Lean source is distributed as fourteen parts which concatenate to a single file
@@ -68,20 +70,37 @@ correctly posed.
 ``GRH'' in this paper always means \cref{st:grh,st:strip}: Dirichlet $L$-functions. The note
 says the case of Dedekind zeta functions is expected and not done.
 
-\subsection{The build}
+\subsection{The build}\label{sec:build}
 \ifsecondrun
 We built the unmodified archive twice, on two rented machines. The first build took
 Mathlib's compiled files from the community's build cache for the pinned commit and ran
 \lean{lake build Main} for \firstbuildhours{} hours on \firstbuildthreads{} threads
-(\firstbuildcpu). For the second, Mathlib and the packages it depends on were first compiled
-from source, \mathlibmodules{} modules of Mathlib in \mathlibminutes{} minutes, so that no
-compiled file came from a cache; \lean{lake build Main} then ran for \buildhours{} hours on
-\buildthreads{} threads (\buildcpu). Each build ended with the line
-\lean{Build completed successfully}, after \buildjobs{} jobs in the second, and with exit
-code~$0$. In each, all \filecount{} modules of the archive were built and none failed. The
-installed toolchain was compared, file by file, with the release archive of Lean
-\leanversion{} published on GitHub: all \toolchainfiles{} files are identical. What follows
-refers to the second build.
+(\firstbuildcpu); its log was not kept, and these figures are from a summary of it made by
+hand. For the second, Mathlib and the packages it depends on were first compiled from
+source, \mathlibmodules{} modules of Mathlib in \mathlibminutes{} minutes, the download of
+the toolchain included, so that no compiled file came from a cache; \lean{lake build Main}
+then ran for \buildhours{} hours on \buildthreads{} threads (\buildcpu), while most of the
+tests of \cref{sec:checker} on Mathlib and on the test modules ran beside it. Each build ended with
+the line \lean{Build completed successfully}, after \buildjobs{} jobs in the second, and
+with exit code~$0$. In each, all \filecount{} modules of the archive were built and none
+failed. On the second machine the installed toolchain was compared, file by file, with the
+release archive of Lean \leanversion{} published on GitHub: all \toolchainfiles{} files are
+identical. The first machine's toolchain was the same release, installed in the same way;
+it was not compared.
+
+The two builds give the same names for the archive. The list of its declarations inside the
+cone of \cref{sec:cone}, each with its kind, the list of those outside it, and the list of
+its modules that meet the cone are the same in both, byte for byte, and so are the counts of
+the two replays for every kind of declaration but one. They differ in Mathlib. The compiled
+files of the first build were not kept, so the cache was fetched again on the second machine
+and compared with the build from source: for every constant its kind, its module and its
+name, and Lean's hash of its statement and of its value. Compiled from source, Mathlib has
+\mathlibonlysource{} theorems that the cached build lacks and lacks \mathlibonlycache{} that
+it has. All of these are private auxiliary lemmas that the tactics \lean{simp} and
+\lean{abel} produce inside \mathlibdiffproofs{} proofs; no name that a person wrote is among
+them. \mathlibhashnote{} The second build thus declares \mathlibextra{} theorems more than
+the first, which is the difference between the two replays, and its cone is larger by
+\mathlibextraconewords. What follows refers to the second build.
 \else
 We ran \lean{lake build Main} on the unmodified archive, on a rented machine with
 \buildthreads{} threads (\buildcpu), using the Mathlib build cache for the pinned commit. It
@@ -108,9 +127,10 @@ lists recorded for the modules it imports; it walks the terms only where no list
 as good as the compiled files it reads, and in the first build those of Mathlib came from the
 community's cache.
 \ifsecondrun
-Two programs of ours compute the axioms again from the terms: the replay of \cref{sec:replay},
-in the environment that the kernel built, and the program that computes the cone of
-\cref{sec:cone}. Both find the same three.
+Two programs of ours compute the axioms again from the terms. The replay of
+\cref{sec:replay} does it for each of the five theorems, in the environment that the kernel
+built, and finds the same three. The program that computes the cone of \cref{sec:cone} finds
+these three and no other axiom among the constants of the cone of the five theorems.
 \else
 The corrected replay program and the program that computes the cone of \cref{sec:cone} both
 compute the axioms from the terms; they are part of the run now under way (\cref{sec:replay}),
@@ -181,11 +201,11 @@ the environment the kernel built. They are \lean{propext}, \lean{Classical.choic
 \lean{Quot.sound} for each, and the program that computes the cone finds the same three among
 the constants of the cone. This matters because \lean{#print axioms}, for a theorem of an
 imported module, prints a list that was recorded in the compiled file when it was written; it
-does not walk the terms again. \lean{riemannHypothesis} depends in the kernel's environment on
-\replayconeconstants{} constants, counted through types, values, constructors, recursors and
-their rules, the structures of projections and the constants behind numerals and strings; the
-cone of \cref{sec:cone}, which follows types, values, the link between an inductive type and
-its constructors and the structures of projections, has \conesize{}.
+does not walk the terms again. For \lean{riemannHypothesis} the replay program counts
+\replayconeconstants{} names, following types, values, constructors, the blocks and rules of
+the recursors reached, the structures of projections and the names into which numerals and
+strings unfold; the cone of \cref{sec:cone}, which follows types, values, the link between an
+inductive type and its constructors and the structures of projections, has \conesize{}.
 \else
 The replay reported in this version is the one made on the first build, with the first form
 of our program. A theorem, a definition, an opaque constant or an axiom was passed to the
@@ -243,12 +263,20 @@ type are checked on the main thread. Lean's own checker, \lean{leanchecker}
 \cite{lean4checker}, has not been run on the whole of this archive.
 \ifsecondrun
 Its ordinary mode imports the import closure again for every module it
-checks: at the \stockpermodule{} seconds a module that it took on the sample below, the
-\filecount{} modules would need about \stockfulldays{} days of one processor. Its other mode,
+checks. Run as described below, \stocksampleatatime{} processes at a time and beside the
+other runs named there, it took \stocksampleminutes{} minutes for \stocksample{} names; at
+that rate, checking each of the \filecount{} modules once would take about \stockfulldays{}
+days on that machine. Its function for one module, called on one module at a time, took
+\stockexactmin{} to \stockexactmax{} seconds on each of the \stockkilledimports{} modules
+named below. Its other mode,
 \lean{--fresh}, replays one closure in one process, as our program does, but on one thread.
 On Mathlib it used \stockfreshmathlibcpuminutes{} minutes of processor time and our program
-\stockreplaymathlibcpuminutes{}; our replay of the archive used \replaycpuhours{} hours of
-processor time, so by that ratio Lean's checker would need about \freshestimatehours{} hours.
+\stockreplaymathlibcpuminutes{}, both measured while the machine was building the archive;
+our replay of the archive used \replaycpuhours{} hours of processor time, so by the ratio of
+the two on Mathlib, \freshratio, Lean's checker would need roughly \freshestimatehours{}
+hours of one processor, if the memory it needs is there; the ratio was measured under the
+build's load and the hours were not. Such a run was started on the second machine and had
+not ended when this version was made.
 \else
 Its ordinary mode imports the import closure again for every module it checks, \filecount{}
 times over; on the first machine an attempt on some two thousand modules at once ended at
@@ -260,9 +288,15 @@ minutes on \firstreplaythreads{} threads, so in that mode Lean's checker would n
 more of one processor for the archive; we intend to make that run on the second build.
 \fi
 So the replay of the whole archive rests on our program, and we give the grounds for
-trusting it. The tests that follow were made on the second machine, on its own build of
-Mathlib from source, while it was building the archive; the times quoted from them were
-measured under that load.
+trusting it. The tests on the modules of \cref{tab:hostile}, and those with \lean{--fresh}
+on Mathlib and on the module that declares \lean{RiemannHypothesis}, were made on the second
+machine, on its own build of Mathlib from source, while it was building the archive, and the
+times quoted for them were measured under that load. Everything else in this subsection was
+run after the build: the second implementation on the closure of the $L$-function, the
+runs on a sample of names of the archive's modules, and the checks of single modules. The
+sample run whose time is quoted ran beside the run of \lean{leanchecker --fresh} on
+\lean{Main} just mentioned and, for its first half hour, beside that run of the second
+implementation.
 
 \emph{Review.} The program has been reviewed four times against the source of Lean
 \leanversion{}, by further instances of the language model that wrote it; no person has
@@ -289,12 +323,18 @@ the program and running the tests, and found no input on which the corrected pro
 success wrongly; that check, with the points it leaves open, is appended to the fourth
 report. None of the gaps found by the third
 and fourth reviews touches the five theorems, which are stated and checked outside the module
-system (\cref{sec:scan}). The tests below
-were made with the program whose SHA-256 begins {\small\ttfamily \hostileprogramsha}.
+system (\cref{sec:scan}). After that check only the comment at the head of the program was
+changed, to correct sentences that the reviewer had named and to add a paragraph on the
+memory it uses; its instructions are the ones checked, as a comparison with the program of
+version~1.2 of this paper's repository shows. The script that runs the tests was also
+changed after the check: it refuses an empty or repeated list of modules and tests the
+program's list of axioms. The tests below were made with the program as it now stands,
+whose SHA-256 begins {\small\ttfamily \hostileprogramsha}.
 \ifsecondrun
 So was the replay reported here. The first run, made with the earliest form of the program on
-the first build, had given the same counts of modules, of names, and of theorems,
-definitions, opaque constants, axioms, constructors and recursors.
+the first build, had given the same counts of modules, definitions, opaque constants, axioms,
+inductive types, constructors and recursors, and \mathlibextra{} theorems fewer, the
+difference between the two builds of Mathlib (\cref{sec:build}).
 \fi
 
 \emph{Modules built to be wrong.} We made \hostilemodules{} small modules
@@ -324,22 +364,29 @@ a whole; it accepted both. Our program
 accepts the same two closures, of \stockreplayrzdecls{} and \stockreplaymathlibdecls{}
 declarations. Both ran on the second machine's build of Mathlib.
 \ifsecondrun
-In its ordinary mode \lean{leanchecker} was run on \stocksample{} modules of the
-archive, one process a module: \lean{Main} and \stocksampledrawn{} drawn from the modules that
-hold a declaration of the cone, by a fixed pseudo-random shuffle so that the draw can be
-repeated. It accepted \stocksampleok{}.
+In its ordinary mode \lean{leanchecker} takes a name as a prefix: it checks the module of
+that name and every module whose name extends it, each module's own declarations against
+its imports, importing the closure again for each and all at once. We ran it on
+\stocksample{} names, one process a name and \stocksampleatatime{} at a time: \lean{Main}
+and \stocksampledrawn{} taken from the modules that hold a declaration of the cone by a
+fixed selection that can be repeated (\lean{shuf} with a constant in place of random bytes;
+the names are listed in the results). \stockprefixnote{} \stocksamplenote{} The checker also
+accepts the module \lean{Statements}, which holds the archive's own definitions of the
+statements and is not among the modules a sample could draw.
 \fi
 
 \emph{The files of the module system.} A module that uses Lean's module system is compiled to
 five files: a first part, a part for the language server, a private part, and two files of
 compiled code. A file outside the system, such as every file of the archive, reads the
-private part, and that is what a replay replays. A module inside the system receives its
-constants from the first part, from the modules that the first part's import
-list names, and in one case from a file of compiled code. Lean writes the first part from the
+private part, and that is what a replay replays; a module inside the system that imports
+with \lean{import all} reads it too. Otherwise a module inside the system receives its
+constants from the first part, from the modules that the first part's import list names,
+and, when a module is loaded only for its compiled code, from a file of compiled code and
+from the modules that its import list names. Lean writes the first part from the
 declarations of the private part, each unchanged, reduced to an axiom with the same
-statement, or left out; it gives the first part and the second file of compiled code the
-import list of the private part; and it writes no constants
-into the files of compiled code. The program fails unless all of that holds. In Mathlib's
+statement, or left out; it gives the first part and that file of compiled code the import
+list of the private part; and the command \lean{lean}, which compiles a file, writes no
+constants into the files of compiled code. Our program fails unless all of that holds. In Mathlib's
 closure every one of the \stockexportedmodules{} modules uses the module system, and the
 \stockexported{} constants of their first parts are what Lean derives from the parts
 replayed, with one qualification. For a recursive definition that is compiled to code Lean
@@ -353,25 +400,29 @@ unmarked form in those files and nowhere else, and counts it. This comparison re
 fourth review's reading of how Lean \leanversion{} imports; it is not a claim that no other
 route exists.
 
-\emph{An independent kernel.} All of the above uses the kernel inside Lean. \lean{lean4lean}
-\cite{lean4lean} is a second implementation of the type checker, written in Lean; we used a
-fixed commit of it, made for a release candidate of Lean 4.33.0, and built it with Lean
-\leanversion{}. By its source it uses
-Lean's representation of terms, with Lean's own substitution on them, and Lean's reader of
-compiled files; type inference, definitional equality and the treatment of inductive types
-are its own. We ran it where its speed
+\emph{A second implementation of the kernel.} All of the above uses the kernel inside Lean.
+\lean{lean4lean} \cite{lean4lean} is an implementation of the type checker written in Lean.
+Its authors describe it as derived directly from the C++ code of the kernel and as likely to
+share errors with it, so it is a second implementation and not a fully independent one. We
+used a fixed commit of it, made for a release candidate of Lean 4.33.0, and built it with
+Lean \leanversion{}. In its source the terms are Lean's own, with Lean's functions for
+substitution, and compiled files are read by Lean's reader (\lean{readModuleDataParts} in
+its \lean{Replay.lean}); type inference and definitional equality
+(\lean{TypeChecker.lean}), the checking of inductive types (\lean{Inductive/Add.lean}) and
+the quotient type (\lean{Quot.lean}) are written there in Lean. We ran it where its speed
 allowed, on the second machine. On the \hostilebad{} modules that a replay must reject, with
 \lean{--fresh}, it
 rejects \independentfreshrejects{}; like Lean's checker, it does not compare the inductive
 types and the other constants it builds with those of the files (\cref{tab:hostile}). With
-\lean{--fresh} on the module that declares the
-statement \lean{RiemannHypothesis} it accepts the whole import closure, in that machine's
-build of Mathlib: every definition on
-which the meaning of the statement depends was accepted by a second kernel.
+\lean{--fresh} on the module of Mathlib that declares \lean{RiemannHypothesis} and
+\lean{riemannZeta}, and on the one that declares the $L$-function of a Dirichlet character,
+it accepts the whole import closure of each, in that machine's build of Mathlib: every
+definition on which those three depend was accepted by a second implementation of the
+kernel.
 \ifsecondrun
-On the same
-\stocksample{} modules of the archive as above, one process a module, each module's own
-declarations against its imports, it accepted \independentsampleok{}. It was not run on the
+It was also run on the same \independentsample{} names, one process a name and
+\independentsampleatatime{} at a time; it takes a name in the same way.
+\independentsamplenote{} It accepts the module \lean{Statements} too. It was not run on the
 whole archive.
 \else
 It has not been run on the archive.
@@ -388,7 +439,13 @@ certifies. It does not certify any description of the proof, including ours.
 Three limits should be stated. First, the full replay uses one kernel, the one in Lean
 \leanversion{}: the build, our replay and Lean's checker share it, together with the code
 that reads compiled files, so their agreement is one witness to the kernel's judgment and not
-several. The second kernel covered the statement and a sample, not the whole.
+several. That code takes on trust the hashes and flags that names and terms carry in a
+compiled file; nothing recomputes them, and the third review describes how a file written
+by hand could use that to make a statement refer to another constant than the one its name
+shows. The files replayed here were written by Lean in our second build or, for Lean's own
+library, are those of the published release; and \lean{check.sh} writes out
+\cref{st:rh,st:grh,st:strip} and elaborates each afresh against its theorem. The second
+implementation covered the definitions named above and a sample, not the whole.
 \else
 Four limits should be stated. First, the replay of the whole archive reported here was made
 with the earlier form of our program, and establishes what \cref{sec:replay} says and no
@@ -403,12 +460,11 @@ judgment and not several. The second kernel covered the statement, not the archi
 The kernel
 inside Lean also takes on trust the definitions of a few constants of Lean's own library that
 it recognises by name, among them the arithmetic of the natural numbers. On the second
-machine we compared the toolchain's files with the published release, and the second kernel
-ran on the closure of the statement, where those definitions are declared; when it adds one
+machine we compared the toolchain's files with the published release, and the second
+implementation ran on closures in which those definitions are declared; when it adds one
 of them it checks that the definition has the form assumed (\lean{checkPrimitiveDef} in its
-source). Neither was done on the first machine. A run of an independent kernel over the
-whole archive is
-the check most worth adding.
+source). Neither was done on the first machine. A run of another implementation of the
+kernel over the whole archive is the check most worth adding.
 \ifsecondrun
 Second, the replay program has been reviewed and tested as
 described, but by the model that wrote it and by no person. Third, both builds are ours; we

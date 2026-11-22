@@ -5,12 +5,14 @@ One row per statement of the paper about the proof. Levels: M computed from the 
 | Section | Statement | Level | Where |
 |---|---|---|---|
 | 2 | The archive's size and hash, the counts of files and lines, and the static inspection | M | `results/scan.txt` |
-| 2 | The five theorems of `Main.lean` and their statements | S | `Main.lean:4-12`; `Statements.lean` |
-| 2 | `RiemannHypothesis` and `riemannZeta` are Mathlib's | M | `results/check.txt` |
-| 2 | The build succeeds; every module is built | M | `results/build-summary.txt` |
-| 2 | Each of the five theorems depends on `propext`, `Classical.choice`, `Quot.sound` only | M | `results/axioms.txt` |
+| 2 | The five theorems of `Main.lean` and their statements | S | `Main.lean:4-12`; `Statements.lean`; the three main statements are also written out in `check.sh` and elaborated against the theorems (`results/check.txt`) |
+| 2 | `RiemannHypothesis` and `riemannZeta` are Mathlib's, and where the Dirichlet $L$-function is declared | M | `results/check.txt` |
+| 2 | The builds succeed; every module is built | M | `results/build-summary.txt`, `results/run1/build-summary.txt` |
+| 2 | Each of the five theorems depends on `propext`, `Classical.choice`, `Quot.sound` only | M | `results/check.txt` (the recorded lists); `results/replay-targets.txt` and `CONE-AXIOMS` in `results/cut-result.txt` (from the terms) |
 | 2 | The dependency cone and every statement that a declaration is or is not used by the proof | M | `results/cut-result.txt`, `results/cut-in.txt.xz`, `results/cut-out.txt.xz`, `results/cut-modules.txt.xz`, `results/cut-five-extra.txt` |
-| 2 | The kernel replay and its counts | M | `results/replay-summary.txt`, `results/replay-axioms.txt`, `results/replay-skipped.txt`, `results/replay-log.txt` |
+| 2 | The kernel replay and its counts | M | `results/replay-summary.txt`, `results/replay-provenance.txt`, `results/replay-targets.txt`, `results/replay-axioms.txt`, `results/replay-skipped.txt` |
+| 2 | How the two builds agree and differ | M | `results/run1/`, compared by `paper/tools/numbers.py`; for the two builds of Mathlib, `results/mathlib-diff.txt` |
+| 2 | What `lean4lean` is and does | P | its `README.md`, `Lean4Lean/Replay.lean:296`, `Lean4Lean/TypeChecker.lean`, `Lean4Lean/Inductive/Add.lean`, `Lean4Lean/Quot.lean`, `Lean4Lean/Environment.lean:45` and `Lean4Lean/Primitive.lean:246`, at commit `5518bf83`; `results/independent-build.txt` |
 | 2 | What the elaborators of the archive do | P | `Formalism/HermitianCurvature/HermitianCurvatureProofs/CutCptCopy.lean:87`; `Formalism/LocalToGlobal/IndefiniteReal/HeckeNonvanishing/Imports.lean:5`; `Formalism/LocalToGlobal/NumberFieldFamilies/OwnStruct.lean:53-60`; `BuildAid/D1.lean` to `D5.lean` |
 | 3 | `riemannHypothesis` is `rhOfAll`, which is `Formalism.VW.rh_of_every allChi` | P | `Main.lean:4`; `Supplements/Kernels/MainTheorems.lean:9` |
 | 3 | The three hypotheses `Green`, `VWin`, `Nonempty (HypsAlt …)`; the window exponent 3/2; hosts from `supplyChi` | P | `Development/AutomorphicArithmetic/ThetaCorrespondence/ThetaPairLifts/ThirdPlaceSeries/TopPlug.lean:12-18` |

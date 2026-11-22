@@ -1,0 +1,69 @@
+script sha256 a1138b80970bb57229e967af68cd66e16c55f77db74396e0f2273e44b9411a0f
+lean4lean binary sha256 855dc3f9141d083f6f752e4537b6c1f85558f65f94e5b0bf7f33013a41b37897, last written 2026-11-21T15:45:06Z
+read sample.txt (1 with a code other than 0) and independent-sample.txt (1)
+started 2026-11-22T16:58:21Z, one process at a time
+route-test leanchecker Hostile.Honest exit 0 (0 required): 
+route-test leanchecker Hostile.FalseTheorem exit 1 (not 0 required):   False
+route-test lean4lean Hostile.Honest exit 0 (0 required): checked 41 declarations
+route-test lean4lean Hostile.FalseTheorem exit 134 (not 0 required): /lib/x86_64-linux-gnu/libc.so.6(clone+0x43) [0x7501d9c70353]
+leanchecker Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients 0 3 
+leanchecker Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.CompDEqHomComp 0 2 
+leanchecker Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.DigOKAddInl 0 2 
+leanchecker Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.DoubleMonomialApply 0 3 
+leanchecker Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.FortyEightBoundArith 0 3 
+leanchecker Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.FrameZeroLe 0 3 
+leanchecker Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.GeoTouch 0 2 
+leanchecker Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.MemTSetIff 0 2 
+leanchecker Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.MultidegSingle 0 3 
+leanchecker Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.NoOpStep 0 2 
+leanchecker Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.OldestFar 0 2 
+leanchecker Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.PlaneCoeffMonomial 0 3 
+leanchecker Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.PlaneCoeffOneTTens 0 2 
+leanchecker Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.PlanePairsOnBlocksAt 0 3 
+leanchecker Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.PmatDetMem 0 2 
+leanchecker Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.ProdRangeZmod 0 2 
+leanchecker Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.RenameMemSupported 0 3 
+leanchecker Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.RestOneOpOf 0 2 
+leanchecker Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.RestPlOf 0 2 
+leanchecker Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.SumFiberMultideg 0 3 
+leanchecker Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.SupportedOfSupport 0 2 
+leanchecker Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.TensZeroRight 0 2 
+leanchecker Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.TouchCOfMem 0 3 
+leanchecker Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.TypeBd 0 2 
+leanchecker Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.UpdDModelLet 0 3 
+leanchecker Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.ValSCongrSupp 0 2 
+leanchecker Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.ValuationGeOfLeAddOne 0 2 
+leanchecker Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.WBound 0 3 
+leanchecker Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.WithThModelLet 0 2 
+leanchecker Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.XXgZeroP 0 2 
+lean4lean Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients 0 4 checked 9 declarations
+lean4lean Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.CompDEqHomComp 0 5 checked 4 declarations
+lean4lean Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.DigOKAddInl 0 4 checked 19 declarations
+lean4lean Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.DoubleMonomialApply 0 6 checked 102 declarations
+lean4lean Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.FortyEightBoundArith 0 7 checked 44 declarations
+lean4lean Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.FrameZeroLe 0 4 checked 25 declarations
+lean4lean Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.GeoTouch 0 4 checked 8 declarations
+lean4lean Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.MemTSetIff 0 5 checked 21 declarations
+lean4lean Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.MultidegSingle 0 4 checked 24 declarations
+lean4lean Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.NoOpStep 0 4 checked 16 declarations
+lean4lean Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.OldestFar 0 5 checked 39 declarations
+lean4lean Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.PlaneCoeffMonomial 0 4 checked 34 declarations
+lean4lean Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.PlaneCoeffOneTTens 0 4 checked 27 declarations
+lean4lean Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.PlanePairsOnBlocksAt 0 4 checked 20 declarations
+lean4lean Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.PmatDetMem 0 4 checked 4 declarations
+lean4lean Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.ProdRangeZmod 0 5 checked 20 declarations
+lean4lean Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.RenameMemSupported 0 4 checked 9 declarations
+lean4lean Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.RestOneOpOf 0 4 checked 9 declarations
+lean4lean Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.RestPlOf 0 4 checked 9 declarations
+lean4lean Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.SumFiberMultideg 0 4 checked 2 declarations
+lean4lean Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.SupportedOfSupport 0 4 checked 13 declarations
+lean4lean Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.TensZeroRight 0 5 checked 28 declarations
+lean4lean Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.TouchCOfMem 0 5 checked 50 declarations
+lean4lean Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.TypeBd 0 4 checked 1 declarations
+lean4lean Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.UpdDModelLet 0 4 checked 21 declarations
+lean4lean Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.ValSCongrSupp 0 5 checked 33 declarations
+lean4lean Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.ValuationGeOfLeAddOne 0 4 checked 18 declarations
+lean4lean Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.WBound 0 4 checked 31 declarations
+lean4lean Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.WithThModelLet 0 4 checked 13 declarations
+lean4lean Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.XXgZeroP 0 4 checked 16 declarations
+ended 2026-11-22T17:01:50Z; processes killed for memory in the container 7 -> 7

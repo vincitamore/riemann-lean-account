@@ -1,0 +1,147 @@
+CONE-SIZE 1478219
+CONE-SIZE-FIVE-THEOREMS 1478243
+CONSTANTS-SCANNED 2741727
+BY-ROOT root total-constants in-cone
+  Lake 7 0
+  Mathlib 569989 203325
+  Init 66124 9674
+  ProofWidgets 1182 0
+  Development 1254110 856267
+  Formalism 457873 280681
+  Main 5 1
+  Batteries 10150 258
+  ReciprocityTheory 65723 48326
+  Lemmata 402 318
+  Lean 89572 2
+  Supplements 4 2
+  Aesop 6504 3
+  CompanionTheory 20251 15980
+  GroundTheory 138889 77901
+  Plausible 618 0
+  Std 51136 13
+  ImportGraph 91 0
+  PositivityTheory 8257 4374
+  Statements 5 0
+  Qq 633 0
+  LeanSearchClient 202 0
+  BuildAid 0 0
+PROJECT-THEOREMS total 1588253 in-cone 1093609
+PROJECT-DEFINITIONS total 331347 in-cone 178298
+PROJECT-MODULES with-constants 175014 touching-cone 147489
+SHORT-NAME-PROBES name: declarations-with-that-last-component in-cone [up to 6 in cone] [up to 3 not in cone]
+  riemannHypothesis: 2 1 [riemannHypothesis] [UpperTheory.FinalTheorems.riemannHypothesis]
+  rhOfAll: 1 1 [rhOfAll] []
+  allChi: 1 1 [allChi] []
+  every_character_of_green_v_win: 1 1 [UpperTheory.Top.every_character_of_green_v_win] []
+  zero_free_all_of_green_v_win: 1 1 [UpperTheory.Top.zero_free_all_of_green_v_win] []
+  shape_closed_link_n_of_green: 1 1 [UpperTheory.Top.shape_closed_link_n_of_green] []
+  shapeWin: 1 0 [] [UpperTheory.Top.shapeWin]
+  plugAll: 1 0 [] [UpperTheory.Top.plugAll]
+  supplyChi: 1 1 [UpperTheory.Top.supplyChi] []
+  zeroFreeAll_of_topG: 1 1 [UpperTheory.Top.zeroFreeAll_of_topG] []
+  zeroFree_of_rpow_window: 1 1 [Deduction.zeroFree_of_rpow_window] []
+  each_unit_bound_statement: 1 1 [Formalism.LFunctionChainParameters.WeightedSlopeBounds.each_unit_bound_statement] []
+  key_identity5: 1 1 [Formalism.LFunctionChainParameters.WeightedSlopeBounds.key_identity5] []
+  MeanBoundSecondForm: 1 0 [] [Formalism.RankGapBounds.WeightedMeanData.Data.MeanBoundSecondForm]
+  theoremF: 1 1 [Formalism.HN.theoremF] []
+  theoremFSharp: 1 1 [Formalism.HN.theoremFSharp] []
+  boundsMu: 2 2 [Formalism.L2.Indef.IndefSide.boundsMu, Formalism.DivisorInequality.boundsMu] []
+  gramWindow2_proved: 1 1 [Formalism.MainNotions.G.GramWindowAlt.gramWindow2_proved] []
+  GramWindow2: 1 1 [Formalism.MainNotions.G.GramWindowAlt.GramWindow2] []
+  thmAGauss: 1 1 [Formalism.DworkPowerSeriesWeights.thmAGauss] []
+  oneLetterGauss: 1 1 [Formalism.DworkPowerSeriesWeights.oneLetterGauss] []
+  thmBGauss: 1 0 [] [Formalism.DworkPowerSeriesWeights.thmBGauss]
+  lemma_R_log_loss: 1 1 [Formalism.DworkPowerSeriesWeights.lemma_R_log_loss] []
+  split_bound_eleven_one: 1 1 [Formalism.MainNotions.DIV.Bridge.DworkPowerSeriesWeights.split_bound_eleven_one] []
+  kernel_a_one_generic: 1 1 [Formalism.InvariantFactorPaths.G7.kernel_a_one_generic] []
+  kernel_a_two_generic: 1 1 [Formalism.InvariantFactorPaths.G7.kernel_a_two_generic] []
+  kernel_b_generic: 1 1 [Formalism.InvariantFactorPaths.G7.kernel_b_generic] []
+  admissible_level_two: 1 1 [Formalism.L2.G.Adm2InU.admissible_level_two] []
+  admissible_tops_mertens: 1 1 [Formalism.MainNotions.Pk.admissible_tops_mertens] []
+  cm3: 3 3 [ReciprocityTheory.ChartRestriction.L1.cm3, Formalism.L2.Th1.CM.cm3, GlobalTheory.HondaCM3.cm3] []
+  cmGoodModel_of_globalArtinReciprocity: 1 1 [GlobalTheory.Corev.CmTwoClosing.cmGoodModel_of_globalArtinReciprocity] []
+  globalArtin: 3 2 [GlobalTheory.Published.HeckeLAdicCharacter.globalArtin, CompanionTheory.FamInh.globalArtin] [PositivityTheory.FamInh.globalArtin]
+  chowla_selberg_eta: 1 1 [GlobalTheory.chowla_selberg_eta] []
+  tendsto_realEisenstein_sub_pole: 1 1 [GlobalTheory.tendsto_realEisenstein_sub_pole] []
+  topCovolSlim2_use_alt_alt: 1 1 [SelfIntersectionVolumeEstimates.topCovolSlim2_use_alt_alt] []
+  lcv_le: 1 1 [GlobalTheory.CovTop.Assembly.lcv_le] []
+  resolutionCharZero: 1 1 [PositivityTheory.Resplug.ResolutionBlowup.resolutionCharZero] []
+  principalisationCharZero_closed: 1 1 [PositivityTheory.ResPlug.WeightsCompactStabilizer.principalisationCharZero_closed] []
+  inEta_num: 1 1 [Formalism.L2.DIV.inEta_num] []
+  divinN_of_hypV: 1 1 [UpperTheory.Top.divinN_of_hypV] []
+  vvRecord: 1 1 [UpperTheory.Top.vvRecord] []
+  zero_density_box: 1 1 [Formalism.HermitianLattices.Ext.PrimitiveCharacterCasts.ZD.zero_density_box] []
+  meanSqK: 1 1 [QH.meanSqK] []
+  pair_share: 1 1 [QH.pair_share] []
+  levelPrime_unconditional: 1 1 [GlobalTheory.EX.levelPrime_unconditional] []
+  minkowski_bound_rat: 1 1 [minkowski_bound_rat] []
+  numberU3U_of_prints: 1 1 [UpperTheory.GalN.V.Win.N.numberU3U_of_prints] []
+  zetaUr: 1 1 [UpperTheory.V.Z.Kato.Final.zetaUr] []
+  galoisRepresentations_of_thetaLift: 1 1 [UpperTheory.Gal.Int.galoisRepresentations_of_thetaLift] []
+  tLiftK: 1 1 [UpperTheory.TP.K.tLiftK] []
+  recTExists: 1 1 [UpperTheory.Zero.LLC.recTExists] []
+  classSel: 1 1 [UpperTheory.Top.classSel] []
+  linkG_fam_noKer: 1 1 [Formalism.L2.G.linkG_fam_noKer] []
+  link_of_local_closed: 1 1 [Formalism.L2.G.link_of_local_closed] []
+  theorem_A_closed_form_holds: 1 1 [Formalism.MainNotions.G.GramWindowAlt.theorem_A_closed_form_holds] []
+  prvF_of_orbitLetterBounds: 1 1 [PI.OrbBoundFW.prvF_of_orbitLetterBounds] []
+  orbitBound_standardSeries_inertPlaces: 1 1 [GlobalTheory.T.orbitBound_standardSeries_inertPlaces] []
+  comb_of_tied: 1 1 [GlobalTheory.Ggeo.KerComb.comb_of_tied] []
+  exists_beFam_evenConditionsInert_of_kerEnt: 1 1 [GlobalTheory.KerStd.exists_beFam_evenConditionsInert_of_kerEnt] []
+  scal_of_aForm_bForm: 1 1 [GlobalTheory.LiftRows.scal_of_aForm_bForm] []
+  lamLow_of_classicalTheorems: 1 0 [] [GlobalTheory.BigTop.lamLow_of_classicalTheorems]
+  congruenceLength_twistedPlaces_of_heckeIntegrality: 1 1 [GlobalTheory.T.congruenceLength_twistedPlaces_of_heckeIntegrality] []
+  carU_of_star_alt: 1 1 [UpperTheory.GalS.carU_of_star_alt] []
+  cusp_of_pair_alt: 1 1 [UpperTheory.GalS.cusp_of_pair_alt] []
+  DetGain: 1 0 [] [Formalism.B.DetGain]
+  WeightedSieveImpliesRH: 1 0 [] [Formalism.WT.WeightedSieveImpliesRH]
+  WeightThm: 1 0 [] [Formalism.WT.WeightThm]
+  WeightCor: 1 0 [] [Formalism.WT.WeightCor]
+  RiemannHypothesisOfHalfLinks: 1 0 [] [Formalism.CMTypeGaloisData.RiemannHypothesisOfHalfLinks]
+  ZetaQuarterPowerCorollary: 1 0 [] [Formalism.B.ZetaQuarterPowerCorollary]
+  BesselPeriodGGP: 1 0 [] [PI.BesselPeriodGGP.BesselPeriodGGP]
+  DetChain: 1 0 [] [Formalism.ThetaLiftIndependence.DetChain]
+  DetBlocks: 1 0 [] [Formalism.ThetaLiftIndependence.DetBlocks]
+  hostThickExists: 1 1 [Formalism.FrobeniusOrbits.hostThickExists] []
+  of_four_alt: 1 1 [UpperTheory.V.HV.Core.of_four_alt] []
+  lemmaK_litN_alt: 1 1 [UpperTheory.V.ZK.lemmaK_litN_alt] []
+  model_upper: 1 1 [UpperTheory.V.U3.model_upper] []
+  kato_eulerSystem_integrality: 1 1 [UpperTheory.Kd.K4.kato_eulerSystem_integrality] []
+  uniqGap_holds: 1 1 [CompanionTheory.Lime.BM.uniqGap_holds] []
+  standard_weyl_lattices_fock_dual: 1 1 [GlobalTheory.T.standard_weyl_lattices_fock_dual] []
+  Row0b: 1 1 [UpperTheory.GalStar.Row0b] []
+  AwayB: 1 1 [UpperTheory.GalStar.AwayB] []
+  LemmaM: 4 2 [Formalism.L2.FormalSeriesBounds.RowData.LemmaM, UpperTheory.V.Alg.LemmaM] [Lean.Meta.Tactic.BVDecide.LemmaM, Formalism.MainNotions.GradedPowerSeriesLemmas.LemmaM]
+  LevelPrime: 2 1 [GlobalTheory.EX.LevelPrime] [Formalism.LFunctionChainParameters.LChain2.LevelPrime]
+  SizeData₂: 4 4 [Formalism.BasicNotions.SizeData₂, Formalism.LFunctionChainParameters.LChain.SizeData₂, Formalism.LFunctionChainParameters.DeficitSplitLemmas.SizeData₂, Formalism.CohomologicalDescent.LogSmallConstantBounds.SizeData₂] []
+  ChainTied: 1 1 [Formalism.MainNotions.ChainTied] []
+  InputSG: 1 1 [Formalism.LFunctionChainParameters.MatrixLatticeEstimates.InputSG] []
+  LinkN: 1 1 [Formalism.MainNotions.LinkN] []
+  DIVinN: 1 1 [Formalism.MainNotions.DIVinN] []
+  HypsAlt: 1 1 [GlobalTheory.Fc.HypsAlt] []
+  Hyps: 17 11 [Formalism.FourierDecayAlt.MA.Hyps, Formalism.L2.SG.Pf.RegroupPf.Hyps, Formalism.MainNotions.Pf14.Hyps, PI.UnitaryGroupMassFormula.ScXuExists.Hyps, PI.UnitaryGroupMassFormula.PhGram.Hyps, Formalism.L2.FormalSeriesBounds.RawChart.Hyps] [PI.UnitaryGroupMassFormula.DLm.Hyps, GlobalTheory.Fc.Hyps, BranchingSupport.Hyps]
+  VWin: 1 1 [UpperTheory.Top.VWin] []
+  Green: 1 1 [GlobalTheory.GLq.Green] []
+  frameB_share: 1 1 [Formalism.HN.frameB_share] []
+  layer_cake_formula: 1 1 [Formalism.CorankShareLayerCake.FR.layer_cake_formula] []
+  formB: 10 10 [Formalism.MainNotions.FormalGroupSystem.Pf.formB, ReciprocityTheory.ChartRestriction.DS.formB, UpperTheory.Comparison₂.formB, GlobalTheory.CompanionTheory.SW.HermSd.formB, GlobalTheory.CompanionTheory.SW.WittE.formB, ReciprocityTheory.ChartRestriction.DS.G2.formB] []
+  Fi: 15 10 [Formalism.BasicNotions.MemberForms.Fi, Formalism.L2.Forms.ValTied.Fi, Formalism.L2.Forms.ValuationCompatibleChart.Fi, Formalism.FourierDecayAlt.Fr.FrameData.Fi, Formalism.FourierDecayAlt.P.MAx3.F.Rel.Fi, Formalism.FourierDecayAlt.P.MAx3.F.FOK.Fi] [Formalism.L2.Col.GSD.Ev.Fi, Formalism.L2.Col.GFam.Ev.Fi, Formalism.L2.Col.GFamS.Ev.Fi]
+  cuspA: 1 1 [Formalism.L2.Pj.Core.cuspA] []
+  adm2: 81 26 [Formalism.MainNotions.LocalSituation.adm2, Formalism.MainNotions.BlochKatoReduction.adm2, Formalism.MainNotions.BlochKatoReduction.Gen.adm2, Formalism.MainNotions.AuxBlock8.adm2, Formalism.MainNotions.LocalQuadraticParts.adm2, Formalism.MainNotions.SelectionLemmas.adm2] [Formalism.MainNotions.ArithmeticCylinders.adm2, Formalism.MainNotions.IntegralHeckeForms.adm2, Formalism.MainNotions.ZetaZeroFreeRegion.adm2]
+  Iu: 3 2 [Formalism.BasicNotions.DV.Iu, UpperTheory.V.W.GFrame.Iu] [GlobalTheory.Pat.Frame.Iu]
+  NprimeDef: 1 1 [Formalism.BasicNotions.DV.NprimeDef] []
+  LossBounds: 1 1 [Formalism.LFunctionChainParameters.WeightedSlopeBounds.LossBounds] []
+  QuotientSlopeBoundsWith: 1 1 [Formalism.LFunctionChainParameters.WeightedSlopeBounds.QuotientSlopeBoundsWith] []
+  Count5: 1 1 [Formalism.LFunctionChainParameters.WeightedSlopeBounds.Count5] []
+  AskMainBalance: 1 0 [] [Formalism.LFunctionChainParameters.characterSumData.AskMainBalance]
+  GrowthSizeBound: 1 1 [Formalism.LFunctionChainParameters.ThickSetMeanBounds.GrowthSizeBound] []
+  CM2: 2 1 [Formalism.L2.Th1.CM.CM2] [GlobalTheory.IndefiniteRowSideFullHecke.LengthValuationTwists.CM2]
+  CM3: 1 1 [Formalism.L2.Th1.CM.CM3] []
+  ltLog: 3 1 [Formalism.L2.Th1.CM.ltLog] [Formalism.G.ltLog, GlobalTheory.AcrisK.ltLog]
+  LemmaRA: 1 1 [Formalism.DworkPowerSeriesWeights.LemmaRA] []
+  UniqGap: 2 2 [GlobalTheory.GapIn.UniqGap, CompanionTheory.Lime.BM.UniqGap] []
+  KExpansion: 2 1 [Formalism.L2.SG.TermOp.KExpansion] [Formalism.MainNotions.S.KExpansion]
+  CongruenceNumberRankThree: 1 0 [] [UpperTheory.V.Af.CongruenceNumberRankThree]
+  TheoremF: 1 1 [Formalism.HN.TheoremF] []
+  BoundsMu: 1 1 [Formalism.DivisorInequality.BoundsMu] []
+LITERATURE-HUB theorems 198 not-in-cone 0

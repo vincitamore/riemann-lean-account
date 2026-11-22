@@ -1,0 +1,4 @@
+'CarryForward.riemannZeta_ne_zero_of_half_lt_re' depends on axioms: [propext, Classical.choice, Quot.sound]
+'CarryForward.LFunction_ne_zero_of_real_of_half_lt' depends on axioms: [propext, Classical.choice, Quot.sound]
+'CarryForward.LFunction_zero_on_critical_line' depends on axioms: [propext, Classical.choice, Quot.sound]
+COR-EXIT 0

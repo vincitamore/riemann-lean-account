@@ -1,9 +1,9 @@
 % Version and date. The measured numbers are in numbers.tex, which tools/numbers.py writes from
-% the results files. Three numbers are typed here because no results file holds them; each
+% the results files. A few numbers are typed here because no results file holds them; each
 % says where it comes from. numbers.tex also sets \ifsecondrun: false while the results are
 % those of the first run only.
-\newcommand{\paperdate}{21 November 2026}
-\newcommand{\paperversion}{1.2}
+\newcommand{\paperdate}{22 November 2026}
+\newcommand{\paperversion}{1.3}
 \input{numbers}
 % Billed by the provider for the machine of the first run, from its start to its end; not a
 % measurement of the archive.
@@ -11,6 +11,12 @@
 % The first replay was started with LEAN_NUM_THREADS=28; this is our record of the command,
 % and no results file of that run holds it.
 \newcommand{\firstreplaythreads}{28}
+% The cost of the second machine, \secondruncost, is computed in tools/numbers.py from the
+% provider's hourly price and the machine's start, which are typed there, and the last time in
+% file-times.txt.
+% The memory limit of the first machine's container, in GB, as the provider listed it; no
+% results file of that run holds it.
+\newcommand{\firstmemorylimit}{128}
 
 % The outcome of the kernel replay, in words (used in the section on verification).
 \newcommand{\replaystatus}{%

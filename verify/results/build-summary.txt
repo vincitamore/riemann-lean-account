@@ -1,25 +1,61 @@
-START 1795191011 threads=32
-1795191017 ✔ [8705/9402] Built Formalism.SizeWindowBrackets.RealSlopeBoundsSplit (1.5s)
-1795191022 ✔ [8706/9402] Built Formalism.HermitianLattices.StatementJac (6.2s)
-...
-1795239292 ✔ [183890/183893] Built Supplements.Kernels.MainTheoremsCritical (19s)
-1795239311 ✔ [183891/183893] Built Supplements.Kernels.MainTheoremsAll (19s)
-1795239341 ✔ [183892/183893] Built Main (25s)
-1795239342 Build completed successfully (183893 jobs).
+MACHINE
+model name	: AMD EPYC 4565P 16-Core Processor
+threads available 32
+memory 125 GB (of the host, if this is a container)
+memory-limit 64 GB (of this container, in units of 10^9 bytes)
+BUILD OF Main (logs/build.log)
+START 1795274972 threads=32
+1795332669 Build completed successfully (183893 jobs).
 LAKE-EXIT 0
-END 1795239342
-
+END 1795332670
 oleans 175187
 failed-marks 0
+error-lines 0
 warnings 489061
+compiled-bytes 100162467000
+disk-peak-GB 115
+setup-files-measured 175187 files 1030632972582 bytes
+TOOLCHAIN AND PACKAGES
 leanprover/lean4:v4.33.1
 Lean (version 4.33.1, x86_64-unknown-linux-gnu, commit 819816b2e0a3bf405af45ae5c7af2491d8f5bee6, Release)
-   "name": "mathlib",
-   "manifestFile": "lake-manifest.json",
-   "inputRev": "0df444a360eaa60ab8c11dca51a86af692955474",
-   "inherited": false,
    "rev": "0df444a360eaa60ab8c11dca51a86af692955474",
+   "name": "mathlib",
+   "inputRev": "0df444a360eaa60ab8c11dca51a86af692955474",
    "rev": "b7eb3304aeae834b12dda98993a37f6a41f6f0bb",
+   "name": "plausible",
+   "inputRev": "main",
    "rev": "5f4d51b81cbd3f6b32b156bfad9056621a040404",
-32
-model name	: AMD EPYC 9575F 64-Core Processor
+   "name": "LeanSearchClient",
+   "inputRev": "main",
+   "rev": "16f02aa7642864af59f1ff0e384a015994db9118",
+   "name": "importGraph",
+   "inputRev": "main",
+   "rev": "4be2e3d5087eeb272cf5a8853b8f9dd025ef5957",
+   "name": "proofwidgets",
+   "inputRev": "main",
+   "rev": "3448c0bcc5ce01b2d1546e483ec3620e32df3d0e",
+   "name": "aesop",
+   "inputRev": "master",
+   "rev": "92c15be17b7caf78c2ad767ec40f89052d908d81",
+   "name": "Qq",
+   "inputRev": "master",
+   "rev": "4488d40d070b9700d4d5a6aa342f0d40c31b2a2d",
+   "name": "batteries",
+   "inputRev": "main",
+   "rev": "6130a47896ce867c6a4a55373441e59e565bad0f",
+   "name": "Cli",
+   "inputRev": "v4.33.0",
+ "name": "tree",
+BUILD OF Mathlib FROM SOURCE (mathlib-build.log)
+MATHLIB-START 1795273808
+1795274944 Build completed successfully (8712 jobs).
+MATHLIB-EXIT 0
+MATHLIB-END 1795274945
+mathlib-jobs 8712
+mathlib-modules-built 8312
+packages-modules-built 8690
+lines of the log that mention a cache, a download or a release:
+  1795273810 info: downloading https://releases.lean-lang.org/lean4/v4.33.1/lean-4.33.1-linux.tar.zst
+  1795273899 ✔ [150/576] Built Batteries.Util.Cache (395ms)
+  1795273901 ✔ [188/8612] Built Aesop.RulePattern.Cache (560ms)
+(end of those lines)

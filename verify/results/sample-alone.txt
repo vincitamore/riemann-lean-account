@@ -1,0 +1,2 @@
+DONE-STEP probe leanchecker Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients exit 137 seconds 41 max-anon-bytes 59711430656 oom_kill 3
+DONE-STEP probe lean4lean Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients exit 137 seconds 45 max-anon-bytes 59476672512 oom_kill 4

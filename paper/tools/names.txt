@@ -139,3 +139,18 @@ word cut/CutMain.lean
 word replay/ReplayMain.lean
 word verify/
 word verify/results/
+word simp
+word abel
+word shuf
+word import all
+word mathlib-diff.sh
+word sample-exact.sh
+word readModuleDataParts
+word Replay.lean
+word TypeChecker.lean
+word Inductive/Add.lean
+word Quot.lean
+word corollaries.sh
+word df
+word Statements
+word lean

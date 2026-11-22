@@ -1,0 +1,3 @@
+lake env lean Targets.lean
+(no output)
+TARGETS-EXIT 0

@@ -1,0 +1,7 @@
+sorryAx
+Classical.choice
+propext
+Quot.sound
+Lean.trustCompiler
+Lean.ofReduceBool
+Lean.ofReduceNat

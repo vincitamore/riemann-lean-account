@@ -22,10 +22,12 @@ pkg=$(cd "$1" && pwd); prog=$(cd "$2" && pwd); out=$(mkdir -p "$3" && cd "$3" &&
 echo "replay program sha256 $(sha256sum "$prog/ReplayMain.lean" | cut -d' ' -f1)"
 cd "$pkg" || exit 1
 [ -z "$(tail -c 1 expected.txt)" ] || { echo "HOSTILE-FAILED expected.txt does not end with a newline"; exit 1; }
-if grep -v -E '^[A-Za-z0-9]+ (accepts|rejects|any) (accepts|rejects|any) (accepts|rejects) [^ ]+$' expected.txt | grep -q .; then
+if grep -v -E '^[A-Za-z0-9]+ (accepts|rejects|any) (accepts|rejects|any) (accepts|rejects) [^[:space:]]+$' expected.txt | grep -q .; then
   echo "HOSTILE-FAILED a line of expected.txt is not of the expected form"; exit 1
 fi
 mapfile -t modules < <(cut -d' ' -f1 expected.txt)
+[ "${#modules[@]}" -gt 0 ] || { echo "HOSTILE-FAILED expected.txt names no module"; exit 1; }
+[ -z "$(printf '%s\n' "${modules[@]}" | sort | uniq -d)" ] || { echo "HOSTILE-FAILED expected.txt names a module twice"; exit 1; }
 lake build > "$out/hostile-build.txt" 2>&1 || { echo "HOSTILE-FAILED the hostile package does not build"; tail -5 "$out/hostile-build.txt"; exit 1; }
 lake exe craft >> "$out/hostile-build.txt" 2>&1 || { echo "HOSTILE-FAILED the crafted files were not written"; exit 1; }
 echo "the hostile package builds and the crafted files are written"
@@ -71,7 +73,10 @@ for m in "${modules[@]}"; do
   sed '$d' "$out/hostile-$m-report.txt"
   [ "$(tail -n 1 "$out/hostile-$m-report.txt")" = OK ] || bad=1
 done
-echo "axioms named Hostile.* that the replay lists for Hostile.Axiom: $(grep -c '^Hostile\.' "$out/hostile-Axiom-replay/replay-axioms.txt")"
+# the one axiom that Hostile.Axiom declares must be in the replay's list of axioms
+ax=$(grep -c '^Hostile\.' "$out/hostile-Axiom-replay/replay-axioms.txt" 2>/dev/null)
+echo "axioms named Hostile.* that the replay lists for Hostile.Axiom: $ax (expected 1)"
+[ "$ax" = 1 ] || bad=1
 
 # The report on named theorems. Hostile.conclusion is a theorem that the kernel accepts and that
 # depends on Hostile.falseProved, which it rejects; Hostile.Honest.size_pos depends on nothing

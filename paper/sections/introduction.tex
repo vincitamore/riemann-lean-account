@@ -9,10 +9,10 @@ source \cite{alpoge2026lean}, \filecount{} Lean files and \linecount{} lines, an
 with a timeline of twenty steps. The note says that no human-readable proof has been written.
 
 This paper does two things. It reports that the proof is correct as a formal object: we built
-the archive, it compiles, \lean{#print axioms} reports for its five top theorems the three
-standard axioms and nothing else, and the kernel accepts every theorem and definition of the
-import closure, replayed from an empty environment (\cref{sec:verification}\ifsecondrun\else,
-which also says what the replay reported in this version did not compare\fi). And it says
+the archive, it compiles, its five top theorems depend on the three standard axioms and
+nothing else, and the kernel accepts every theorem, and every definition that is not marked
+unsafe or partial, of the import closure, replayed from an empty environment
+(\cref{sec:verification}). And it says
 what the argument
 is: an account read from the Lean source, from the final theorem down to the theorems of the
 published literature on which it rests. The release does not contain one.

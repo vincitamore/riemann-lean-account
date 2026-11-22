@@ -1,0 +1,7 @@
+modules checked 501 (Main and 500 drawn from the 147488 modules of the cone)
+accepted 500
+not accepted 1
+Main accepted
+seconds, summed over the modules 37516
+processes at a time 10
+elapsed seconds 3769

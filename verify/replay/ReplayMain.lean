@@ -10,26 +10,31 @@ The others are put in a dependency order, and each declaration is passed to the 
 earlier in that order. Constructors and recursors are not sent: the kernel generates them from
 the inductive declarations.
 
-When every declaration has been sent, the environment the kernel built is compared with what was
-read, constant by constant and in both directions: every constant read that is neither unsafe
-nor partial must equal, field by field, the constant of that name in the environment the kernel
-built, and every constant the kernel built must be one of them. Terms are compared up to the
+When every declaration has been sent, the environment the kernel built is compared with the
+parts replayed, constant by constant and in both directions: every constant of those parts
+that is neither unsafe nor partial, in the version that Lean's import keeps of its name, must
+equal, field by field, the constant of that name in the environment the kernel built, and
+every constant the kernel built must be one of them. Terms are compared up to the
 names and annotations of binders, which the kernel does not consult. Without this comparison a
 file could hold a constant that no kernel call produces (an inductive type or a quotient
 constant written into the table directly), and it would be counted and never examined.
 
 A module that uses Lean's module system is compiled to five files. An import from outside the
-module system reads the private part (`.olean.private`), and that is the part replayed. A
+module system reads the private part (`.olean.private`), and that is the part replayed; a
+module inside the system that imports with `import all` reads it too. Otherwise a
 module inside the system receives its constants from elsewhere: from the first part (`.olean`),
 from the modules that the first part's import list names, and, for a module loaded only for
-its compiled code, from the `.ir` file (`Lean/Environment.lean`: `readModuleDataPartsOfMod`,
+its compiled code, from the `.ir` file and from the modules that its import list names
+(`Lean/Environment.lean`: `readModuleDataPartsOfMod`,
 `ImportedModule.mainModule?`, `importModulesCore`). The constants of the server part reach no
 kernel environment, and it is not read here. Lean writes the first part from the same
 declarations, each unchanged, reduced to an axiom with the same statement, or left out; it
-gives the first part and the `.ir` file the import list of the private part; and it writes no
-constants into the `.ir` and `.ir.sig` files. The program fails unless all of that holds:
-every constant of the first part is the replayed constant of that name or its statement as
-such an axiom, the import lists and the flags agree, and the code files hold no constants.
+gives the first part and the `.ir` file the import list of the private part; and `lean`
+writes no constants into the `.ir` and `.ir.sig` files. The program fails unless all of that
+holds: every constant of the first part is the constant of that name in the private part or
+its statement as such an axiom; the private part carries the module-system flag when the
+first part does; the import lists of the first part and of the `.ir` file are that of the
+private part; and the code files hold no constants.
 The axiom must be marked unsafe exactly when the source of Lean 4.33.1 marks it so, with one
 allowance: the files of Lean's own library, as distributed with 4.33.1, do not mark the axiom
 of a partial definition, though files that 4.33.1 compiles do. In the files of the toolchain's
@@ -38,8 +43,14 @@ replayed (below), so such an axiom states a type that this program has not passe
 kernel; and a theorem of a module inside the module system may use it.
 
 What is not compared in those files: the entries of environment extensions and the names
-listed for the compiler, which reach the elaborator and the compiler of a module inside the
-system and not its kernel.
+listed for the compiler. At import they add no constant to a kernel environment. They do
+reach the elaborator and the compiler of a module inside the system, which may run compiled
+code found there, and the names listed for the compiler decide which recorded list of axioms
+`#print axioms` reads.
+
+Memory. The first part and the code files are read a second time while the import keeps them
+mapped, so each is copied; the copies are kept to the end. On the closure of Lean's own
+library that is about 650 MB.
 
 How it differs from the toolchain's `leanchecker`.
 * `leanchecker` re-imports the import closure once for every module it checks, all at once. On
@@ -56,8 +67,9 @@ How it differs from the toolchain's `leanchecker`.
 * `Lean.Environment.replay`, which `leanchecker` calls, compares constructors and recursors with
   the kernel's and nothing else. The comparison described above also covers inductive types and
   quotient constants; the program also requires every listed constructor to be a constructor of
-  its type, every stored name to be the name of its constant, and the files that a module
-  inside the module system reads to agree with the part replayed, as described above.
+  its type, every stored name to be the name of its constant, and the files from which a
+  module inside the module system takes constants to agree with the part replayed, as
+  described above.
 
 A name declared by more than one module: Lean's import accepts this for two theorems with the
 same statement, for a theorem and an axiom, and for two axioms. The program keeps the version
