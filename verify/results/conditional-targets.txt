@@ -1,0 +1,44 @@
+Lean (version 4.36.0, x86_64-w64-windows-gnu, commit 611c117bfaf7b7ae1cfcf246ce6fba31e8f509e9, Release)
+Mathlib fc4f59e577feb1a4956671bc04ac18aaaf8cd842
+
+Targets.lean sha256=7a4dc8b3cc972268845ccb2bd23e9c6c1435fbfb103ece80184a47cdc8b06f45
+
+lean -o <clean-build>/Targets.olean Targets.lean -> exit 0
+leanchecker -v Targets
+replaying Targets
+exit 0
+
+MillerPrime.lean sha256=0d00e1058eb509f4e1cf1606215c5cb9fcc78ff8641673ee41e3d4d9a25f49c3
+'CarryForward.Targets.isStrongProbablePrime_of_prime' depends on axioms: [propext, Classical.choice, Quot.sound]
+lean -o <clean-build>/MillerPrime.olean MillerPrime.lean -> exit 0
+leanchecker -v MillerPrime
+replaying MillerPrime
+exit 0
+
+MillerSubgroup.lean sha256=605390e0b2cc02511868dcc5aa35e6ddb1ad1271cdda9b809d6a7aa54f0b8d07
+'CarryForward.Targets.exists_proper_subgroup_of_composite' depends on axioms: [propext, Classical.choice, Quot.sound]
+lean -o <clean-build>/MillerSubgroup.olean MillerSubgroup.lean -> exit 0
+leanchecker -v MillerSubgroup
+replaying MillerSubgroup
+exit 0
+
+MillerCharacter.lean sha256=9a86b6044f9d6b95bd8460bab482561aef20b71ed5c3e16e1d57f3a392b878a2
+'CarryForward.Targets.miller_of_liar_subgroups' depends on axioms: [propext, Classical.choice, Quot.sound]
+lean -o <clean-build>/MillerCharacter.olean MillerCharacter.lean -> exit 0
+leanchecker -v MillerCharacter
+replaying MillerCharacter
+exit 0
+
+MillerFromSmallNonresidue.lean sha256=763f2737321f350b06803537701e341e49fbd2dafdc997f83421941bd6fa1205
+'CarryForward.Targets.millerTestIsCorrect_of_smallNonresidue' depends on axioms: [propext, Classical.choice, Quot.sound]
+lean -o <clean-build>/MillerFromSmallNonresidue.olean MillerFromSmallNonresidue.lean -> exit 0
+leanchecker -v MillerFromSmallNonresidue
+replaying MillerFromSmallNonresidue
+exit 0
+
+PrimeCountingFromPsi.lean sha256=eaec769ae9bf8224f28367fef04d03eb01a24e5c315ea69c40fb6acaca572c1d
+'CarryForward.Targets.primeCountingError_of_psi_bound' depends on axioms: [propext, Classical.choice, Quot.sound]
+lean -o <clean-build>/PrimeCountingFromPsi.olean PrimeCountingFromPsi.lean -> exit 0
+leanchecker -v PrimeCountingFromPsi
+replaying PrimeCountingFromPsi
+exit 0
