@@ -27,14 +27,17 @@ times in UTC:
    both times.
 6. 15:02 to 16:03. `sample.sh` again, eight at a time, with the script as published; the
    process on that name was killed again. Beside it, to 15:30, `independent.sh fresh` on the
-   module that declares the Dirichlet L-function, and, from 15:02 on, Lean's own checker with
-   `--fresh` on `Main`, which was still running when these files were fetched and from which
-   nothing here comes.
+   module that declares the Dirichlet L-function, and, from 15:02 on, step 9.
 7. 16:03 to 16:05. A first form of the script that became `sample-exact.sh` ran each command
    on that name by itself once more; both were killed again. Its output is not kept.
 8. From 16:12, and again from 16:50 with the scripts as published, whose output is what is
    kept: `check.sh` once more (it now prints more and runs both checkers on `Statements`),
    `sample-exact.sh`, `mathlib-diff.sh`.
+9. 15:02 to 23:03. `FRESH_ROOTS=Main stock.sh`: Lean's own checker with `--fresh` on the whole
+   import closure of `Main`, on one thread, beside steps 6 to 8 for its first two hours; then,
+   to 00:02 on 23 November, the same script ran our replay on `Main` once more, with the
+   machine otherwise idle and the number of threads left to Lean's default (`fresh-main/`).
+   Its summary differs from `replay-summary.txt` only in the threads line and the seconds.
 
 **The kills for memory.** The container's counter of processes killed for memory read 7 at
 the end. All seven were processes of one checker or the other on the name
@@ -79,6 +82,8 @@ the program's hash.
 | `replay-axioms.txt` | `replay.sh` | every axiom not marked unsafe that is declared anywhere in the import closure of `Main` |
 | `replay-skipped.txt` | `replay.sh` | the declarations marked unsafe or partial, which a replay does not check |
 | `hostile.txt` | `hostile.sh` | the first line is the SHA-256 of the replay program used; then, for each module of `verify/hostile/`, what Lean's checker did in each of its modes, what our replay did, and the failures the replay recorded; then the test of the report on named theorems |
+| `fresh-main/stock.txt`, `fresh-main/stock-fresh-Main.log.txt` | `FRESH_ROOTS=Main stock.sh` | the SHA-256 of the replay program; Lean's checker with `--fresh` on the whole import closure of `Main`: exit code and times; then our replay on the same closure, run again: exit code, times, counts. The second file is a copy of the checker's log, `stock-fresh-Main.log`: it is empty, since the checker prints nothing when it accepts. The script does not make a panic fatal, so the empty log is what shows there was none. The log's time in `file-times.txt` is when the run began |
+| `fresh-main/replay-Main/replay-summary.txt` | the same | the replay program's own summary of that second run over `Main` |
 | `independent-build.txt` | `independent.sh build`, in step 2 | the commit of `lean4lean`, the toolchain it was made for and the one it was built with. The file is the log of that step, copied into the results at 14:03 on 22 November. `sample-exact.txt` gives the SHA-256 of the binary and the time it was last written |
 | `independent-hostile.txt` | `independent.sh hostile` | what `lean4lean` did on the same modules, in each of its modes |
 | `stock.txt` | `stock.sh` | the first line is the SHA-256 of the replay program used; then Lean's checker with `--fresh`, and our replay, on the import closure of the Mathlib module that declares `RiemannHypothesis` and on Mathlib as a whole: exit codes, times, counts |

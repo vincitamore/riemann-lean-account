@@ -259,8 +259,8 @@ paper.
 It imports once, orders the declarations, and runs the kernel checks of theorems,
 definitions, opaque constants and axioms in parallel, each against a snapshot of the
 environment as it stood when the declaration's turn came; inductive types and the quotient
-type are checked on the main thread. Lean's own checker, \lean{leanchecker}
-\cite{lean4checker}, has not been run on the whole of this archive.
+type are checked on the main thread. Lean's own checker is \lean{leanchecker}
+\cite{lean4checker}.
 \ifsecondrun
 Its ordinary mode imports the import closure again for every module it
 checks. Run as described below, \stocksampleatatime{} processes at a time and beside the
@@ -270,13 +270,18 @@ days on that machine. Its function for one module, called on one module at a tim
 \stockexactmin{} to \stockexactmax{} seconds on each of the \stockkilledimports{} modules
 named below. Its other mode,
 \lean{--fresh}, replays one closure in one process, as our program does, but on one thread.
-On Mathlib it used \stockfreshmathlibcpuminutes{} minutes of processor time and our program
-\stockreplaymathlibcpuminutes{}, both measured while the machine was building the archive;
-our replay of the archive used \replaycpuhours{} hours of processor time, so by the ratio of
-the two on Mathlib, \freshratio, Lean's checker would need roughly \freshestimatehours{}
-hours of one processor, if the memory it needs is there; the ratio was measured under the
-build's load and the hours were not. Such a run was started on the second machine and had
-not ended when this version was made.
+We ran it on the whole import closure of \lean{Main}, on the second machine. It accepted the
+closure, ending with exit code~$0$ after \freshmainhours{} hours, \freshmaincpuhours{} of
+them processor time, and printing nothing; for about its first two hours three of the runs
+below ran beside it: the sample run whose time is quoted, the second implementation on the
+closure of the $L$-function, and the checks of single modules. So each of the
+\replaydecls{} constants of \cref{sec:replay}, which are those that are neither unsafe nor
+partial, each in the version that Lean's import keeps of its name, has been accepted by the
+kernel twice from an empty environment, once driven by Lean's own checker and once by our
+program. What rests on our programs alone is what Lean's replay does not do: the comparison
+of the kernel's environment with the compiled files beyond constructors and recursors, the
+check of the further versions of repeated names, the comparison of the files of the module
+system, and the axioms computed from the terms.
 \else
 Its ordinary mode imports the import closure again for every module it checks, \filecount{}
 times over; on the first machine an attempt on some two thousand modules at once ended at
@@ -287,15 +292,15 @@ process, as our program does, but on one thread. On Mathlib it used
 minutes on \firstreplaythreads{} threads, so in that mode Lean's checker would need a day or
 more of one processor for the archive; we intend to make that run on the second build.
 \fi
-So the replay of the whole archive rests on our program, and we give the grounds for
-trusting it. The tests on the modules of \cref{tab:hostile}, and those with \lean{--fresh}
+For those we give the grounds for trusting the replay program. The runs behind
+\cref{tab:hostile}, and those with \lean{--fresh}
 on Mathlib and on the module that declares \lean{RiemannHypothesis}, were made on the second
-machine, on its own build of Mathlib from source, while it was building the archive, and the
-times quoted for them were measured under that load. Everything else in this subsection was
-run after the build: the second implementation on the closure of the $L$-function, the
-runs on a sample of names of the archive's modules, and the checks of single modules. The
-sample run whose time is quoted ran beside the run of \lean{leanchecker --fresh} on
-\lean{Main} just mentioned and, for its first half hour, beside that run of the second
+machine, on its own build of Mathlib from source, while it was building the archive.
+Everything else in this subsection was run after the build: the run of
+\lean{leanchecker --fresh} on \lean{Main}, the second implementation on the closure of the $L$-function, the
+runs on a sample of names of the archive's modules, and the checks of single modules, with
+the two tests of the way of calling them. The sample run whose time is quoted ran beside
+the run on \lean{Main} and, for its first half hour, beside that run of the second
 implementation.
 
 \emph{Review.} The program has been reviewed four times against the source of Lean
@@ -358,11 +363,12 @@ which examines the module it is given and trusts that module's imports,
 
 \input{hostile-table}
 
-\emph{Agreement with Lean's checker where it runs.} \lean{leanchecker --fresh} was run on
+\emph{Agreement with Lean's checker.} Besides the closure of \lean{Main},
+\lean{leanchecker --fresh} was run on
 the module of Mathlib that declares the statement \lean{RiemannHypothesis}, and on Mathlib as
 a whole; it accepted both. Our program
-accepts the same two closures, of \stockreplayrzdecls{} and \stockreplaymathlibdecls{}
-declarations. Both ran on the second machine's build of Mathlib.
+accepts the same closures; those two have \stockreplayrzdecls{} and
+\stockreplaymathlibdecls{} declarations. All of this ran on the second machine's build.
 \ifsecondrun
 In its ordinary mode \lean{leanchecker} takes a name as a prefix: it checks the module of
 that name and every module whose name extends it, each module's own declarations against
@@ -467,7 +473,9 @@ source). Neither was done on the first machine. A run of another implementation 
 kernel over the whole archive is the check most worth adding.
 \ifsecondrun
 Second, the replay program has been reviewed and tested as
-described, but by the model that wrote it and by no person. Third, both builds are ours; we
+described, but by the model that wrote it and by no person. That the kernel accepts each of
+the \replaydecls{} constants no longer rests on it, since Lean's own checker finds the same;
+the comparisons and the further versions listed in \cref{sec:checker} do. Third, both builds are ours; we
 know of no other at the time of writing.
 \else
 Third, the replay program has been reviewed and tested as described, but by the model that

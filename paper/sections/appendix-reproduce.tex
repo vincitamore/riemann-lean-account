@@ -66,7 +66,9 @@ The scripts in \lean{verify/} assume \lean{bash} with \lean{git},
   replay of \cref{sec:replay}. The number of threads is set with \lean{LEAN_NUM_THREADS}.
 \item \lean{hostile.sh} builds the modules of \lean{hostile/} and runs Lean's checker and the
   replay program on each (\cref{tab:hostile}).
-\item \lean{stock.sh} runs \lean{leanchecker --fresh} and the replay program on Mathlib, and
+\item \lean{stock.sh} runs \lean{leanchecker --fresh} and then the replay program on
+  Mathlib, or on the roots named in \lean{FRESH_ROOTS}: with \lean{Main} there, and another
+  directory for the output, it is the check of the whole archive by Lean's own checker.
   \lean{sample.sh} runs \lean{leanchecker} on a sample of names of the archive's modules
   (\cref{sec:checker}).
 \item \lean{independent.sh} fetches \lean{lean4lean} at a fixed commit, builds it with the
@@ -104,7 +106,10 @@ outside the cone.
 \ifsecondrun
 The second run took \mathlibminutes{} minutes to compile Mathlib and \buildhours{} hours to
 build the archive on \buildthreads{} threads; the cone then took \cuthours{} hours and the
-replay \replayminutes{} minutes. The provider billed \firstruncost{} US dollars for the first
+replay \replayminutes{} minutes. Lean's own checker took \freshmainhours{} hours on one
+thread for the whole archive, and the replay, run again after it when the compiled files had
+just been read, \freshmainreplayminutes{} minutes. The provider billed \firstruncost{} US
+dollars for the first
 machine. The second, at its hourly price, cost about \secondruncost{} dollars from its start
 to the end of the steps reported here.
 \else

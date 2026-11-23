@@ -756,15 +756,45 @@ def main() -> None:
         if key == "rz":
             fresh_rz_cpu = float(m.group(3)) + float(m.group(4))
     if second:
-        put("freshratio", f"{cpu_ratio:.2f}", "stock.txt: leanchecker --fresh's processor time on Mathlib over the replay's")
-        put("freshestimatehours", str(round(replay_cpu_s * cpu_ratio / 3600)),
-            "computed: the replay's processor time times the ratio of the two programs' processor times on Mathlib")
+        # Lean's own checker with --fresh on the whole import closure of Main, and our replay run
+        # again by the same script (fresh-main/stock.txt)
+        fm = (res / "fresh-main" / "stock.txt").read_text(encoding="utf-8")
+        if grab(fm, r"^replay program sha256 ([0-9a-f]{64})$", "the hash of the program in the whole-archive run") != hsha:
+            sys.exit("numbers.py: the whole-archive run of Lean's checker was paired with another replay program")
+        f1 = re.findall(r"^leanchecker --fresh Main: exit (\d+); elapsed ([0-9.]+) s, processor time ([0-9.]+) s user and ([0-9.]+) s system", fm, re.M)
+        f2 = re.findall(r"^replay Main: exit (\d+); elapsed ([0-9.]+) s, processor time ([0-9.]+) s user and ([0-9.]+) s system.*?constants (\d+) replayed (\d+) failed (\d+)", fm, re.M)
+        if len(f1) != 1 or f1[0][0] != "0":
+            sys.exit("numbers.py: fresh-main/stock.txt does not record Lean's checker accepting the closure of Main")
+        if len(f2) != 1 or f2[0][0] != "0" or f2[0][6] != "0" or int(f2[0][5]) != replayed:
+            sys.exit("numbers.py: fresh-main/stock.txt does not record our replay accepting the same closure with the same count")
+        fresh_main_cpu = float(f1[0][2]) + float(f1[0][3])
+        put("freshmainhours", f"{float(f1[0][1]) / 3600:.1f}", "fresh-main/stock.txt: elapsed")
+        put("freshmaincpuhours", f"{fresh_main_cpu / 3600:.1f}", "fresh-main/stock.txt: processor time")
+        put("freshmainreplayminutes", str(round(float(f2[0][1]) / 60)), "fresh-main/stock.txt: our replay on the same closure, run after it")
+        put("freshmainreplaycpuhours", f"{(float(f2[0][2]) + float(f2[0][3])) / 3600:.1f}", "fresh-main/stock.txt: processor time of that replay")
+        # The checker printed nothing: a copy of its log is kept and must be empty.
+        if (res / "fresh-main" / "stock-fresh-Main.log.txt").stat().st_size != 0:
+            sys.exit("numbers.py: Lean's checker printed something on the closure of Main; the text says it printed nothing")
+        # Our replay run again by the same script: its summary must be the first replay's, but for
+        # the threads line and the seconds.
+        strip = lambda text: [l for l in text.splitlines() if l.strip() and not l.startswith(("threads ", "seconds "))]
+        if strip((res / "fresh-main" / "replay-Main" / "replay-summary.txt").read_text(encoding="utf-8")) != strip(rep):
+            sys.exit("numbers.py: the replay run again after Lean's checker does not give the first replay's summary")
+        # When it ran. Its log file is created at its start and never written after (file-times.txt).
+        # The text says which runs ran beside it for about its first two hours and which did not.
+        fm_start = times["fresh-main/stock-fresh-Main.log"]
+        beside = [times[n] for n in ("sample.txt", "independent-fresh.txt", "sample-exact.txt", "mathlib-diff.txt", "check.txt")]
+        if abs(times["sample-modules.txt"] - fm_start) > 120 or min(beside) < fm_start \
+                or not 1.5 * 3600 <= max(beside) - fm_start <= 2.25 * 3600:
+            sys.exit("numbers.py: the runs said to have run beside Lean's checker for about two hours did not")
+        if times["independent-sample.txt"] > fm_start:
+            sys.exit("numbers.py: lean4lean's sample run overlapped Lean's checker on Main; the text says it did not")
         l4 = re.search(r"^lean4lean --fresh Mathlib\.NumberTheory\.LSeries\.RiemannZeta: exit 0; elapsed [0-9.]+ s, processor time ([0-9.]+) s user and ([0-9.]+) s system",
                        ifresh, re.M)
         l4_ratio = (float(l4.group(1)) + float(l4.group(2))) / fresh_rz_cpu
         put("independentratio", f"{l4_ratio:.1f}", "independent-fresh.txt and stock.txt: lean4lean's processor time on the closure of the statement's module over leanchecker --fresh's")
-        put("independentestimatehours", str(round(replay_cpu_s * cpu_ratio * l4_ratio / 3600, -1)).split(".")[0],
-            "computed: the estimate for leanchecker --fresh times that ratio, to the nearest ten hours")
+        put("independentestimatehours", str(round(fresh_main_cpu * l4_ratio / 3600, -1)).split(".")[0],
+            "computed: the processor time of leanchecker --fresh on Main times that ratio, to the nearest ten hours")
     msum = (res / "replay-Mathlib" / "replay-summary.txt").read_text(encoding="utf-8")
     ex = re.search(r"^exported-parts-compared (\d+) modules, (\d+) constants", msum, re.M)
     if ex.group(1) != grab(msum, r"^modules (\d+)", "the modules of Mathlib's closure"):

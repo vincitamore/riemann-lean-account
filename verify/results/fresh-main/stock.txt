@@ -1,0 +1,3 @@
+replay program sha256 5e695c0b2bb77f494fba42c876556b44f7dac679c1d9111eacf93589cc8e3393
+leanchecker --fresh Main: exit 0; elapsed 28848.286 s, processor time 25919.597 s user and 338.424 s system
+replay Main: exit 0; elapsed 3535.217 s, processor time 41263.273 s user and 656.994 s system; constants 2701138 replayed 2695298 failed 0 

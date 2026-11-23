@@ -1,0 +1,24 @@
+REPLAY-SUMMARY
+root Main
+threads unset (Lean's default: one per processor)
+modules 186200
+constants 2701138
+replayed 2695298
+theorems 2084262
+definitions 556318
+opaque 3882
+axioms 7
+quotient-constants 4
+inductive-types 15769 in 15734 blocks
+constructors-compared 19159
+recursors-compared 15897
+sum-of-the-kinds 2695298 (equals replayed: true)
+compared-with-the-kernel's-constants 2695298 (every constant replayed, in both directions)
+exported-parts-compared 11013 modules, 657071 constants
+exported-axioms-of-partial-definitions-not-marked-unsafe 686 (allowed in Lean's own library only)
+code-files-read 11013 modules (they must hold no constants)
+unsafe-or-partial-not-replayed 5840
+failed 0
+names-declared-more-than-once 13382, further versions 40595, of which checked 40595 and axioms 0
+selftest accepts-true true rejects-false true
+seconds 3527

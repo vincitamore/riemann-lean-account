@@ -3,27 +3,20 @@
 Open work that this repository makes possible. Each item says what exists here to start from.
 None of it has been done by us unless it says so.
 
-## 1. Another kernel over the whole archive, Lean's own checker, and an independent build
+## 1. Another kernel over the whole archive, a person's review, and an independent build
 
-The full replay uses the kernel inside Lean 4.33.1. The check most worth adding is a
-run of another implementation of the kernel over the whole import closure of `Main`: lean4lean
-with `--fresh`, or an export of the environment checked by an external checker, which would
-share less with Lean than lean4lean does. We ran lean4lean on the modules of
-`verify/hostile/`, on the closures of the two Mathlib modules that declare what the statements
-are about, on the archive's module `Statements`, and on a sample of the archive's modules
-against their imports (`verify/independent.sh`). On the closure of the module that declares
-`RiemannHypothesis` it used 6.9 times the processor time of
-`leanchecker --fresh`, both measured beside the build; by that ratio and the estimate below,
-the whole archive would need roughly 100 hours of one processor.
-
-Lean's own `leanchecker --fresh Main` would check the declarations independently of our
-program, though it makes none of the comparisons our program adds. It runs on one thread. On
-Mathlib it used 37 minutes of processor time and our program
-31; our replay of the archive took 12 hours of
-processor time, so by that ratio it needs roughly 15 hours of one
-processor, and the memory to hold the whole environment; the ratio was measured beside the
-build and the hours were not. Such a run was started on the second machine and had not ended
-when this version was made.
+The full replay uses the kernel inside Lean 4.33.1, driven by Lean's own checker and
+by our program. The check most worth adding is a run of another implementation of the kernel
+over the whole import closure of `Main`: lean4lean with `--fresh`, or an export of the
+environment checked by an external checker, which would share less with Lean than lean4lean
+does. We ran lean4lean on the modules of `verify/hostile/`, on the closures of the two Mathlib
+modules that declare what the statements are about, on the archive's module `Statements`, and
+on a sample of the archive's modules against their imports (`verify/independent.sh`). On the
+closure of the module that declares `RiemannHypothesis` it used 6.9 times the
+processor time of `leanchecker --fresh`, both measured beside the build. `leanchecker --fresh`
+used 7.3 hours of processor time on the whole archive, so by that ratio
+lean4lean would need roughly 50 hours of one processor; the two
+figures were measured under different loads.
 
 The replay program (`verify/replay/ReplayMain.lean`, 594 lines) has been
 reviewed four times by the model that wrote it (`notes/review-replay-program-A.md` to `-D.md`)

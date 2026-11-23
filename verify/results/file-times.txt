@@ -32,3 +32,6 @@ scan.txt 1795283271
 stock.txt 1795290772
 targets.txt 1795332862
 toolchain.txt 1795275021
+fresh-main/stock.txt 1795392143
+fresh-main/stock-fresh-Main.log 1795359760
+fresh-main/replay-Main/replay-summary.txt 1795392141

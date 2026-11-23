@@ -128,7 +128,7 @@
 \newcommand{\firstconesize}{1{,}478{,}219}% run1/cut-result.txt
 \newcommand{\firstreplayminutes}{57}% run1/replay-summary.txt
 \newcommand{\cuthours}{3.4}% file-times.txt: from targets.txt to the last cut file
-\newcommand{\secondruncost}{29}% computed: 1.12 dollars an hour from the machine's start to the last time in file-times.txt
+\newcommand{\secondruncost}{37}% computed: 1.12 dollars an hour from the machine's start to the last time in file-times.txt
 \newcommand{\replayskippedrec}{5{,}008}% replay-skipped.txt
 \newcommand{\replaymillions}{2.7}% computed
 \newcommand{\replayprogramlines}{594}% verify/replay/ReplayMain.lean: lines, comments included
@@ -168,10 +168,12 @@
 \newcommand{\stockreplaymathlibdecls}{766{,}714}% stock.txt
 \newcommand{\stockreplaymathlibminutes}{5}% stock.txt
 \newcommand{\stockreplaymathlibcpuminutes}{31}% stock.txt: processor time
-\newcommand{\freshratio}{1.21}% stock.txt: leanchecker --fresh's processor time on Mathlib over the replay's
-\newcommand{\freshestimatehours}{15}% computed: the replay's processor time times the ratio of the two programs' processor times on Mathlib
+\newcommand{\freshmainhours}{8.0}% fresh-main/stock.txt: elapsed
+\newcommand{\freshmaincpuhours}{7.3}% fresh-main/stock.txt: processor time
+\newcommand{\freshmainreplayminutes}{59}% fresh-main/stock.txt: our replay on the same closure, run after it
+\newcommand{\freshmainreplaycpuhours}{11.6}% fresh-main/stock.txt: processor time of that replay
 \newcommand{\independentratio}{6.9}% independent-fresh.txt and stock.txt: lean4lean's processor time on the closure of the statement's module over leanchecker --fresh's
-\newcommand{\independentestimatehours}{100}% computed: the estimate for leanchecker --fresh times that ratio, to the nearest ten hours
+\newcommand{\independentestimatehours}{50}% computed: the processor time of leanchecker --fresh on Main times that ratio, to the nearest ten hours
 \newcommand{\stockexportedmodules}{10{,}498}% replay-Mathlib/replay-summary.txt
 \newcommand{\stockexported}{644{,}284}% replay-Mathlib/replay-summary.txt
 \newcommand{\stockpartialunmarked}{531}% replay-Mathlib/replay-summary.txt

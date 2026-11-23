@@ -8,8 +8,9 @@ This repository contains two things:
 
 1. **A verification.** We built the archive twice, the second time with Mathlib compiled from
    source, checked which axioms the theorems depend on, replayed its declarations through the
-   Lean kernel from an empty environment, compared what the kernel built with the compiled
-   files, and computed which declarations the final theorem actually uses.
+   Lean kernel from an empty environment, with Lean's own checker and with a program of ours,
+   compared what the kernel built with the compiled files, and computed which declarations
+   the final theorem actually uses.
 2. **An account of the argument**, read from the Lean source: the paper
    [`paper/main.pdf`](paper/main.pdf), and a statement of its skeleton on one page,
    [`paper/one-page.pdf`](paper/one-page.pdf).
@@ -35,7 +36,7 @@ Mathlib's; its replay was made with the earliest form of our program. Its files 
 | Axioms | each of the five top theorems depends on `propext`, `Classical.choice`, `Quot.sound` and nothing else: by `#print axioms`, which for an imported theorem prints a recorded list, and again computed from the terms by the replay, in the environment the kernel built. The cone program finds no other axiom among the constants of the cone of the five |
 | Kernel replay | the import closure of `Main` (the archive, Mathlib and its dependencies, Lean's library) declares 2,701,138 names; the 2,695,298 that are not marked unsafe or partial were replayed through the kernel from an empty environment, among them 2,084,262 theorems, 556,318 definitions and 15,769 inductive types; 0 failures. The environment the kernel built was then compared with the compiled files, constant by constant, in both directions: no difference. 116 minutes on 32 threads |
 | The checker, tested | 29 small modules. 25 of them have, in their import closure, a compiled file that holds something the kernel never accepted or whose parts disagree in a way Lean never writes (one proves `False`, compiles, and has no axioms reported). Our replay rejects all 25; Lean's `leanchecker --fresh` rejects 9 of them |
-| Lean's own checker | `leanchecker --fresh` accepts the import closure of the module that declares the statement, and all of Mathlib; so does our replay. In its ordinary mode it takes a name as a prefix and checks every module under the name against its imports. It was run on 501 names, `Main` among them, which cover 530 modules, and every module is accepted: 500 names by the command. For one name, with 29 modules under it, the command imports the closure 30 times at once and the system killed it at the container's memory limit, also when it ran by itself; the checker's function for one module was then called on each of the 30 in turn and accepted all. It also accepts the module `Statements` |
+| Lean's own checker | `leanchecker --fresh` accepts the whole import closure of `Main`: exit code 0 after 8.0 hours on one thread. So the kernel has accepted each of the 2,695,298 constants that are not marked unsafe or partial, in the version Lean's import keeps of its name, twice: once driven by Lean's checker and once by our program. It also accepts all of Mathlib and the closure of the module that declares the statement, as our replay does. In its ordinary mode it takes a name as a prefix and checks every module under the name against its imports. It was run on 501 names, `Main` among them, which cover 530 modules, and every module is accepted: 500 names by the command. For one name, with 29 modules under it, the command imports the closure 30 times at once and the system killed it at the container's memory limit, also when it ran by itself; the checker's function for one module was then called on each of the 30 in turn and accepted all. It also accepts the module `Statements` |
 | A second implementation of the kernel | `lean4lean`, which its authors describe as derived from the kernel's C++ code. It accepts the import closures of the two Mathlib modules that declare `RiemannHypothesis`, `riemannZeta` and the Dirichlet L-function, and the archive's module `Statements`; with `--fresh` it rejects 9 of the 25 test modules; and on the same 501 names every module is accepted: 500 names by the command. For one name, with 29 modules under it, the command imports the closure 30 times at once and the system killed it at the container's memory limit, also when it ran by itself; the checker's function for one module was then called on each of the 30 in turn and accepted all |
 | Dependency cone | `riemannHypothesis` depends on 1,478,220 declarations. Of the archive's 1,548,656 theorems (counted by name), 1,075,015 are among them; 147,489 of the 175,014 modules that declare anything declare something in the cone. The archive declares no axiom anywhere |
 | Literature | the archive proves 179 named results of the literature; the proof of the final theorem refers to all of them |
@@ -67,8 +68,10 @@ of a few constants it knows by name. A second implementation of the kernel has b
 test modules, on the closures of the Mathlib definitions the statements are about, on the
 archive's module of statements and on a sample of the archive, but not on the whole archive;
 that is the check most worth adding. The replay program is ours; it has been reviewed four
-times and tested as described, by the model that wrote it and by no person. And both builds
-are ours: we know of no other.
+times and tested as described, by the model that wrote it and by no person. That the kernel
+accepts each of those constants no longer rests on it, since Lean's own checker finds the
+same; the comparisons it adds, and its check of the further versions of repeated names, do.
+And both builds are ours: we know of no other.
 
 ## What the argument is
 
@@ -119,6 +122,7 @@ bash $V/cut.sh $V/cut out                          # dependency cone
 bash $V/replay.sh $V/replay out                    # kernel replay and comparison
 bash $V/hostile.sh $V/hostile $V/replay out/hostile-files > out/hostile.txt   # the checkers on modules built to be wrong
 bash $V/stock.sh $V/replay out                     # Lean's checker and ours on Mathlib
+FRESH_ROOTS=Main bash $V/stock.sh $V/replay out/fresh-main   # Lean's checker over the whole archive, 8.0 hours here, then our replay again
 bash $V/independent.sh build > out/independent-build.txt   # a second implementation of the kernel, lean4lean
 bash $V/independent.sh hostile $V/hostile out/hostile-files # on the same test modules; writes out/hostile-files/independent-hostile.txt
 bash $V/independent.sh fresh out                   # on the closure of the module that declares RiemannHypothesis
@@ -146,6 +150,10 @@ welcome as issues or pull requests.
 
 ## Versions
 
+- **1.4**, 23 November 2026. Lean's own checker over the whole archive.
+  - `leanchecker --fresh Main` ended with exit code 0 after 8.0 hours
+    (`verify/results/fresh-main/stock.txt`). The paper's Section 2.8 and its limits now say
+    what no longer rests on our replay program and what still does.
 - **1.3**, 22 November 2026. The second build, and the corrected replay over the whole archive.
   - The archive was built a second time, on another machine, with Mathlib compiled from
     source. The corrected replay program ran over the whole import closure: no failure, and

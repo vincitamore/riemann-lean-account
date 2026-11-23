@@ -154,3 +154,4 @@ word corollaries.sh
 word df
 word Statements
 word lean
+word FRESH_ROOTS
