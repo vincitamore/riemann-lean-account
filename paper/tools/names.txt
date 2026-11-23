@@ -144,6 +144,8 @@ word abel
 word shuf
 word import all
 word mathlib-diff.sh
+word cone-probe.sh
+word cut/ConeProbe.lean
 word sample-exact.sh
 word readModuleDataParts
 word Replay.lean

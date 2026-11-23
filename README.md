@@ -31,7 +31,7 @@ Mathlib's; its replay was made with the earliest form of our program. Its files 
 | Archive | `lean.tar.gz`, 239,275,554 bytes, SHA-256 `9631b4f020199e580ba86178cb56c6e9b09f690c2369a80dc4334aa93f49c7fc`; 175,187 Lean files, 17,374,215 lines |
 | Toolchain | Lean 4.33.1; on the second machine the installed toolchain is identical file by file (17,493 files) to the release on GitHub. Mathlib at `0df444a360eaa60ab8c11dca51a86af692955474` |
 | Build | twice. The second time Mathlib was compiled from source first (8,312 modules, 19 minutes), then `lake build Main` exited 0 after 183,893 jobs and 16.0 hours on 32 threads. All 175,187 modules built in both |
-| The two builds | the lists of the archive's declarations inside and outside the dependency cone are identical byte for byte. The first build's Mathlib was not kept; the community's cache, fetched again on the second machine, was compared with Mathlib from source. From source it has 8 private auxiliary lemmas of `simp` and `abel` that the cached build lacks, and lacks 2 that it has; no other name differs. Among the 772,124 constants both have, by Lean's 32-bit hash, statements differ only in one further auxiliary lemma and one equation that Lean generates for a definition (`SimpleGraph.Walk.take.eq_2`), which the two builds state in different forms, and proofs only in those and in the proofs in which the auxiliary lemmas occur |
+| The two builds | the lists of the archive's declarations inside and outside the dependency cone are identical byte for byte. The first build's Mathlib was not kept; the community's cache, fetched again on the second machine, was compared with Mathlib from source. From source it has 8 private auxiliary lemmas of `simp` and `abel` that the cached build lacks, and lacks 2 that it has; no other name differs. Among the 772,124 constants both have, by Lean's 32-bit hash, statements differ only in one further auxiliary lemma and one equation that Lean generates for a definition (`SimpleGraph.Walk.take.eq_2`), which the two builds state in different forms, and proofs only in those and in the proofs in which the auxiliary lemmas occur. `mathlib-diff.txt` names sixteen constants in all, and two of them are in the cone of `riemannHypothesis` as the second build has it: the theorem `MvPolynomial.coeff_killCompl`, whose proof differs, and the one auxiliary lemma of that proof which only the build from source has. No statement that differs is in the cone |
 | Statement | `riemannHypothesis : RiemannHypothesis`, where `RiemannHypothesis` and `riemannZeta` are Mathlib's own (declared in `Mathlib.NumberTheory.LSeries.RiemannZeta`). `verify/check.sh` writes out the three main statements and elaborates each afresh against its theorem |
 | Axioms | each of the five top theorems depends on `propext`, `Classical.choice`, `Quot.sound` and nothing else: by `#print axioms`, which for an imported theorem prints a recorded list, and again computed from the terms by the replay, in the environment the kernel built. The cone program finds no other axiom among the constants of the cone of the five |
 | Kernel replay | the import closure of `Main` (the archive, Mathlib and its dependencies, Lean's library) declares 2,701,138 names; the 2,695,298 that are not marked unsafe or partial were replayed through the kernel from an empty environment, among them 2,084,262 theorems, 556,318 definitions and 15,769 inductive types; 0 failures. The environment the kernel built was then compared with the compiled files, constant by constant, in both directions: no difference. 116 minutes on 32 threads |
@@ -69,7 +69,7 @@ test modules, on the closures of the Mathlib definitions the statements are abou
 archive's module of statements and on a sample of the archive, but not on the whole archive;
 that is the check most worth adding. The replay program is ours; it has been reviewed four
 times and tested as described, by the model that wrote it and by no person. That the kernel
-accepts each of those constants no longer rests on it, since Lean's own checker finds the
+accepts each of the 2,695,298 constants replayed no longer rests on it, since Lean's own checker finds the
 same; the comparisons it adds, and its check of the further versions of repeated names, do.
 And both builds are ours: we know of no other.
 
@@ -131,6 +131,7 @@ bash $V/sample.sh out 500 8                        # Lean's checker on a sample 
 bash $V/independent.sh sample out 10               # lean4lean on the same sample
 bash $V/sample-exact.sh out $V/hostile             # what each name covers; a name whose process was killed, module by module
 bash $V/mathlib-diff.sh out                        # Mathlib from source against the community's cached build
+bash $V/cone-probe.sh $V/cut out                   # which of the constants that differ are in the cone
 ```
 
 The tests on Mathlib and on the test modules (`hostile.sh`, `stock.sh`, the first three uses of
@@ -150,6 +151,12 @@ welcome as issues or pull requests.
 
 ## Versions
 
+- **1.5**, 23 November 2026. The constants of Mathlib that differ between the two builds, located
+  against the cone.
+  - A new program and script (`verify/cut/ConeProbe.lean`, `verify/cone-probe.sh`) ask of each
+    such constant whether it is in the cone of `riemannHypothesis`
+    (`verify/results/cone-probe.txt`). One theorem whose proof differs and one auxiliary lemma
+    are; no constant whose statement differs is. Version 1.4 had left this undetermined.
 - **1.4**, 23 November 2026. Lean's own checker over the whole archive.
   - `leanchecker --fresh Main` ended with exit code 0 after 8.0 hours
     (`verify/results/fresh-main/stock.txt`). The paper's Section 2.8 and its limits now say

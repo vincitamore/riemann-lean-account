@@ -8,6 +8,7 @@ replay-summary.txt) and the counts of the literature table (refs/rows-counts.jso
 derived figures (differences, shares) and writes one LaTeX macro per number. It stops with an
 error if a number it needs is missing or if two sources disagree.
 """
+import hashlib
 import json
 import pathlib
 import re
@@ -463,6 +464,56 @@ def main() -> None:
             "evidence that two terms are equal, not a proof of it.", "mathlib-diff.txt, in words")
         put("mathlibhashshort", f"Among the {fmt(common)} constants both have, by Lean's 32-bit hash, {t_short_s}, {v_short_s}",
             "the same, for the README")
+        # Which of these constants are in the cone of riemannHypothesis (cone-probe.txt, the output
+        # of cone-probe.sh). The program must have found the cone that the cone program found.
+        cp = (res / "cone-probe.txt").read_text(encoding="utf-8")
+        cp_lines = [l for l in cp.splitlines() if l.strip()]
+        if cp_lines[-1] != "CONE-PROBE-EXIT 0" or cp.count("CONE-PROBE-EXIT") != 1:
+            sys.exit("numbers.py: cone-probe.txt does not end with exit code 0")
+        # the program and the script that ran are the published ones (line ends as in the repository)
+        # (the script is beside the results in the public repository, under publish/public here)
+        for label, places in (("program", [res.parent / "cut" / "ConeProbe.lean"]),
+                              ("script", [res.parent / "cone-probe.sh",
+                                          res.parent.parent / "publish" / "public" / "verify" / "cone-probe.sh"])):
+            found = [p_ for p_ in places if p_.is_file()]
+            if not found:
+                sys.exit(f"numbers.py: the cone probe's {label} is not beside the paper")
+            if hashlib.sha256(found[0].read_bytes().replace(b"\r\n", b"\n")).hexdigest() != grab(cp, rf"^{label} sha256 ([0-9a-f]{{64}})$", f"the probe's {label} hash"):
+                sys.exit(f"numbers.py: the cone probe's {label} is not the one whose hash cone-probe.txt prints")
+        if int(grab(cp, r"^CONE-SIZE (\d+)$", "the probe's cone")) != cone \
+                or int(grab(cp, r"^CONE-SIZE-FIVE-THEOREMS (\d+)$", "the probe's cone of the five")) != cone5:
+            sys.exit("numbers.py: the cone probe did not compute the cone that cut-result.txt reports")
+        verdict_lines = re.findall(r"^(\S+): (in the cone of riemannHypothesis|in the cone of the five theorems only|"
+                                   r"outside the cone|not a constant of this build)$", cp, re.M)
+        verdicts = dict(verdict_lines)
+        if len(verdict_lines) != len(verdicts):
+            sys.exit("numbers.py: cone-probe.txt gives a constant more than one verdict")
+        differing = set(n_ for _, _, n_ in only_src + only_cache + tdiff + vdiff)
+        if set(verdicts) != differing or int(grab(cp, r"^names taken from mathlib-diff\.txt: (\d+)$", "the probe's names")) != len(differing):
+            sys.exit("numbers.py: cone-probe.txt does not cover exactly the constants that mathlib-diff.txt lists")
+        if {n_ for n_, v_ in verdicts.items() if v_ == "not a constant of this build"} != {n_ for _, _, n_ in only_cache}:
+            sys.exit("numbers.py: the constants the probe does not find are not exactly those of the cached build only")
+        in_cone = sorted(n_ for n_, v_ in verdicts.items() if v_ == "in the cone of riemannHypothesis")
+        if any(v_ == "in the cone of the five theorems only" for v_ in verdicts.values()):
+            sys.exit("numbers.py: a differing constant is in the cone of the five theorems only; the text does not say so")
+        # The text is written for this shape: no constant whose statement differs is in the cone;
+        # those in the cone are one theorem whose proof differs and the auxiliary lemmas of that
+        # proof which only the build from source has, as many as the cone is larger by.
+        probe_thm = [n_ for n_ in in_cone if n_ in v_parent_thm]
+        probe_aux = [n_ for n_ in in_cone if n_ in {m_ for _, _, m_ in only_src}]
+        if any(n_ in t_names for n_ in in_cone) or len(probe_thm) != 1 or len(probe_thm) + len(probe_aux) != len(in_cone) \
+                or len(probe_aux) != cone_diff or cone_diff != 1 or aux.match(probe_aux[0]).group(2) != probe_thm[0] \
+                or len(differing) >= 20:
+            sys.exit(f"numbers.py: the differing constants in the cone do not have the shape the text is written for: {in_cone}")
+        teens = small + ["eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen"]
+        put("mathlibconeprobenote", f"Of the {teens[len(differing)]} constants named in this comparison, {small[len(in_cone)]} are in the cone of "
+            f"\\lean{{riemannHypothesis}} as the second build has it: the theorem \\texttt{{{probe_thm[0].replace('_', chr(92) + '_')}}}, "
+            "whose proof differs between the builds, and the auxiliary lemma of that proof which only the build from source "
+            "has, which agrees with the second cone being larger by one. No constant whose statement differs "
+            "is in the cone.", "cone-probe.txt, in words")
+        put("mathlibconeprobeshort", f"`mathlib-diff.txt` names {teens[len(differing)]} constants in all, and {small[len(in_cone)]} of them are in the cone of `riemannHypothesis` as the second build has it: "
+            f"the theorem `{probe_thm[0]}`, whose proof differs, and the one auxiliary lemma of that proof which only the build "
+            "from source has. No statement that differs is in the cone", "the same, for the README")
         # the lists of the archive's declarations and modules are the same in the two builds
         for name in ("cut-in.txt.xz", "cut-out.txt.xz", "cut-modules.txt.xz"):
             if lzma.open(res / name).read() != lzma.open(res / "run1" / name).read():
@@ -528,7 +579,6 @@ def main() -> None:
     if "HOSTILE-OK" not in host:
         sys.exit("numbers.py: the hostile modules did not behave as expected")
     hsha = grab(host, r"^replay program sha256 ([0-9a-f]{64})$", "the hash of the program the tests used")
-    import hashlib
     if hashlib.sha256((res.parent / "replay" / "ReplayMain.lean").read_bytes()).hexdigest() != hsha:
         sys.exit("numbers.py: the hostile tests were not made with the replay program published here")
     put("hostileprogramsha", hsha[:16], "hostile.txt: first sixteen digits")

@@ -1,0 +1,22 @@
+script sha256 b062808602327d1fbf1a0bf2f06fd77be3f848f937773a09aefe8920f1ca937b
+program sha256 6e6cda3ee5ac18fc2c1649dfe6e8a63d16749ab42c140e614b16ca1d7dc35de6
+names taken from mathlib-diff.txt: 16
+CONE-SIZE 1478220
+CONE-SIZE-FIVE-THEOREMS 1478244
+HomologicalComplex.mapBifunctorMapHomotopy.comm₁: outside the cone
+MonomialOrder.sPolynomial_decomposition: outside the cone
+MvPolynomial.coeff_killCompl: in the cone of riemannHypothesis
+Nat.Partrec.Code.evaln_mono._f: outside the cone
+SimpleGraph.Walk.take.eq_2: outside the cone
+_private.Mathlib.Algebra.Homology.BifunctorHomotopy.0.HomologicalComplex.mapBifunctorMapHomotopy.comm₁._abel_1_3: not a constant of this build
+_private.Mathlib.Algebra.Homology.BifunctorHomotopy.0.HomologicalComplex.mapBifunctorMapHomotopy.comm₁._abel_1_4: outside the cone
+_private.Mathlib.Algebra.Homology.BifunctorHomotopy.0.HomologicalComplex.mapBifunctorMapHomotopy.comm₁._simp_1_3: outside the cone
+_private.Mathlib.Algebra.MvPolynomial.Rename.0.MvPolynomial.coeff_killCompl._simp_1_1: in the cone of riemannHypothesis
+_private.Mathlib.Computability.PartrecCode.0.Nat.Partrec.Code.evaln_mono._simp_1_18: outside the cone
+_private.Mathlib.Computability.PartrecCode.0.Nat.Partrec.Code.evaln_mono._simp_1_19: outside the cone
+_private.Mathlib.RingTheory.MvPolynomial.MonomialOrder.0.MonomialOrder.sPolynomial_decomposition._simp_1_1: outside the cone
+_private.Mathlib.RingTheory.MvPolynomial.MonomialOrder.0.MonomialOrder.sPolynomial_decomposition._simp_1_2: outside the cone
+_private.Mathlib.RingTheory.MvPolynomial.MonomialOrder.0.MonomialOrder.sPolynomial_decomposition._simp_1_3: not a constant of this build
+_private.Mathlib.RingTheory.MvPolynomial.MonomialOrder.0.MonomialOrder.sPolynomial_decomposition._simp_1_4: outside the cone
+_private.Mathlib.RingTheory.MvPolynomial.MonomialOrder.0.MonomialOrder.sPolynomial_decomposition._simp_1_5: outside the cone
+CONE-PROBE-EXIT 0

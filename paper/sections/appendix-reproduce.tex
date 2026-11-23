@@ -81,6 +81,9 @@ The scripts in \lean{verify/} assume \lean{bash} with \lean{git},
 \item \lean{mathlib-diff.sh} fetches the community's cached build of Mathlib into a second
   copy of the package and compares it with the build from source: the names of the
   constants, and the hashes of their statements and values (\cref{sec:build}).
+\item \lean{cone-probe.sh} asks, for each constant which that comparison names, whether it
+  is in the cone of \lean{riemannHypothesis}. Its program, \lean{cut/ConeProbe.lean},
+  computes the cone as the cone program does and prints its size.
 \end{enumerate}
 The outputs of our runs are in \lean{verify/results/}, with an index that says what
 wrote each file\ifsecondrun; those of the first run are in \lean{verify/results/run1/}\fi.
@@ -107,8 +110,8 @@ outside the cone.
 The second run took \mathlibminutes{} minutes to compile Mathlib and \buildhours{} hours to
 build the archive on \buildthreads{} threads; the cone then took \cuthours{} hours and the
 replay \replayminutes{} minutes. Lean's own checker took \freshmainhours{} hours on one
-thread for the whole archive, and the replay, run again after it when the compiled files had
-just been read, \freshmainreplayminutes{} minutes. The provider billed \firstruncost{} US
+thread for the whole archive, and the replay, run again after it,
+\freshmainreplayminutes{} minutes. The provider billed \firstruncost{} US
 dollars for the first
 machine. The second, at its hourly price, cost about \secondruncost{} dollars from its start
 to the end of the steps reported here.

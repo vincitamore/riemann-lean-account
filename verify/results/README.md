@@ -2,7 +2,7 @@
 
 Output of our own runs of the programs in `verify/`.
 
-The files here are those of the second run, on 21 and 22 November 2026: Mathlib compiled from
+The files here are those of the second run, from 21 to 23 November 2026: Mathlib compiled from
 source, the archive built, and the steps listed below. Each was made by the script named for it
 in the table, as published here, except where the list or the table says otherwise. The files
 of the first run, of 20 and 21 November, are in `run1/`; the last section says what made them.
@@ -38,6 +38,8 @@ times in UTC:
    to 00:02 on 23 November, the same script ran our replay on `Main` once more, with the
    machine otherwise idle and the number of threads left to Lean's default (`fresh-main/`).
    Its summary differs from `replay-summary.txt` only in the threads line and the seconds.
+10. 23 November, ending at 00:38. `cone-probe.sh`, which took 16 minutes by the machine's log
+    of the step; that log is not among the results, and only the end is in `file-times.txt`.
 
 **The kills for memory.** The container's counter of processes killed for memory read 7 at
 the end. All seven were processes of one checker or the other on the name
@@ -49,17 +51,24 @@ dates its kill. `lean4lean` ends with code 134 on the test module it must reject
 made fatal it aborts while printing its error, and the line kept from its output is part of
 the abort's trace.
 
-**Which script made which file.** `replay.sh`, `hostile.sh`, `stock.sh`, `sample-exact.sh` and
-`mathlib-diff.sh` write a hash of the program or script into their output. The other scripts
-do not. `sample.sh`, `independent.sh`, `check.sh`, `sample-exact.sh` and `mathlib-diff.sh` were
-changed on the machine during 22 November and committed afterwards; the published `sample.sh`
-and `independent.sh` differ from the files that ran only in their comments. The cone program
-that ran is not identified by a hash in its output.
+**Which script made which file.** `replay.sh`, `hostile.sh`, `stock.sh`, `sample-exact.sh`,
+`mathlib-diff.sh` and `cone-probe.sh` write a hash of the program or script into their output.
+The other scripts do not. `sample.sh`, `independent.sh`, `check.sh`, `sample-exact.sh` and
+`mathlib-diff.sh` were changed on the machine during 22 November and committed afterwards; the
+published `sample.sh` and `independent.sh` differ from the files that ran only in their
+comments. The cone program that ran is not identified by a hash in its output; the cone probe,
+built beside it from the same package, prints the hash of its own source, and finds a cone of
+the same size.
 
 **A correction to the replay program's comment.** Its header says that the copies kept in
 memory come to about 650 MB on the closure of Lean's own library; the fourth review measured
 652 MiB, which is 684 MB. The comment is left as it is because every result is stamped with
 the program's hash.
+
+**A correction to the cone probe's comment.** The header of `cut/ConeProbe.lean` says that four
+definitions are copied from `CutMain.lean`. There are five (`valOf`, `extraOf`,
+`usedConstsImpl`, `usedConsts`, `cone`), and `cone` is copied without the lines that print
+progress. The comment is left as it is because the result is stamped with the program's hash.
 
 ## The second run
 
@@ -96,6 +105,7 @@ the program's hash.
 | `sample-exact.txt` | `sample-exact.sh` | the SHA-256 of the script and of the `lean4lean` binary; which sample files it read and how many lines of each had a code other than 0; the test of each way of calling a checker's function on a module of `verify/hostile/` that must be accepted and on one that must be rejected; then, for the name whose process was killed, each module the name covers, checked one at a time by the checker's own function for one module: the checker, the name, the module, the exit code, the seconds, and the last line the checker printed (for `lean4lean`, the number of declarations checked); then the container's count of kills for memory before and after |
 | `sample-earlier.txt`, `sample-earlier-summary.txt` | `sample.sh` as it was before its output was kept, ten at a time | step 4 above: the process on the same name ended with code 137. The container's count of kills for memory read 1 at the start of the step that followed (`independent-sample-summary.txt`) |
 | `mathlib-diff.txt` | `mathlib-diff.sh` | Mathlib compiled from source against the community's cached build of the same commit, fetched again on this machine: the last lines the fetch printed; the constants one has and the other lacks; among those both have, the ones whose statements or values differ by the hash stored in the compiled files; and, for each whose statement differs, the statement as each build has it |
+| `cone-probe.txt` | `cone-probe.sh` | the SHA-256 of the script and of its program `cut/ConeProbe.lean`; the size of the cone of `riemannHypothesis` and of the five theorems, as that program computes them; then, for each constant that `mathlib-diff.txt` names, whether it is in the cone, outside it, or not a constant of the build from source |
 | `file-times.txt` | `stat -c '%n %Y'` on the files of the results directory on the machine | the time each was last written (Unix seconds), from which the paper takes the duration of the cone step: from `targets.txt`, the last file of the step before it, to the cone's last file. `cut.sh` records no time itself |
 
 ## How to read the counts

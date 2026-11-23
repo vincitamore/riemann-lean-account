@@ -5,3 +5,8 @@ defaultTargets = ["cut"]
 name = "cut"
 root = "CutMain"
 supportInterpreter = true
+
+[[lean_exe]]
+name = "coneprobe"
+root = "ConeProbe"
+supportInterpreter = true
