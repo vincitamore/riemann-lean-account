@@ -69,6 +69,8 @@ zeroFree_of_rpow_window F (hθ : 0 < θ) (hθ1 : θ < 1) (hδ : 0 < δ)
 **[read]** The pointwise form of this, `LandauWinAt` (TGC/Window.lean:24), is defined and never used.
 **[read]** Inputs: continuation of L, L(s, χ) ≠ 0 on Re s ≥ 1, L(1, χ) ≠ 0, ζ's residue and constant at 1 (Mathlib), conjugation symmetry (`LFunction_conj`, LT/LFunctionConj.lean:88), isolated zeros; no zero-free region, zero density or explicit formula.
 
+Crossley gives a signed example of Alpöge’s criterion. Write $g(u)=G_F(e^u)$ for $u>0$ and extend it by zero. The difference $-g(u)+3g(u-\log 2)-2g(u-2\log 2)$ multiplies the Laplace transform by $(1-2^{-s})(2^{1-s}-1)$. This factor is nonzero in the open critical strip and positive on $(0,1)$, so a one-sided window bound on the difference still gives `ZeroFree F θ`. [Lean declaration](https://github.com/leecrossley/dirichlet-window-transfer/blob/fa94718cf9d65ee5b143ded4c91dc3873222cfdf/DelayedPole.lean#L176) and [archived proof](https://doi.org/10.5281/zenodo.24410863).
+
 ## B. The supply of hosts
 
 ### B.1 Wiring
